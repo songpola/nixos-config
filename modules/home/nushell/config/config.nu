@@ -3,4 +3,4 @@ $env.config = {
 }
 
 alias gc = czg emoji gpg
-alias nixos-switch = sudo nixos-rebuild switch --flake ~/nixos-config
+alias nixos-switch = sudo nixos-rebuild switch --flake (readlink $"($env.HOME)/nixos-config")
