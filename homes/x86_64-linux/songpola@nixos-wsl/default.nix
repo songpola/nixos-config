@@ -17,7 +17,6 @@
   ...
 }: {
   home = {
-    sessionVariables.EDITOR = "micro";
     packages = with pkgs; [
       # Editors
       helix
