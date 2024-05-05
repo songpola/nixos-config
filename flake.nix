@@ -5,10 +5,6 @@
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    snowfall-flake = {
-      url = "github:snowfallorg/flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,7 +27,6 @@
       channels-config.allowUnfree = true;
 
       overlays = with inputs; [
-        snowfall-flake.overlays.default
         nix-ld-rs.overlays.default
       ];
 
