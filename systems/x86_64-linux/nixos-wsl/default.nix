@@ -15,19 +15,15 @@
   # All other arguments come from the system system.
   # config,
   ...
-}: let
-  user = "songpola";
-in {
+}: {
   wsl = {
     enable = true;
-    defaultUser = user;
+    defaultUser = "songpola";
   };
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 
-  users.users.${user} = {
-    shell = pkgs.nushell;
-  };
+  users.defaultUserShell = pkgs.nushell;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

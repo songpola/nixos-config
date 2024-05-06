@@ -13,9 +13,10 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
-  # config,
+  config,
   ...
 }: {
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+  users.users.${config.wsl.defaultUser}.extraGroups = ["libvirtd"];
 }
