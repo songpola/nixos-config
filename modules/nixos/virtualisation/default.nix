@@ -16,7 +16,16 @@
   config,
   ...
 }: {
-  virtualisation.libvirtd.enable = true;
+  virtualisation = {
+    libvirtd.enable = true;
+
+    virtualbox.host = {
+      enable = true;
+      enableExtensionPack = true;
+    };
+  };
+
   programs.virt-manager.enable = true;
-  users.users.${config.wsl.defaultUser}.extraGroups = ["libvirtd"];
+
+  users.users.${config.wsl.defaultUser}.extraGroups = ["libvirtd" "vboxusers"];
 }
