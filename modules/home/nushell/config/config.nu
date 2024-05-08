@@ -6,6 +6,7 @@ let configPath = $"($env.HOME)/nixos-config"
 
 alias cls = clear
 
+alias gp = git push
 alias gc = czg emoji gpg
 alias ga = git add .
 alias gca = git commit --amend
