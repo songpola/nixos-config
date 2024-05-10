@@ -23,11 +23,9 @@
       enable = true;
       enableExtensionPack = true;
     };
-
-    docker.enable = true;
   };
 
   programs.virt-manager.enable = true;
 
-  users.users.${config.wsl.defaultUser}.extraGroups = ["libvirtd" "vboxusers" "docker"];
+  users.users.${config.wsl.defaultUser}.extraGroups = ["libvirtd" "vboxusers"];
 }

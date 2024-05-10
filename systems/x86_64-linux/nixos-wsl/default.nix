@@ -19,6 +19,7 @@
   wsl = {
     enable = true;
     defaultUser = "songpola";
+    docker-desktop.enable = true;
   };
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
