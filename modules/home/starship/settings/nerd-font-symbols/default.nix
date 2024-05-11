@@ -13,11 +13,8 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
-  config,
+  # config,
   ...
 }: {
-  programs.nh = {
-    enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/_/github.com/songpola/nixos-config";
-  };
+  programs.starship.settings = builtins.fromTOML (builtins.readFile ./nerd-font-symbols.toml);
 }

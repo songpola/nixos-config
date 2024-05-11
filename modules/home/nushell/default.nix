@@ -22,7 +22,6 @@
       envFile.source = ./config/env.nu;
       configFile.source = ./config/config.nu;
     };
-    starship.enable = true;
     carapace.enable = true;
   };
 }

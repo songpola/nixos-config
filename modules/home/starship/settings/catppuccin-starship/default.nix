@@ -5,7 +5,7 @@
   # An instance of `pkgs` with your overlays and packages applied is also available.
   # pkgs,
   # You also have access to your flake's inputs.
-  # inputs,
+  inputs,
   # Additional metadata is provided by Snowfall Lib.
   # system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
@@ -13,11 +13,15 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
-  config,
+  # config,
   ...
-}: {
-  programs.nh = {
-    enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/_/github.com/songpola/nixos-config";
-  };
+}: let
+  flavour = "latte"; # One of `latte`, `frappe`, `macchiato`, or `mocha`
+  catppuccin-starship-palettes = "${inputs.catppuccin-starship}/palettes/${flavour}.toml";
+in {
+  programs.starship.settings =
+    {
+      palette = "catppuccin_${flavour}";
+    }
+    // builtins.fromTOML (builtins.readFile catppuccin-starship-palettes);
 }

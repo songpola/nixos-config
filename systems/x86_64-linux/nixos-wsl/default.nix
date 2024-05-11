@@ -19,12 +19,18 @@
   wsl = {
     enable = true;
     defaultUser = "songpola";
+    startMenuLaunchers = true;
     docker-desktop.enable = true;
   };
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 
   users.defaultUserShell = pkgs.nushell;
+
+  environment.systemPackages = with pkgs; [
+    gnome-icon-theme
+    gnome.adwaita-icon-theme
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
