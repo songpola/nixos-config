@@ -3,3 +3,6 @@
 [hostname]
 ssh_only = false
 style = "green bold"
+
+[nix_shell]
+heuristic = true
