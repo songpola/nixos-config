@@ -18,6 +18,6 @@
 }: {
   programs.nh = {
     enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/_/github.com/songpola/nixos-config";
+    flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
   };
 }
