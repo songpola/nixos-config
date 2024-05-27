@@ -27,10 +27,10 @@
 
   users.defaultUserShell = pkgs.nushell;
 
-  environment.systemPackages = with pkgs; [
-    gnome-icon-theme
-    gnome.adwaita-icon-theme
-  ];
+  # environment.systemPackages = with pkgs; [
+  #   gnome-icon-theme
+  #   gnome.adwaita-icon-theme
+  # ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
