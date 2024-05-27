@@ -20,7 +20,19 @@
     enable = true;
     defaultUser = "songpola";
     startMenuLaunchers = true;
-    docker-desktop.enable = true;
+
+    # Docker Desktop Integration workarounds
+    # https://github.com/nix-community/NixOS-WSL/issues/235
+    docker-desktop.enable = false;
+    extraBin = with pkgs; [
+      {src = "${uutils-coreutils-noprefix}/bin/mkdir";}
+      {src = "${uutils-coreutils-noprefix}/bin/cat";}
+      {src = "${uutils-coreutils-noprefix}/bin/whoami";}
+      {src = "${uutils-coreutils-noprefix}/bin/ls";}
+      {src = "${busybox}/bin/addgroup";}
+      {src = "${su}/bin/groupadd";}
+      {src = "${su}/bin/usermod";}
+    ];
   };
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
