@@ -16,8 +16,5 @@
   config,
   ...
 }: {
-  programs.nh = {
-    enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
-  };
+  programs.nh.enable = true;
 }

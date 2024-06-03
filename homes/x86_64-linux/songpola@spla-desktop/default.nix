@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -16,13 +16,8 @@
   # config,
   ...
 }: {
-  programs.git = {  
-    extraConfig = {
-      core.sshCommand = "ssh.exe";
-      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
-      gpg.format = "ssh";
-      gpg.ssh.program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl";
-      commit.gpgsign = true;
-    };
+  programs.chromium = {
+    enable = true;
+    package = pkgs.brave;
   };
 }

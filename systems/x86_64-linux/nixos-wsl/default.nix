@@ -37,8 +37,6 @@
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 
-  users.defaultUserShell = pkgs.nushell;
-
   # environment.systemPackages = with pkgs; [
   #   gnome-icon-theme
   #   gnome.adwaita-icon-theme
@@ -51,4 +49,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
+
+  programs.nh.flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
 }
