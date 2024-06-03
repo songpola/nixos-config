@@ -93,6 +93,8 @@
       gh
       croc
       firefox
+      pciutils
+      usbutils
     ];
   };
 
