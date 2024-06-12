@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -16,5 +16,7 @@
   # config,
   ...
 }: {
-  home-manager.useGlobalPkgs = true;
+  home.packages = with pkgs; [
+    pnpm
+  ];
 }
