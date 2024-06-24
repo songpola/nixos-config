@@ -29,6 +29,7 @@
       {src = "${uutils-coreutils-noprefix}/bin/cat";}
       {src = "${uutils-coreutils-noprefix}/bin/whoami";}
       {src = "${uutils-coreutils-noprefix}/bin/ls";}
+      {src = "${uutils-coreutils-noprefix}/bin/id";}
       {src = "${busybox}/bin/addgroup";}
       {src = "${su}/bin/groupadd";}
       {src = "${su}/bin/usermod";}
