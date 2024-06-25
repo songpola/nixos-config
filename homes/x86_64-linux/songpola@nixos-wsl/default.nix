@@ -16,7 +16,7 @@
   # config,
   ...
 }: {
-  programs.git = {  
+  programs.git = {
     extraConfig = {
       core.sshCommand = "ssh.exe";
       user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";

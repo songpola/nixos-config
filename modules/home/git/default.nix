@@ -18,7 +18,10 @@
 }: {
   programs.git = {
     enable = true;
-    userEmail = "ice.songpola@pm.me";
+    userEmail = "1527535+songpola@users.noreply.github.com";
     userName = "Songpol Anannetikul";
+    extraConfig = {
+      init.defaultBranch = "main";
+    };
   };
 }
