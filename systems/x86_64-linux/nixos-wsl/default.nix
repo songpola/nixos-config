@@ -38,6 +38,8 @@
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 
+  services.tailscale.enable = true;
+
   # environment.systemPackages = with pkgs; [
   #   gnome-icon-theme
   #   gnome.adwaita-icon-theme
