@@ -7,6 +7,7 @@
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
+  # namespace, # The namespace used for your flake, defaulting to "internal" if not set.
   # system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
   # format, # A normalized name for the system target (eg. `iso`).
@@ -16,5 +17,8 @@
   # config,
   ...
 }: {
-  programs.starship.settings = builtins.fromTOML (builtins.readFile ./bracketed-segments.toml);
+  home-manager = {
+    useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506
+    useUserPackages = true; # https://discourse.nixos.org/t/users-users-name-packages-vs-home-manager-packages/22240
+  };
 }

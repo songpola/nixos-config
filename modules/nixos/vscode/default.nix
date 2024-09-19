@@ -3,10 +3,11 @@
   # as well as the libraries available from your flake's inputs.
   # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
+  # namespace, # The namespace used for your flake, defaulting to "internal" if not set.
   # system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
   # format, # A normalized name for the system target (eg. `iso`).
@@ -16,8 +17,19 @@
   # config,
   ...
 }: {
-  programs.starship = {
-    enable = true;
-    settings = builtins.fromTOML (builtins.readFile ./settings/settings.toml);
-  };
+  wsl.extraBin = with pkgs; [
+    {src = "${uutils-coreutils-noprefix}/bin/uname";}
+  ];
+
+  environment.systemPackages = with pkgs; [
+    # Required by VS Code Remote Extension
+    wget
+
+    # Tools
+    nil # Nix Language Server
+    alejandra # Nix Formatter
+  ];
+
+  # Support VS Code non-nix extensions
+  programs.nix-ld.enable = true;
 }

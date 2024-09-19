@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -12,11 +12,16 @@
   # format, # A normalized name for the system target (eg. `iso`).
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
-  # All other arguments come from the module system.
-  # config,
+  # All other arguments come from the system system.
+  config,
+  systemStateVersion, # specialArgs
   ...
 }: {
-  home.packages = with pkgs; [
-    uutils-coreutils-noprefix
-  ];
+  system.stateVersion = systemStateVersion;
+  wsl.enable = true;
+
+  programs.nh = {
+    enable = true;
+    flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
+  };
 }

@@ -14,12 +14,28 @@
   # host, # The host name for this home.
   # All other arguments come from the home home.
   # config,
+  homeStateVersion, # specialArgs
   ...
 }: {
+  home.stateVersion = homeStateVersion;
+  programs.home-manager.enable = true;
+
   home.packages = with pkgs; [
-    # Editors
-    helix
     micro
-    neovim
   ];
+
+  programs.git = {
+    enable = true;
+    userEmail = "1527535+songpola@users.noreply.github.com";
+    userName = "Songpol Anannetikul";
+    extraConfig = {
+      init.defaultBranch = "main";
+
+      core.sshCommand = "ssh.exe";
+      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
+      gpg.format = "ssh";
+      gpg.ssh.program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl";
+      commit.gpgsign = true;
+    };
+  };
 }

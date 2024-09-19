@@ -1,41 +1,40 @@
 {
+  description = "songpola's NixOS-WSL config";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-24.05";
+    unstable.url = "nixpkgs/nixos-unstable";
     snowfall-lib = {
-      url = "github:snowfallorg/lib";
+      url = "github:snowfallorg/lib/v3.0.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
+      url = "github:nix-community/NixOS-WSL/2405.5.4";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-ld-rs = {
-      url = "github:nix-community/nix-ld-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    catppuccin-starship = {
-      url = "github:catppuccin/starship";
-      flake = false;
     };
   };
 
-  outputs = inputs:
-    inputs.snowfall-lib.mkFlake {
+  outputs = inputs: let
+    stateVersion = "24.05";
+  in
+    inputs.snowfall-lib.mkFlake rec {
       inherit inputs;
       src = ./.;
 
-      channels-config.allowUnfree = true;
+      homes.users."nixos@nixos".specialArgs = {
+        homeStateVersion = stateVersion;
+      };
 
-      overlays = with inputs; [
-        nix-ld-rs.overlays.default
-      ];
-
-      systems.hosts.nixos-wsl.modules = with inputs; [
-        nixos-wsl.nixosModules.default
-      ];
+      systems.hosts.nixos = {
+        modules = with inputs; [
+          nixos-wsl.nixosModules.default
+        ];
+        specialArgs = {
+          systemStateVersion = stateVersion;
+        };
+      };
     };
 }
