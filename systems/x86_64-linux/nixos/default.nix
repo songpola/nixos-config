@@ -16,7 +16,10 @@
   config,
   systemStateVersion, # specialArgs
   ...
-}: {
+}: let
+  inherit (lib) forEach flatten;
+  inherit (lib.songpola) get-files;
+in {
   system.stateVersion = systemStateVersion;
   wsl.enable = true;
 
@@ -24,12 +27,12 @@
     packages = with pkgs; [
       uutils-coreutils-noprefix
     ];
-    paths = lib.lists.forEach packages (package: "${package}/bin");
+    paths = forEach packages (package: "${package}/bin");
     # Get a list of all files (no filter) in the path
-    get-all-files = path: lib.songpola.get-files path null;
-    bins = lib.lists.flatten (lib.lists.forEach paths get-all-files);
+    get-all-files = path: get-files path null;
+    bins = flatten (forEach paths get-all-files);
   in
-    lib.lists.forEach bins (src: {inherit src;});
+    forEach bins (src: {inherit src;});
 
   programs.nh = {
     enable = true;
