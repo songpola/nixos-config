@@ -1,9 +1,9 @@
 {
   # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # as well as the libraries available from your flake's inputs.
-  # lib,
+  lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -19,6 +19,17 @@
 }: {
   system.stateVersion = systemStateVersion;
   wsl.enable = true;
+
+  wsl.extraBin = let
+    packages = with pkgs; [
+      uutils-coreutils-noprefix
+    ];
+    paths = lib.lists.forEach packages (package: "${package}/bin");
+    # Get a list of all files (no filter) in the path
+    get-all-files = path: lib.songpola.get-files path null;
+    bins = lib.lists.flatten (lib.lists.forEach paths get-all-files);
+  in
+    lib.lists.forEach bins (src: {inherit src;});
 
   programs.nh = {
     enable = true;

@@ -17,10 +17,6 @@
   # config,
   ...
 }: {
-  wsl.extraBin = with pkgs; [
-    {src = "${uutils-coreutils-noprefix}/bin/uname";}
-  ];
-
   environment.systemPackages = with pkgs; [
     # Required by VS Code Remote Extension
     wget

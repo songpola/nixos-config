@@ -24,6 +24,8 @@
       inherit inputs;
       src = ./.;
 
+      snowfall.namespace = "songpola";
+
       homes.users."nixos@nixos".specialArgs = {
         homeStateVersion = stateVersion;
       };
