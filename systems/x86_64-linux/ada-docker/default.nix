@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -15,19 +15,46 @@
   # All other arguments come from the system system.
   config,
   ...
-}: let
-  inherit (lib.songpola) make-extraBin-from-packages;
-in {
+}: {
   system.stateVersion = "24.05";
 
   programs.nh = {
     enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
+    flake = with config; users.users.songpola.home + "/nixos-config";
   };
 
-  wsl = {
-    enable = true;
-    docker-desktop.enable = true;
-    extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
+  networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
+
+  imports = [
+    ./hardware-configuration.nix
+    ./disks.nix
+  ];
+
+  boot.loader = {
+    efi = let
+      get-mountpoint = name: config.disko.devices.disk.main.content.partitions.${name}.content.mountpoint;
+    in {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = get-mountpoint "ESP";
+    };
+    grub = {
+      efiSupport = true;
+      device = "nodev";
+    };
   };
+
+  time.timeZone = "Asia/Bangkok";
+
+  services.openssh.enable = true;
+
+  users.users = {
+    root.openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
+    songpola = {
+      isNormalUser = true;
+      extraGroups = ["wheel" "docker"];
+      openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
+    };
+  };
+
+  virtualisation.docker.enable = true;
 }

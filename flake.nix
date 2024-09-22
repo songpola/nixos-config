@@ -11,32 +11,26 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/2405.5.4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs: let
-    stateVersion = "24.05";
-  in
+  outputs = inputs:
     inputs.snowfall-lib.mkFlake rec {
       inherit inputs;
       src = ./.;
 
       snowfall.namespace = "songpola";
 
-      homes.users."nixos@nixos".specialArgs = {
-        homeStateVersion = stateVersion;
-      };
-
-      systems.hosts.nixos = {
-        modules = with inputs; [
-          nixos-wsl.nixosModules.default
-        ];
-        specialArgs = {
-          systemStateVersion = stateVersion;
-        };
+      systems.hosts = with inputs; {
+        ada-docker.modules = [disko.nixosModules.disko];
+        nixos.modules = [nixos-wsl.nixosModules.default];
       };
     };
 }
