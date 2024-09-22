@@ -45,7 +45,10 @@
 
   time.timeZone = "Asia/Bangkok";
 
-  services.openssh.enable = true;
+  services = {
+    openssh.enable = true;
+    qemuGuest.enable = true;
+  };
 
   users.users = {
     root.openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
