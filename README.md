@@ -15,7 +15,7 @@ sudo nixos-rebuild switch --flake github:songpola/nixos-config
 ### Deploy to Remote Host
 
 ```bash
-nixos-rebuild --flake github:songpola/nixos-config --build-host songpola@<host> --target-host songpola@<host> --use-remote-sudo switch
+nixos-rebuild --flake github:songpola/nixos-config --build-host songpola@<host> --target-host songpola@<host> --use-remote-sudo --use-substitutes switch
 ```
 
 ## nixos-anywhere
