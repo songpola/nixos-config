@@ -17,11 +17,12 @@
   systemStateVersion, # specialArgs
   ...
 }: let
-  inherit (lib) forEach flatten;
-  inherit (lib.songpola) get-files;
+  inherit (lib.songpola) make-extraBin-from-packages;
 in {
   system.stateVersion = systemStateVersion;
   wsl.enable = true;
+
+  wsl.docker-desktop.enable = true;
 
   wsl.extraBin = make-extraBin-from-packages (
     with pkgs; [
