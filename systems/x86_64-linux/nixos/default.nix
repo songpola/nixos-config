@@ -23,16 +23,11 @@ in {
   system.stateVersion = systemStateVersion;
   wsl.enable = true;
 
-  wsl.extraBin = let
-    packages = with pkgs; [
+  wsl.extraBin = make-extraBin-from-packages (
+    with pkgs; [
       uutils-coreutils-noprefix
-    ];
-    paths = forEach packages (package: "${package}/bin");
-    # Get a list of all files (no filter) in the path
-    get-all-files = path: get-files path null;
-    bins = flatten (forEach paths get-all-files);
-  in
-    forEach bins (src: {inherit src;});
+    ]
+  );
 
   programs.nh = {
     enable = true;

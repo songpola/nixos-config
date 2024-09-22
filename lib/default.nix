@@ -10,8 +10,8 @@
   # snowfall-inputs,
 }: let
   inherit (lib.snowfall.fs) safe-read-directory;
-  inherit (lib) filterAttrs mapAttrsToList;
-in {
+  inherit (lib) filterAttrs mapAttrsToList forEach flatten;
+in rec {
   # Get a list of files in a directory that its kind matches the filter
   get-files = path: filter: let
     # Get all file entries in the directory
@@ -25,4 +25,13 @@ in {
   in
     # Add the path to the name of the file
     mapAttrsToList (name: kind: "${path}/${name}") filtered-entries;
+
+  # Make entries for wsl.extraBin from a list of packages
+  make-extraBin-from-packages = packages: let
+    paths = forEach packages (package: "${package}/bin");
+    # Get a list of all files (no filter) in the path
+    get-all-files = path: get-files path null;
+    bins = flatten (forEach paths get-all-files);
+  in
+    forEach bins (src: {inherit src;});
 }
