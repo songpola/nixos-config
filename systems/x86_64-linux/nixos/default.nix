@@ -21,7 +21,6 @@
 in {
   system.stateVersion = "24.05";
 
-  # nh
   programs.nh = {
     enable = true;
     flake = config.users.users.${defaultUser}.home + "/nixos-config";
@@ -34,5 +33,9 @@ in {
   };
 
   # Nushell
-  users.users.${defaultUser}.shell = pkgs.nushell;
+  # ---
+  # BUG: Not compatible with JetBrains Remote Development
+  # https://youtrack.jetbrains.com/issue/GTW-9181/Remote-development-WSL-Unable-to-connect-to-host-due-to-unsupported-shell-command
+  # ---
+  # users.users.${defaultUser}.shell = pkgs.nushell;
 }
