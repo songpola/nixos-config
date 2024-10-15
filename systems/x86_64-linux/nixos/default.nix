@@ -17,12 +17,14 @@
   ...
 }: let
   inherit (lib.songpola) make-extraBin-from-packages;
+  defaultUser = config.wsl.defaultUser;
 in {
   system.stateVersion = "24.05";
 
+  # nh
   programs.nh = {
     enable = true;
-    flake = with config; users.users.${wsl.defaultUser}.home + "/nixos-config";
+    flake = config.users.users.${defaultUser}.home + "/nixos-config";
   };
 
   wsl = {
@@ -30,4 +32,7 @@ in {
     docker-desktop.enable = true;
     extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
   };
+
+  # Nushell
+  users.users.${defaultUser}.shell = pkgs.nushell;
 }
