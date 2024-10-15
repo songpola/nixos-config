@@ -19,6 +19,11 @@
 }: {
   home.packages = with pkgs; [
     micro
+
+    wget # Required by VS Code Remote Extension
+
+    nil
+    alejandra
   ];
 
   programs = {
