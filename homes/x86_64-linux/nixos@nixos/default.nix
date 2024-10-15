@@ -19,9 +19,12 @@
   home = {
     stateVersion = "24.05";
     packages = with pkgs; [
+      # Install the LTS version of Node.js:
+      # pnpm env use --global lts
       pnpm
     ];
   };
+
   programs = {
     # 1Password SSH WSL Integration
     git.extraConfig = {
