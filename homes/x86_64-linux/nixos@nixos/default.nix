@@ -22,8 +22,6 @@
       # Install the LTS version of Node.js:
       # pnpm env use --global lts
       pnpm
-
-      temurin-bin-21
     ];
   };
 
