@@ -28,11 +28,11 @@
   programs = {
     # 1Password SSH WSL Integration
     git.extraConfig = {
-      core.sshCommand = "ssh.exe";
       user.signingkey = lib.songpola.ssh-key;
       gpg.format = "ssh";
-      gpg.ssh.program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl";
+      gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
       commit.gpgsign = true;
+      core.sshCommand = "ssh.exe";
     };
 
     # Nushell
