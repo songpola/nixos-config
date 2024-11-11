@@ -17,6 +17,7 @@
   # config,
   ...
 }: {
+  # Common packages, installed on hosts
   home.packages = with pkgs; [
     micro
 

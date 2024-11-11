@@ -19,8 +19,6 @@
   home = {
     stateVersion = "24.05";
     packages = with pkgs; [
-      # Install the LTS version of Node.js:
-      # pnpm env use --global lts
       pnpm
     ];
   };
