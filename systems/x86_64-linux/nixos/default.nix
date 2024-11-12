@@ -29,7 +29,7 @@ in {
   wsl = {
     enable = true;
     docker-desktop.enable = true;
-    extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
+    # extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
   };
 
   # Nushell
