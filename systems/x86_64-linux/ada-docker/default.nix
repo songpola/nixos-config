@@ -20,10 +20,11 @@
 in {
   system.stateVersion = "24.05";
 
-  programs.nh = {
-    enable = true;
-    flake = with config; users.users.songpola.home + "/nixos-config";
-  };
+  # Disable nh for this host; use another host to update configuration
+  # programs.nh = {
+  #   enable = true;
+  #   flake = with config; users.users.songpola.home + "/nixos-config";
+  # };
 
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 

@@ -26,10 +26,12 @@ sudo nixos-rebuild switch --flake github:songpola/nixos-config
 
 #### Deploy to Remote Host
 
-> Add `--use-remote-sudo` flag if non-root user
+- Add `--use-remote-sudo` flag if use non-root user
+- Add `--build-host <user>@<host>` flag to build on remote host
+- Add `--use-substitutes` flag to speed up if the remote host is faster
 
 ```bash
-nixos-rebuild --flake github:songpola/nixos-config --build-host <user>@<host> --target-host <user>@<host> --use-substitutes switch
+nixos-rebuild --flake github:songpola/nixos-config --target-host <user>@<host> switch
 ```
 
 ## Notes
