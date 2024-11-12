@@ -38,7 +38,7 @@
       enable = true;
       configFile.source = ./config.nu;
       shellAliases = {
-        ssh = "ssh.exe";
+        # ssh = "ssh.exe";
         gcm = "czg emoji gpg";
         nos = "nh os switch";
       };
