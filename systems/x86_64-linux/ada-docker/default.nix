@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -15,7 +15,9 @@
   # All other arguments come from the system system.
   config,
   ...
-}: {
+}: let
+  get-mountpoint = name: config.disko.devices.disk.main.content.partitions.${name}.content.mountpoint;
+in {
   system.stateVersion = "24.05";
 
   programs.nh = {
@@ -27,13 +29,11 @@
 
   imports = [
     ./hardware-configuration.nix
-    ./disks.nix
+    ./disk-config.nix
   ];
 
   boot.loader = {
-    efi = let
-      get-mountpoint = name: config.disko.devices.disk.main.content.partitions.${name}.content.mountpoint;
-    in {
+    efi = {
       canTouchEfiVariables = true;
       efiSysMountPoint = get-mountpoint "ESP";
     };
@@ -51,13 +51,16 @@
   };
 
   users.users = {
-    root.openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
+    # root.openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
     songpola = {
       isNormalUser = true;
       extraGroups = ["wheel" "docker"];
       openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
+      shell = pkgs.nushell;
     };
   };
+
+  security.sudo.wheelNeedsPassword = false;
 
   virtualisation.docker.enable = true;
 }

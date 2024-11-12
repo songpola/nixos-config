@@ -1,5 +1,15 @@
 # songpola's NixOS Config
 
+## Setup
+
+### `nixos-anywhere`
+
+> Set password (using `passwd`) for `root` first
+
+```bash
+nix run github:nix-community/nixos-anywhere -- --flake github:songpola/nixos-config#<hostname> root@<host>
+```
+
 ## Usage
 
 ### `nh`
@@ -16,19 +26,17 @@ sudo nixos-rebuild switch --flake github:songpola/nixos-config
 
 #### Deploy to Remote Host
 
-```bash
-nixos-rebuild --flake github:songpola/nixos-config --build-host songpola@<host> --target-host songpola@<host> --use-remote-sudo --use-substitutes switch
-```
-
-### `nixos-anywhere`
+> Add `--use-remote-sudo` flag if non-root user
 
 ```bash
-nix run github:nix-community/nixos-anywhere -- --flake github:songpola/nixos-config#<hostname> root@<host>
+nixos-rebuild --flake github:songpola/nixos-config --build-host <user>@<host> --target-host <user>@<host> --use-substitutes switch
 ```
 
 ## Notes
 
-### Install the LTS version of Node.js
+### pnpm
+
+#### Install the LTS version of Node.js
 
 ```bash
 pnpm env use --global lts
@@ -38,6 +46,5 @@ pnpm env use --global lts
 
 ## References
 
-### [My SSH Public Key](https://github.com/songpola.keys)
-
-### [nixos-anywhere](https://github.com/nix-community/nixos-anywhere/blob/main/docs/howtos/no-os.md#installing-on-a-machine-with-no-operating-system)
+- [My SSH Public Key](https://github.com/songpola.keys)
+- [nixos-anywhere](https://github.com/nix-community/nixos-anywhere/blob/main/docs/howtos/no-os.md#installing-on-a-machine-with-no-operating-system)
