@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -18,10 +18,7 @@
   ...
 }: {
   # Required by JetBrains Remote Development
-  programs.nix-ld = {
-    enable = true;
-    libraries = with pkgs; [
-      pcre2 # libpcre2-8.so.0
-    ];
-  };
+  # programs.nix-ld.libraries = with pkgs; [
+  #   pcre2 # libpcre2-8.so.0
+  # ];
 }
