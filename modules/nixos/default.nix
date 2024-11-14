@@ -20,4 +20,9 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   programs.nix-ld.enable = true;
+
+  home-manager = {
+    useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506
+    useUserPackages = true; # https://discourse.nixos.org/t/users-users-name-packages-vs-home-manager-packages/22240
+  };
 }
