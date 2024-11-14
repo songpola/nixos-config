@@ -1,7 +1,7 @@
 {
   # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # as well as the libraries available from your flake's inputs.
-  lib,
+  # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
   pkgs,
   # You also have access to your flake's inputs.
@@ -16,7 +16,7 @@
   config,
   ...
 }: let
-  inherit (lib.songpola) make-extraBin-from-packages;
+  # inherit (lib.songpola) make-extraBin-from-packages;
   defaultUser = config.wsl.defaultUser;
 in {
   system.stateVersion = "24.05";
@@ -30,12 +30,6 @@ in {
     enable = true;
     docker-desktop.enable = true;
     # extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
-    extraBin = [
-      {
-        name = "ssh";
-        src = "/mnt/c/Windows/System32/OpenSSH/ssh.exe";
-      }
-    ];
   };
 
   # Nushell
@@ -44,4 +38,6 @@ in {
   # https://youtrack.jetbrains.com/issue/GTW-9181/Remote-development-WSL-Unable-to-connect-to-host-due-to-unsupported-shell-command
   # ---
   # users.users.${defaultUser}.shell = pkgs.nushell;
+
+  programs.ssh.package = pkgs.songpola.ssh-wsl-win;
 }

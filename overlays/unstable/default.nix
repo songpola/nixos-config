@@ -9,7 +9,7 @@
   # The namespace used for your Flake, defaulting to "internal" if not set.
   # namespace,
   # Inputs from your flake.
-  inputs,
+  # inputs,
   ...
 }: final: prev: {
   inherit (channels.unstable) nix-ld;
