@@ -12,19 +12,16 @@
   # stdenv,
   ...
 }:
-# pkgs.openssh.overrideAttrs (oldAttrs: {
-#   postInstall =
-#     oldAttrs.postInstall
-#     + ''
-#       mv $out/bin/ssh $out/bin/ssh.orig
-#       ln -sf /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
-#     '';
-# })
 pkgs.symlinkJoin {
   name = "ssh-wsl-win";
   paths = [pkgs.openssh];
   postBuild = ''
+    # ssh
     mv $out/bin/ssh $out/bin/ssh-wsl
     ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
+
+    # ssh-add
+    mv $out/bin/ssh-add $out/bin/ssh-add-wsl
+    ln -s /mnt/c/Windows/System32/OpenSSH/ssh-add.exe $out/bin/ssh-add
   '';
 }
