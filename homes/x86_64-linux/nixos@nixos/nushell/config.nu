@@ -9,3 +9,4 @@ $env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
 alias _ls = ls
 alias gcm = czg emoji gpg
 alias nos = nh os switch
+alias f = fuck
