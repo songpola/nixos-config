@@ -22,28 +22,24 @@
       pnpm
     ];
   };
-
   programs = {
-    # 1Password SSH WSL Integration
+    # 1Password SSH for WSL
     git.extraConfig = {
       user.signingkey = lib.songpola.ssh-key;
       gpg.format = "ssh";
       gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
       commit.gpgsign = true;
-      core.sshCommand = "ssh.exe";
+      # core.sshCommand = "ssh.exe"; # already symlinked
     };
-
-    # Nushell
     nushell = {
-      enable = true;
-      configFile.source = ./config.nu;
+      configFile.source = ./nushell/config.nu;
+      extraConfig = lib.mkAfter (builtins.readFile ./nushell/external_completer.nu);
       shellAliases = {
         # ssh = "ssh.exe";
         gcm = "czg emoji gpg";
         nos = "nh os switch";
       };
     };
-    starship.enable = true;
-    carapace.enable = true;
+
   };
 }

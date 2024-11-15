@@ -19,12 +19,10 @@
 }: {
   # Common packages, installed on all hosts
   home.packages = with pkgs; [
-    micro
-
     wget # Required by VS Code Remote Extension
-
     nil
     alejandra
+    httpie
   ];
 
   programs = {
@@ -37,5 +35,26 @@
         init.defaultBranch = "main";
       };
     };
+    micro.enable = true;
+    nushell.enable = true;
+    fish.enable = true;
+    starship.enable = true;
+    carapace.enable = true;
+    eza = {
+      enable = true;
+      git = true;
+      icons = true;
+      enableNushellIntegration = true;
+    };
+    yazi = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+    atuin.enable = true;
+    bat.enable = true;
+    ripgrep.enable = true;
+    zoxide.enable = true;
+    thefuck.enable = true;
+    fzf.enable = true;
   };
 }

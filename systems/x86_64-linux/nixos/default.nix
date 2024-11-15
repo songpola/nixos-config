@@ -37,7 +37,7 @@ in {
   # BUG: Not compatible with JetBrains Remote Development
   # https://youtrack.jetbrains.com/issue/GTW-9181/Remote-development-WSL-Unable-to-connect-to-host-due-to-unsupported-shell-command
   # ---
-  # users.users.${defaultUser}.shell = pkgs.nushell;
+  users.users.${defaultUser}.shell = pkgs.nushell;
 
   programs.ssh.package = pkgs.songpola.ssh-wsl-win;
 }
