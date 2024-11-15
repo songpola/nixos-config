@@ -34,11 +34,6 @@
     nushell = {
       configFile.source = ./nushell/config.nu;
       extraConfig = lib.mkAfter (builtins.readFile ./nushell/external_completer.nu);
-      shellAliases = {
-        # ssh = "ssh.exe";
-        gcm = "czg emoji gpg";
-        nos = "nh os switch";
-      };
     };
 
   };

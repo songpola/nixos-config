@@ -34,4 +34,11 @@ in rec {
     bins = flatten (forEach paths get-all-files);
   in
     forEach bins (src: {inherit src;});
+
+  # Enable multiple options at once
+  enableOptions = let
+    op = acc: option: acc // {"${option}".enable = true;};
+    acc0 = {};
+  in
+    options: lib.foldl' op acc0 options;
 }
