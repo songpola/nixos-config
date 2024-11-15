@@ -50,7 +50,10 @@
       enable = true;
       enableNushellIntegration = true;
     };
-    atuin.enable = true;
+    atuin = {
+      enable = true;
+      enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414
+    };
     bat.enable = true;
     ripgrep.enable = true;
     zoxide.enable = true;
