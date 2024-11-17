@@ -19,14 +19,16 @@
 }: let
   inherit (lib.songpola) enableOptions;
 in {
-  # Common packages, installed on all hosts
-  home.packages = with pkgs; [
-    wget # Required by VS Code Remote Extension
-    nil
-    alejandra
-    httpie
-    ov
-  ];
+  home = {
+    packages = with pkgs; [
+      wget # Required by VS Code Remote Extension
+      nil
+      alejandra
+      httpie
+      ov
+      pnpm
+    ];
+  };
 
   programs =
     lib.recursiveUpdate
@@ -59,11 +61,15 @@ in {
         };
         delta.enable = true;
       };
+      nushell = {
+        configFile.source = ./nushell/config.nu;
+        extraConfig = lib.mkAfter (builtins.readFile ./nushell/external_completer.nu);
+      };
       eza = {
         git = true;
         icons = true;
         enableNushellIntegration = true;
-        extraOptions = [ "-1" ];
+        extraOptions = ["-1"];
       };
       yazi.enableNushellIntegration = true;
       atuin.enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414

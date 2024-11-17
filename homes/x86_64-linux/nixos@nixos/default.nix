@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -16,24 +16,12 @@
   # config,
   ...
 }: {
-  home = {
-    stateVersion = "24.05";
-    packages = with pkgs; [
-      pnpm
-    ];
-  };
-  programs = {
-    # 1Password SSH for WSL
-    git.extraConfig = {
-      user.signingkey = lib.songpola.ssh-key;
-      gpg.format = "ssh";
-      gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-      commit.gpgsign = true;
-      # core.sshCommand = "ssh.exe"; # already symlinked
-    };
-    nushell = {
-      configFile.source = ./nushell/config.nu;
-      extraConfig = lib.mkAfter (builtins.readFile ./nushell/external_completer.nu);
-    };
+  home.stateVersion = "24.05";
+  # 1Password SSH for WSL
+  programs.git.extraConfig = {
+    user.signingkey = lib.songpola.ssh-key;
+    gpg.format = "ssh";
+    gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
+    commit.gpgsign = true;
   };
 }
