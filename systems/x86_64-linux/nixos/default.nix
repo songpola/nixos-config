@@ -21,11 +21,6 @@
 in {
   system.stateVersion = "24.05";
 
-  programs.nh = {
-    enable = true;
-    flake = config.users.users.${defaultUser}.home + "/nixos-config";
-  };
-
   wsl = {
     enable = true;
     docker-desktop.enable = true;
@@ -39,5 +34,13 @@ in {
   # ---
   users.users.${defaultUser}.shell = pkgs.nushell;
 
-  programs.ssh.package = pkgs.songpola.ssh-wsl-win;
+  programs = {
+    nh = {
+      enable = true;
+      flake = config.users.users.${defaultUser}.home + "/nixos-config";
+    };
+    ssh.package = pkgs.songpola.ssh-wsl-win;
+  };
+
+  boot.supportedFilesystems = ["nfs"];
 }

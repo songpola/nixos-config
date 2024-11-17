@@ -35,6 +35,5 @@
       configFile.source = ./nushell/config.nu;
       extraConfig = lib.mkAfter (builtins.readFile ./nushell/external_completer.nu);
     };
-
   };
 }
