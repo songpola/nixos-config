@@ -68,10 +68,11 @@ in {
       eza = {
         git = true;
         icons = true;
-        enableNushellIntegration = true;
         extraOptions = ["-1"];
+        enableNushellIntegration = true;
       };
       yazi.enableNushellIntegration = true;
       atuin.enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414
+      bat.config.wrap = "never";
     };
 }
