@@ -6,7 +6,6 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME )
 $env.PAGER = "ov"
 $env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
 
-alias _ls = ls
+alias l = ls
 alias gcm = czg emoji gpg
 alias nos = nh os switch
-alias f = fuck
