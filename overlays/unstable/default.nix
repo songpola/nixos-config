@@ -12,5 +12,5 @@
   # inputs,
   ...
 }: final: prev: {
-  inherit (channels.unstable) nix-ld;
+  inherit (channels.unstable) nix-ld ov;
 }
