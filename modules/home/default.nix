@@ -27,6 +27,7 @@ in {
       httpie
       ov
       pnpm
+      ouch
     ];
   };
 
