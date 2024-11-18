@@ -14,11 +14,15 @@
 }:
 pkgs.symlinkJoin {
   name = "ssh-wsl-win";
-  paths = [pkgs.openssh];
+  paths = with pkgs; [
+    openssh
+    songpola.ssh-win
+  ];
   postBuild = ''
     # ssh
     mv $out/bin/ssh $out/bin/ssh-wsl
-    ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
+    # ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
+    ln -s $out/bin/ssh-win $out/bin/ssh
 
     # ssh-add
     mv $out/bin/ssh-add $out/bin/ssh-add-wsl
