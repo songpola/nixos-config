@@ -12,31 +12,9 @@
   # stdenv,
   ...
 }:
-pkgs.writeShellScriptBin "ssh-win"
-''
-  # Code to execute before calling ssh
-  echo "Running ssh-win..."
-  # Example: Logging the connection attempt
-  echo "$(date): Attempting to connect: $@"
-
-  # Call the actual ssh command with all passed arguments
-  # ${pkgs.openssh}/bin/ssh "$@"
-
-  # Prepare the command for PowerShell
-  powershell_cmd="ssh $*"
-
-  # Call PowerShell.exe to execute the ssh command
-  # /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command
-  /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "$powershell_cmd"
-
-  # Capture the exit code from PowerShell
-  exit_code=$?
-
-  # Optional: Handle exit codes or log further
-  if [ $exit_code -ne 0 ]; then
-    echo "SSH command failed with exit code $exit_code"
-  fi
-
-  # Return the exit code from PowerShell
-  exit $exit_code
-''
+pkgs.writeShellApplication {
+  name = "ssh-win";
+  text = ''
+    exec /mnt/c/Windows/System32/OpenSSH/ssh.exe "$@"
+  '';
+}

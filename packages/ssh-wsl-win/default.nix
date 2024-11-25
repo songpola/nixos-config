@@ -12,20 +12,27 @@
   # stdenv,
   ...
 }:
-pkgs.symlinkJoin {
-  name = "ssh-wsl-win";
-  paths = with pkgs; [
-    openssh
-    songpola.ssh-win
-  ];
-  postBuild = ''
-    # ssh
-    mv $out/bin/ssh $out/bin/ssh-wsl
-    # ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
-    ln -s $out/bin/ssh-win $out/bin/ssh
+with pkgs;
+  symlinkJoin {
+    name = "ssh-wsl-win";
+    paths = [
+      openssh
+      songpola.ssh-win
+    ];
+    postBuild = ''
+      # Move ${openssh}/bin/ssh to $out/bin/ssh-wsl
+      mv $out/bin/ssh $out/bin/ssh-wsl
 
-    # ssh-add
-    mv $out/bin/ssh-add $out/bin/ssh-add-wsl
-    ln -s /mnt/c/Windows/System32/OpenSSH/ssh-add.exe $out/bin/ssh-add
-  '';
-}
+      # WSL: $out/bin/ssh-wsl (from ${openssh})
+      # Windows: $out/bin/ssh-win (from ${songpola.ssh-win})
+      ln -s $out/bin/ssh-win $out/bin/ssh
+
+      # ssh-add
+      mv $out/bin/ssh-add $out/bin/ssh-add-wsl
+      ln -s /mnt/c/Windows/System32/OpenSSH/ssh-add.exe $out/bin/ssh-add
+
+      # ssh-keygen
+      mv $out/bin/ssh-keygen $out/bin/ssh-keygen-wsl
+      ln -s /mnt/c/Windows/System32/OpenSSH/ssh-keygen.exe $out/bin/ssh-keygen
+    '';
+  }
