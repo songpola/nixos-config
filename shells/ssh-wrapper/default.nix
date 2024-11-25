@@ -6,15 +6,14 @@
   # inputs,
   # The namespace used for your flake, defaulting to "internal" if not set.
   # namespace,
-  # All other arguments come from NixPkgs. You can use `pkgs` to pull packages or helpers
+  # All other arguments come from NixPkgs. You can use `pkgs` to pull shells or helpers
   # programmatically or you may add the named attributes as arguments here.
   pkgs,
-  # stdenv,
+  mkShell,
   ...
 }:
-pkgs.writeShellApplication {
-  name = builtins.baseNameOf ./.;
-  text = ''
-    exec /mnt/c/Windows/System32/OpenSSH/ssh.exe "$@"
-  '';
+mkShell {
+  packages = with pkgs; [
+    songpola.ssh-wrapper
+  ];
 }

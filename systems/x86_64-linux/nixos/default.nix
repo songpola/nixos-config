@@ -39,7 +39,7 @@ in {
       enable = true;
       flake = config.users.users.${defaultUser}.home + "/nixos-config";
     };
-    ssh.package = pkgs.songpola.ssh-wsl-win;
+    ssh.package = pkgs.songpola.ssh-wrapper;
   };
 
   boot.supportedFilesystems = ["nfs"];
