@@ -15,10 +15,7 @@
 with pkgs;
   symlinkJoin {
     name = builtins.baseNameOf ./.;
-    paths = [
-      openssh
-      songpola.ssh-win
-    ];
+    paths = [openssh];
     postBuild = ''
       # Rename ssh to ssh-wsl
       mv $out/bin/ssh $out/bin/ssh-wsl
