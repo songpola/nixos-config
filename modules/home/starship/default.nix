@@ -20,27 +20,30 @@
   readTomlFile = path: builtins.fromTOML (builtins.readFile path);
   mergeTomlFiles = acc: path: lib.recursiveUpdate acc (readTomlFile path);
   mergePresets = presetFiles: lib.foldl' mergeTomlFiles {} presetFiles;
+  removeByPath = pathList: set:
+    lib.updateManyAttrsByPath [
+      {
+        path = lib.init pathList;
+        update = old:
+          lib.filterAttrs (n: v: n != (lib.last pathList)) old;
+      }
+    ]
+    set;
 in {
-  programs.starship.settings =
-    lib.recursiveUpdate (
-      mergePresets [
-        ./presets/nerd-font-symbols.toml
-        ./presets/bracketed-segments.toml
-      ]
-    ) {
-      format = lib.concatStrings [
-        "$hostname"
-        "$os"
-        "$all"
-        "$username"
-        "$character"
-      ];
-      username.show_always = true;
-      username.format = "[$user]($style) ";
-      hostname.ssh_only = false;
-      hostname.format = "[$ssh_symbol$hostname]($style) ";
-      os.disabled = false;
-      os.format = "[$symbol]($style)";
-      status.disabled = false;
-    };
+  programs.starship.settings = (
+    # 3. Override: Remove the `os.format`
+    removeByPath ["os" "format"] (
+      lib.recursiveUpdate (
+        # 1. Default: Load and merge the presets
+        mergePresets [
+          ./presets/nerd-font-symbols.toml
+          ./presets/bracketed-segments.toml
+        ]
+      )
+      # 2. Override: Add some settings
+      {
+        os.disabled = false;
+      }
+    )
+  );
 }
