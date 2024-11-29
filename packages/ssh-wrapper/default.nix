@@ -17,12 +17,13 @@ with pkgs;
     name = builtins.baseNameOf ./.;
     paths = [openssh];
     postBuild = ''
-      # Rename ssh to ssh-wsl
+      # WSL:      $out/bin/ssh-wsl -> ${pkgs.openssh}/bin/ssh
       mv $out/bin/ssh $out/bin/ssh-wsl
 
-      # ssh
-      # WSL:      $out/bin/ssh-wsl -> ${pkgs.openssh}/bin/ssh
       # Windows:  $out/bin/ssh-win -> /mnt/c/Windows/System32/OpenSSH/ssh.exe
+      ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh-win
+
+      # ssh (default)
       ln -s $out/bin/ssh-win $out/bin/ssh
 
       # ssh-add
