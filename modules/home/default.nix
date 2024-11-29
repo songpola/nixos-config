@@ -19,17 +19,15 @@
 }: let
   inherit (lib.songpola) enableOptions;
 in {
-  home = {
-    packages = with pkgs; [
-      wget # Required by VS Code Remote Extension
-      nil
-      alejandra
-      httpie
-      ov
-      pnpm
-      ouch
-    ];
-  };
+  home.packages = with pkgs; [
+    wget # Required by VS Code Remote Extension
+    nil
+    alejandra
+    httpie
+    ov
+    pnpm
+    ouch
+  ];
 
   programs =
     lib.recursiveUpdate
