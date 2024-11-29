@@ -40,7 +40,7 @@ in {
           ./presets/bracketed-segments.toml
         ]
       )
-      # 2. Override: Add some settings
+      # 2. Override: Enable `os` module
       {
         os.disabled = false;
       }
