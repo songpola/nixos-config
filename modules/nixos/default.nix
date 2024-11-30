@@ -24,5 +24,8 @@
     useUserPackages = true; # https://discourse.nixos.org/t/users-users-name-packages-vs-home-manager-packages/22240
   };
 
-  programs.nix-ld.enable = true;
+  programs = {
+    nh.enable = true;
+    nix-ld.enable = true;
+  };
 }

@@ -36,10 +36,7 @@ in {
   users.users.${defaultUser}.shell = pkgs.nushell;
 
   programs = {
-    nh = {
-      enable = true;
-      flake = config.users.users.${defaultUser}.home + "/nixos-config";
-    };
+    nh.flake = config.users.users.${defaultUser}.home + "/nixos-config";
     ssh.package = pkgs.songpola.ssh-wrapper;
     _1password.enable = true;
     _1password-gui = {
