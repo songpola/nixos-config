@@ -17,14 +17,13 @@ with pkgs;
     name = builtins.baseNameOf ./.;
     paths = [
       openssh
-      songpola.ssh-win
+      # songpola.ssh-win
     ];
     postBuild = ''
       # ssh
-      #   WSL:      $out/bin/ssh-wsl -> ${pkgs.openssh}/bin/ssh
       mv $out/bin/ssh $out/bin/ssh-wsl
-      # * Windows:  $out/bin/ssh-win -> /mnt/c/Windows/System32/OpenSSH/ssh.exe
-      ln -s $out/bin/ssh-win $out/bin/ssh
+      # ln -s $out/bin/ssh-win $out/bin/ssh
+      ln -s /mnt/c/Windows/System32/OpenSSH/ssh.exe $out/bin/ssh
 
       # ssh-add
       mv $out/bin/ssh-add $out/bin/ssh-add-wsl
