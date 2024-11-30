@@ -34,5 +34,9 @@
         ada-docker.modules = [disko.nixosModules.disko];
         nixos.modules = [nixos-wsl.nixosModules.default];
       };
+
+      alias = {
+        shells.default = "ssh-wsl";
+      };
     };
 }
