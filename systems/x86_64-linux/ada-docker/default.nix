@@ -49,6 +49,11 @@ in {
   services = {
     openssh.enable = true;
     qemuGuest.enable = true;
+    resolved = {
+      enable = true;
+      dnssec = "allow-downgrade";
+      dnsovertls = "opportunistic";
+    };
   };
 
   users.users = {
