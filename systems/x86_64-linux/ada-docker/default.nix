@@ -54,6 +54,7 @@ in {
       dnssec = "allow-downgrade";
       dnsovertls = "opportunistic";
     };
+    tailscale.enable = true;
   };
 
   users.users = {
