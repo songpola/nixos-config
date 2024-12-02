@@ -66,7 +66,7 @@ in {
       };
       eza = {
         git = true;
-        icons = true;
+        icons = "auto";
         extraOptions = ["-1"];
         enableNushellIntegration = true;
       };
