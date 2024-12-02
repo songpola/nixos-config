@@ -1,7 +1,7 @@
 {
   description = "songpola's NixOS-WSL config";
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.05";
+    nixpkgs.url = "nixpkgs/nixos-24.11";
     unstable.url = "nixpkgs/nixos-unstable";
     snowfall-lib = {
       url = "github:snowfallorg/lib";
