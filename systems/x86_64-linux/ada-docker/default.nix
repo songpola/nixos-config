@@ -51,8 +51,7 @@ in {
     qemuGuest.enable = true;
     resolved = {
       enable = true;
-      dnssec = "allow-downgrade";
-      dnsovertls = "opportunistic";
+      fallbackDns = ["10.0.0.1"];
     };
     tailscale = {
       enable = true;
