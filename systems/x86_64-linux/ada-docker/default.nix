@@ -33,15 +33,18 @@ in {
     ./disk-config.nix
   ];
 
-  boot.loader = {
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = get-mountpoint "ESP";
+  boot = {
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = get-mountpoint "ESP";
+      };
+      grub = {
+        efiSupport = true;
+        device = "nodev";
+      };
     };
-    grub = {
-      efiSupport = true;
-      device = "nodev";
-    };
+    growPartition = true;
   };
 
   time.timeZone = "Asia/Bangkok";
