@@ -49,10 +49,10 @@ in {
   services = {
     openssh.enable = true;
     qemuGuest.enable = true;
-    resolved = {
-      enable = true;
-      fallbackDns = ["10.0.0.1"];
-    };
+    # resolved = {
+    #   enable = true;
+    #   fallbackDns = ["10.0.0.1"];
+    # };
     tailscale = {
       enable = true;
       openFirewall = true;
