@@ -26,15 +26,9 @@ in {
   wsl = {
     enable = true;
     docker-desktop.enable = true;
-    # extraBin = make-extraBin-from-packages (with pkgs; [uutils-coreutils-noprefix]);
     startMenuLaunchers = true;
   };
 
-  # Nushell
-  # ---
-  # BUG: Not compatible with JetBrains Remote Development
-  # https://youtrack.jetbrains.com/issue/GTW-9181/Remote-development-WSL-Unable-to-connect-to-host-due-to-unsupported-shell-command
-  # ---
   users.users.${defaultUser}.shell = pkgs.nushell;
 
   programs = {
