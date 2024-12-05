@@ -11,3 +11,7 @@ $env.MANROFFOPT = "-c"
 alias l = ls
 alias gcm = czg emoji gpg
 alias nos = nh os switch
+alias c = cat
+alias cat = bat
+alias du = dust
+alias df = duf
