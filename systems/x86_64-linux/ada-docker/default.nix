@@ -20,12 +20,6 @@
 in {
   system.stateVersion = "24.05";
 
-  # Disable nh for this host; use another host to update configuration
-  # programs.nh = {
-  #   enable = true;
-  #   flake = with config; users.users.songpola.home + "/nixos-config";
-  # };
-
   networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
 
   imports = [
@@ -52,10 +46,6 @@ in {
   services = {
     openssh.enable = true;
     qemuGuest.enable = true;
-    # resolved = {
-    #   enable = true;
-    #   fallbackDns = ["10.0.0.1"];
-    # };
     tailscale = {
       enable = true;
       openFirewall = true;
@@ -63,7 +53,6 @@ in {
   };
 
   users.users = {
-    # root.openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
     songpola = {
       isNormalUser = true;
       extraGroups = ["wheel" "docker"];

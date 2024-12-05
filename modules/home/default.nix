@@ -20,7 +20,7 @@
   inherit (lib.songpola) enableOptions;
 in {
   home.packages = with pkgs; [
-    wget # Required by VS Code Remote Extension
+    wget
     nil
     alejandra
     httpie
