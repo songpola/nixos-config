@@ -27,6 +27,21 @@ in {
     ov
     pnpm
     ouch
+    dust
+    duf
+    bottom
+    glances
+    gtop
+    gping
+    curlie
+    doggo
+    btop
+    uutils-coreutils-noprefix
+    mtr
+    rustscan
+    xh
+    hyperfine
+    trashy
   ];
 
   programs =
@@ -41,8 +56,8 @@ in {
         "starship"
         "carapace"
         "eza"
-        "yazi"
-        "atuin"
+        # "yazi"
+        # "atuin"
         "bat"
         "ripgrep"
         "zoxide"
@@ -70,8 +85,8 @@ in {
         extraOptions = ["-1"];
         enableNushellIntegration = true;
       };
-      yazi.enableNushellIntegration = true;
-      atuin.enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414
+      # yazi.enableNushellIntegration = true;
+      # atuin.enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414
       bat.config.wrap = "never";
     };
 }
