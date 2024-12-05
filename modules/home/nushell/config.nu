@@ -13,5 +13,6 @@ alias gcm = czg emoji gpg
 alias nos = nh os switch
 alias c = cat
 alias cat = bat
+alias d = du
 alias du = dust
 alias df = duf
