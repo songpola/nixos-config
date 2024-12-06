@@ -82,7 +82,7 @@ in {
       eza = {
         git = true;
         icons = "auto";
-        extraOptions = ["-1"];
+        extraOptions = ["-1" "--group-directories-first" ];
         enableNushellIntegration = true;
       };
       # yazi.enableNushellIntegration = true;
