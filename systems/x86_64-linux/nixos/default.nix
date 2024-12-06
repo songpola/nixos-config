@@ -35,9 +35,9 @@ in {
 
   boot.supportedFilesystems = ["nfs"];
 
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-    extraSetFlags = ["--operator=${defaultUser}"];
-  };
+  # services.tailscale = {
+  #   enable = true;
+  #   openFirewall = true;
+  #   extraSetFlags = ["--operator=${defaultUser}"];
+  # };
 }
