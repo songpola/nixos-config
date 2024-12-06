@@ -23,7 +23,7 @@ in {
 
   networking = {
     hostName = lib.snowfall.system.get-inferred-system-name ./.;
-    firewall.trustedInterfaces = [config.services.tailscale.interface];
+    firewall.trustedInterfaces = [config.services.tailscale.interfaceName];
   };
 
   imports = [
