@@ -21,7 +21,10 @@
 in {
   system.stateVersion = "24.05";
 
-  networking.hostName = lib.snowfall.system.get-inferred-system-name ./.;
+  networking = {
+    hostName = lib.snowfall.system.get-inferred-system-name ./.;
+    firewall.trustedInterfaces = [config.services.tailscale.interface];
+  };
 
   imports = [
     ./hardware-configuration.nix
