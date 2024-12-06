@@ -16,7 +16,6 @@
   config,
   ...
 }: let
-  # inherit (lib.songpola) make-extraBin-from-packages;
   defaultUser = config.wsl.defaultUser;
 in {
   system.stateVersion = "24.05";
@@ -32,16 +31,13 @@ in {
   programs = {
     nh.flake = config.users.users.${defaultUser}.home + "/nixos-config";
     ssh.package = pkgs.songpola.ssh-wrapper;
-    # _1password.enable = true;
-    # _1password-gui = {
-    #   enable = true;
-    #   polkitPolicyOwners = ["${defaultUser}"];
-    # };
   };
 
   boot.supportedFilesystems = ["nfs"];
+
   services.tailscale = {
     enable = true;
+    openFirewall = true;
     extraSetFlags = ["--operator=${defaultUser}"];
   };
 }
