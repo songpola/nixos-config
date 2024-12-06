@@ -32,7 +32,7 @@
 
       systems.hosts = with inputs; {
         ada-docker.modules = [disko.nixosModules.disko];
-        desktop-nixos.modules = [nixos-wsl.nixosModules.default];
+        nixos.modules = [nixos-wsl.nixosModules.default];
       };
 
       alias = {
