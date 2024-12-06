@@ -24,12 +24,12 @@
       gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
       commit.gpgsign = true;
     };
-    ssh = {
-      enable = true;
-      extraConfig = ''
-        Host *
-            IdentityAgent ~/.1password/agent.sock
-      '';
-    };
+    # ssh = {
+    #   enable = true;
+    #   extraConfig = ''
+    #     Host *
+    #         IdentityAgent ~/.1password/agent.sock
+    #   '';
+    # };
   };
 }

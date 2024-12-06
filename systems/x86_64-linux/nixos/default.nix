@@ -32,11 +32,11 @@ in {
   programs = {
     nh.flake = config.users.users.${defaultUser}.home + "/nixos-config";
     ssh.package = pkgs.songpola.ssh-wrapper;
-    _1password.enable = true;
-    _1password-gui = {
-      enable = true;
-      polkitPolicyOwners = ["${defaultUser}"];
-    };
+    # _1password.enable = true;
+    # _1password-gui = {
+    #   enable = true;
+    #   polkitPolicyOwners = ["${defaultUser}"];
+    # };
   };
 
   boot.supportedFilesystems = ["nfs"];
