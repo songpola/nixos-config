@@ -40,4 +40,8 @@ in {
   };
 
   boot.supportedFilesystems = ["nfs"];
+  services.tailscale = {
+    enable = true;
+    extraSetFlags = ["--operator=${defaultUser}"];
+  };
 }
