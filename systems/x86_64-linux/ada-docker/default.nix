@@ -17,6 +17,7 @@
   ...
 }: let
   get-mountpoint = name: config.disko.devices.disk.main.content.partitions.${name}.content.mountpoint;
+  defaultUser = "songpola";
 in {
   system.stateVersion = "24.05";
 
@@ -49,16 +50,15 @@ in {
     tailscale = {
       enable = true;
       openFirewall = true;
+      extraSetFlags = ["--operator=${defaultUser}"];
     };
   };
 
-  users.users = {
-    songpola = {
-      isNormalUser = true;
-      extraGroups = ["wheel" "docker"];
-      openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
-      shell = pkgs.nushell;
-    };
+  users.users.${defaultUser} = {
+    isNormalUser = true;
+    extraGroups = ["wheel" "docker"];
+    openssh.authorizedKeys.keys = [lib.songpola.ssh-key];
+    shell = pkgs.nushell;
   };
 
   security.sudo.wheelNeedsPassword = false;
