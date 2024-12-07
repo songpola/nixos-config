@@ -7,7 +7,7 @@
 > Set password (using `passwd`) for `root` first
 
 ```bash
-nix run github:nix-community/nixos-anywhere -- --flake github:songpola/nixos-config#<hostname> root@<host>
+nix run github:nix-community/nixos-anywhere -- --flake github:songpola/nixos-config#<hostname> --build-on-remote root@<host>
 ```
 
 ## Usage
