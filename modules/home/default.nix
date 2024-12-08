@@ -22,6 +22,7 @@ in {
   home.packages = with pkgs; [
     wget
     nil
+    nixd
     alejandra
     httpie
     ov
