@@ -68,18 +68,4 @@ in {
   security.sudo.wheelNeedsPassword = false;
 
   virtualisation.docker.enable = true;
-
-  fileSystems."/mnt/ada-truenas" = {
-    device = "ada-truenas:/mnt/main/home/songpola/nfs/ada-docker";
-    fsType = "nfs";
-    options = [
-      # NFSv4.2
-      "nfsvers=4.2"
-      # Lazy-mounting
-      "x-systemd.automount"
-      "noauto"
-      # Disconnects after 10 minutes (i.e. 600 seconds)
-      "x-systemd.idle-timeout=600"
-    ];
-  };
 }
