@@ -48,7 +48,7 @@
       };
 
       overlays = with inputs; [
-        snowfall-flake.overlay
+        snowfall-flake.overlays.default
       ];
     };
 }
