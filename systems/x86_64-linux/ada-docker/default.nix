@@ -54,7 +54,6 @@ in {
       enable = true;
       openFirewall = true;
       extraSetFlags = ["--operator=${defaultUser}"];
-      useRoutingFeatures = "server";
     };
   };
 
