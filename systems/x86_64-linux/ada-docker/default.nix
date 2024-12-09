@@ -67,5 +67,9 @@ in {
 
   security.sudo.wheelNeedsPassword = false;
 
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    # https://github.com/NixOS/nixpkgs/commit/77a65d189a85c18420d74bad3bc7d1598e2cb331
+    daemon.settings.live-restore = false;
+  };
 }
