@@ -17,20 +17,6 @@
   # config,
   ...
 }: let
-  inherit (lib) mapAttrsToList haumea;
-  mkImportsFrom = path:
-    mapAttrsToList (name: value: value)
-    (
-      haumea.load {
-        src = path;
-        loader = haumea.loaders.path;
-      }
-    );
-  mkConfigFrom = path:
-    haumea.load {
-      src = path;
-    };
-in {
-  imports = mkImportsFrom ./imports;
-  config = mkConfigFrom ./config;
-}
+  inherit (lib.songpola) mkSystemFrom;
+in
+  mkSystemFrom ./.
