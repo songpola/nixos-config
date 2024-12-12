@@ -21,5 +21,9 @@
       inherit inputs;
       src = ./.;
       snowfall.namespace = "songpola";
+
+      systems.hosts.amiya.modules = with inputs; [
+        disko.nixosModules.default
+      ];
     };
 }
