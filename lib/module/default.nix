@@ -23,7 +23,7 @@ in rec {
     haumea.load {
       src = path;
     };
-  mkSystemFrom = path: {
+  mkModuleFrom = path: {
     imports = mkImportsFrom (path + "/imports");
     config = mkConfigFrom (path + "/config");
   };

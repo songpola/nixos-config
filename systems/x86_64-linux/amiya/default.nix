@@ -17,6 +17,6 @@
   # config,
   ...
 }: let
-  inherit (lib.songpola) mkSystemFrom;
+  inherit (lib.songpola) mkModuleFrom;
 in
-  mkSystemFrom ./.
+  mkModuleFrom ./.
