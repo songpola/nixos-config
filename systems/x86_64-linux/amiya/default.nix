@@ -26,6 +26,11 @@
         loader = haumea.loaders.path;
       }
     );
+  mkConfigFrom = path:
+    haumea.load {
+      src = path;
+    };
 in {
   imports = mkImportsFrom ./imports;
+  config = mkConfigFrom ./config;
 }
