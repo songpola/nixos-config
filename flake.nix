@@ -14,6 +14,10 @@
       url = "disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
