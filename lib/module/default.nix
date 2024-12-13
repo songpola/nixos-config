@@ -19,12 +19,13 @@ in rec {
         loader = haumea.loaders.path;
       }
     );
-  mkConfigFrom = path:
+  mkConfigFrom = path: specialArgs:
     haumea.load {
       src = path;
+      inputs = specialArgs;
     };
-  mkModuleFrom = path: {
+  mkModuleFrom = path: specialArgs: {
     imports = mkImportsFrom (path + "/imports");
-    config = mkConfigFrom (path + "/config");
+    config = mkConfigFrom (path + "/config") specialArgs;
   };
 }

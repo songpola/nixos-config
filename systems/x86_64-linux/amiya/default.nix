@@ -14,9 +14,12 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # # All other arguments come from the system system.
-  # config,
+  config,
   ...
 }: let
-  inherit (lib.songpola) mkModuleFrom;
-in
-  mkModuleFrom ./.
+  inherit (lib.songpola) mkModuleFrom getDiskoMountPoint;
+in (
+  mkModuleFrom ./. {
+    getDiskoMountPoint = getDiskoMountPoint config;
+  }
+)
