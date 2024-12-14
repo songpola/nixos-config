@@ -16,5 +16,5 @@
   # # All other arguments come from the home home.
   # config,
   ...
-} @ args:
-lib.songpola.mkModuleFrom ./. args
+} @ inputs:
+lib.songpola.mkModuleFrom ./. inputs
