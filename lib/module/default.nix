@@ -11,7 +11,7 @@
 }: let
   inherit (lib) attrValues haumea pathExists;
 in rec {
-  mkImportsFrom = path:
+  loadAsList = path:
     if pathExists path
     then
       attrValues
@@ -23,7 +23,7 @@ in rec {
       )
     else [];
 
-  mkConfigFrom = path: specialArgs:
+  loadAsAttrs = path: specialArgs:
     if pathExists path
     then
       haumea.load {
@@ -33,7 +33,8 @@ in rec {
     else {};
 
   mkModuleFrom = path: specialArgs: {
-    imports = mkImportsFrom (path + "/imports");
-    config = mkConfigFrom (path + "/config") specialArgs;
+    imports = loadAsList (path + "/imports");
+    options = loadAsAttrs (path + "/options") specialArgs;
+    config = loadAsAttrs (path + "/config") specialArgs;
   };
 }

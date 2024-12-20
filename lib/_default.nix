@@ -9,4 +9,5 @@
   # # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: {
+  # Your configuration.
 }

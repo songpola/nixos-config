@@ -17,4 +17,5 @@
   # config,
   ...
 }: {
+  # Your configuration.
 }

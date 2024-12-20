@@ -18,6 +18,10 @@
       url = "home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -26,8 +30,13 @@
       src = ./.;
       snowfall.namespace = "songpola";
 
-      systems.hosts.amiya.modules = with inputs; [
-        disko.nixosModules.default
-      ];
+      systems.hosts = with inputs; {
+        amiya.modules = [
+          disko.nixosModules.default
+        ];
+        doctor.modules = [
+          nixos-wsl.nixosModules.default
+        ];
+      };
     };
 }
