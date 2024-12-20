@@ -1,9 +1,9 @@
 {
   # # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # # as well as the libraries available from your flake's inputs.
-  lib,
+  # lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # # You also have access to your flake's inputs.
   # inputs,
   # # Additional metadata is provided by Snowfall Lib.
@@ -14,34 +14,18 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # # All other arguments come from the module system.
-  config,
+  # config,
   ...
-}: let
-  inherit (lib) mkEnableOption mkIf mkOption;
-  optionName = builtins.baseNameOf ./.;
-  cfg = config.${optionName};
-in {
-  options.${optionName} = {
-    enable = mkEnableOption optionName;
-
-    defaultUser = mkOption {
-      default = optionName;
+}: {
+  programs.git = {
+    enable = true;
+    userEmail = "1527535+songpola@users.noreply.github.com";
+    userName = "Songpol Anannetikul";
+    extraConfig = {
+      init.defaultBranch = "main";
     };
-
-    nushell = {
-      enable = mkEnableOption "nushell";
-    };
-  };
-
-  config = mkIf cfg.enable {
-    users.users.${cfg.defaultUser} = {
-      shell = mkIf cfg.nushell.enable pkgs.nushell;
-    };
-
-    programs = {
-      nh = {
-        flake = config.users.users.${cfg.defaultUser}.home + "/nixos-config";
-      };
+    delta = {
+      enable = true;
     };
   };
 }

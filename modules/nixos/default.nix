@@ -1,7 +1,7 @@
 {
   # # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # # as well as the libraries available from your flake's inputs.
-  lib,
+  # lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
   pkgs,
   # # You also have access to your flake's inputs.
@@ -14,34 +14,27 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # # All other arguments come from the module system.
-  config,
+  # config,
   ...
-}: let
-  inherit (lib) mkEnableOption mkIf mkOption;
-  optionName = builtins.baseNameOf ./.;
-  cfg = config.${optionName};
-in {
-  options.${optionName} = {
-    enable = mkEnableOption optionName;
+}: {
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
-    defaultUser = mkOption {
-      default = optionName;
-    };
+  home-manager = {
+    # Default by snowfall-lib
+    # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506
+    # useGlobalPkgs = true;
 
-    nushell = {
-      enable = mkEnableOption "nushell";
-    };
+    # Maybe default to true in the future
+    # https://discourse.nixos.org/t/users-users-name-packages-vs-home-manager-packages/22240
+    useUserPackages = true;
   };
 
-  config = mkIf cfg.enable {
-    users.users.${cfg.defaultUser} = {
-      shell = mkIf cfg.nushell.enable pkgs.nushell;
-    };
-
-    programs = {
-      nh = {
-        flake = config.users.users.${cfg.defaultUser}.home + "/nixos-config";
-      };
-    };
+  programs = {
+    nh.enable = true;
+    nix-ld.enable = true;
   };
+
+  environment.systemPackages = with pkgs; [
+    snowfallorg.flake
+  ];
 }

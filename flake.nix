@@ -22,6 +22,10 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "unstable";
+    };
   };
 
   outputs = inputs:
@@ -38,5 +42,9 @@
           nixos-wsl.nixosModules.default
         ];
       };
+
+      overlays = with inputs; [
+        snowfall-flake.overlays.default
+      ];
     };
 }

@@ -37,4 +37,10 @@ in rec {
     options = loadAsAttrs (path + "/options") specialArgs;
     config = loadAsAttrs (path + "/config") specialArgs;
   };
+
+  enableOptions = let
+    op = acc: option: acc // {"${option}".enable = true;};
+    acc0 = {};
+  in
+    options: lib.foldl' op acc0 options;
 }
