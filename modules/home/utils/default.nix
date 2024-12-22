@@ -23,5 +23,6 @@
     trashy
     jq
     pnpm
+    devbox
   ];
 }
