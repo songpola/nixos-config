@@ -44,5 +44,13 @@ in {
         flake = config.users.users.${cfg.defaultUser}.home + "/nixos-config";
       };
     };
+
+    services = {
+      tailscale = {
+        extraSetFlags = [
+          "--operator=${cfg.defaultUser}"
+        ];
+      };
+    };
   };
 }
