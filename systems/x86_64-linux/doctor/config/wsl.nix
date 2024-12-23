@@ -20,5 +20,5 @@
   enable = true;
   docker-desktop.enable = true;
   startMenuLaunchers = true;
-  defaultUser = config.songpola.defaultUser;
+  defaultUser = config.songpola.name;
 }

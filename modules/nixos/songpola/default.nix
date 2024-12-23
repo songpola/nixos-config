@@ -22,33 +22,38 @@
   name = builtins.baseNameOf ./.;
   cfg = config.${name};
 in {
-  options.${name} = {
-    enable = mkDefaultEnableOption name true;
+  options = {
+    ${name} = {
+      enable = mkDefaultEnableOption name true;
 
-    defaultUser = mkOption {
-      default = name;
-    };
+      name = mkOption {
+        default = name;
+      };
 
-    nushell = {
-      enable = mkDefaultEnableOption "nushell" true;
+      nushell = {
+        enable = mkDefaultEnableOption "nushell" true;
+      };
     };
   };
 
   config = mkIf cfg.enable {
-    users.users.${cfg.defaultUser} = {
+    users.users.${name} = {
       shell = mkIf cfg.nushell.enable pkgs.nushell;
+      openssh.authorizedKeys.keys = [
+        lib.songpola.sshPublicKey
+      ];
     };
 
     programs = {
       nh = {
-        flake = config.users.users.${cfg.defaultUser}.home + "/nixos-config";
+        flake = config.users.users.${name}.home + "/nixos-config";
       };
     };
 
     services = {
       tailscale = {
         extraSetFlags = [
-          "--operator=${cfg.defaultUser}"
+          "--operator=${name}"
         ];
       };
     };
