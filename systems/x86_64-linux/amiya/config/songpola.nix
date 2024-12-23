@@ -1,0 +1,3 @@
+{
+  docker.enable = true;
+}
