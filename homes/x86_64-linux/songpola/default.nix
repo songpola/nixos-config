@@ -16,5 +16,8 @@
   # # All other arguments come from the home home.
   # config,
   ...
-} @ inputs:
-lib.songpola.mkModuleFrom ./. inputs
+}: let
+  inherit (lib) mkDefault;
+in {
+  home.stateVersion = mkDefault "24.11";
+}
