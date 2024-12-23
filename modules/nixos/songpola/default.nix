@@ -20,6 +20,7 @@
   inherit (lib) mkIf mkOption;
   inherit (lib.songpola) mkDefaultEnableOption;
   name = builtins.baseNameOf ./.;
+  home = config.users.users.${name}.home;
   cfg = config.${name};
 in {
   options = {
@@ -28,6 +29,10 @@ in {
 
       name = mkOption {
         default = name;
+      };
+
+      home = mkOption {
+        default = home;
       };
 
       nushell = {
@@ -46,7 +51,7 @@ in {
 
     programs = {
       nh = {
-        flake = config.users.users.${name}.home + "/nixos-config";
+        flake = "${home}/nixos-config";
       };
     };
 
