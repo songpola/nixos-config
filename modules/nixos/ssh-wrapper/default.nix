@@ -25,7 +25,7 @@ in {
     enable =
       (mkEnableOption optionName)
       // {
-        default = config.wsl.enable;
+        default = false;
       };
   };
 
