@@ -38,6 +38,10 @@ in {
       nushell = {
         enable = mkDefaultEnableOption "nushell" true;
       };
+
+      docker = {
+        enable = mkDefaultEnableOption "docker" false;
+      };
     };
   };
 
@@ -47,6 +51,7 @@ in {
       openssh.authorizedKeys.keys = [
         lib.songpola.sshPublicKey
       ];
+      extraGroups = mkIf cfg.docker.enable ["docker"];
     };
 
     programs = {
@@ -62,5 +67,7 @@ in {
         ];
       };
     };
+
+    virtualisation.docker.enable = mkIf cfg.docker.enable true;
   };
 }
