@@ -9,7 +9,7 @@
   # # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: let
-  inherit (lib) attrValues haumea pathExists;
+  inherit (lib) attrValues haumea pathExists mkEnableOption;
 in rec {
   loadAsList = path:
     if pathExists path
@@ -43,4 +43,6 @@ in rec {
     acc0 = {};
   in
     options: lib.foldl' op acc0 options;
+
+  mkDefaultEnableOption = name: default: mkEnableOption name // {inherit default;};
 }

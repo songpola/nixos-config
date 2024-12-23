@@ -17,16 +17,13 @@
   config,
   ...
 }: let
-  inherit (lib) mkEnableOption mkIf;
-  optionName = builtins.baseNameOf ./.;
-  cfg = config.${optionName};
+  inherit (lib) mkIf;
+  inherit (lib.songpola) mkDefaultEnableOption;
+  name = builtins.baseNameOf ./.;
+  cfg = config.${name};
 in {
-  options.${optionName} = {
-    enable =
-      (mkEnableOption optionName)
-      // {
-        default = false;
-      };
+  options.${name} = {
+    enable = mkDefaultEnableOption name false;
   };
 
   config = mkIf cfg.enable {

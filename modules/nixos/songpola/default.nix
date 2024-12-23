@@ -17,19 +17,20 @@
   config,
   ...
 }: let
-  inherit (lib) mkEnableOption mkIf mkOption;
-  optionName = builtins.baseNameOf ./.;
-  cfg = config.${optionName};
+  inherit (lib) mkIf mkOption;
+  inherit (lib.songpola) mkDefaultEnableOption;
+  name = builtins.baseNameOf ./.;
+  cfg = config.${name};
 in {
-  options.${optionName} = {
-    enable = mkEnableOption optionName;
+  options.${name} = {
+    enable = mkDefaultEnableOption name true;
 
     defaultUser = mkOption {
-      default = optionName;
+      default = name;
     };
 
     nushell = {
-      enable = mkEnableOption "nushell";
+      enable = mkDefaultEnableOption "nushell" true;
     };
   };
 
