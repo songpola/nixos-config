@@ -26,6 +26,15 @@
       url = "github:snowfallorg/flake";
       inputs.nixpkgs.follows = "unstable";
     };
+    bash-env-json = {
+      url = "github:tesujimath/bash-env-json";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    bash-env-nushell = {
+      url = "github:tesujimath/bash-env-nushell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bash-env-json.follows = "bash-env-json";
+    };
   };
 
   outputs = inputs:

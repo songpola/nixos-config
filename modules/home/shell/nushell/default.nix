@@ -3,7 +3,7 @@
   # # as well as the libraries available from your flake's inputs.
   lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # # You also have access to your flake's inputs.
   # inputs,
   # # Additional metadata is provided by Snowfall Lib.
@@ -20,6 +20,13 @@
   programs.nushell = {
     enable = true;
     configFile.source = ./config/config.nu;
-    extraConfig = lib.mkAfter (builtins.readFile ./config/external_completer.nu);
+    extraConfig = lib.mkAfter (
+      lib.concatLines [
+        (builtins.readFile ./config/external_completer.nu)
+        ''
+          use "${pkgs.bash-env-nushell}/bash-env.nu"
+        ''
+      ]
+    );
   };
 }
