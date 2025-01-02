@@ -1,9 +1,9 @@
 {
   # # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # # as well as the libraries available from your flake's inputs.
-  lib,
+  # lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
-  pkgs,
+  # pkgs,
   # # You also have access to your flake's inputs.
   # inputs,
   # # Additional metadata is provided by Snowfall Lib.
@@ -16,37 +16,9 @@
   # # All other arguments come from the module system.
   # config,
   ...
-}: let
-  inherit (lib) recursiveUpdate;
-  inherit (lib.songpola) enableOptions;
-in {
-  programs =
-    recursiveUpdate
-    (
-      enableOptions [
-        "home-manager"
-        "micro"
-        # "yazi"
-        # "atuin"
-        "ripgrep"
-        "zoxide"
-        "thefuck"
-        "fzf" #
-        "tealdeer" #
-      ]
-    )
-    {
-      # yazi.enableNushellIntegration = true;
-      # atuin.enableNushellIntegration = false; # https://github.com/nushell/nushell/issues/10414
-    };
-
-  home.packages = with pkgs; [
-    ov
-    ouch
-    trashy
-    jq
-    pnpm
-    devbox
-    snowfallorg.flake
-  ];
+}: {
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
 }

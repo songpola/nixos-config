@@ -33,8 +33,4 @@
     nh.enable = true;
     nix-ld.enable = true;
   };
-
-  environment.systemPackages = with pkgs; [
-    snowfallorg.flake
-  ];
 }
