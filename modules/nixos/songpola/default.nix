@@ -36,7 +36,7 @@ in {
       };
 
       nushell = {
-        enable = mkDefaultEnableOption "nushell" true;
+        enable = mkDefaultEnableOption "nushell" false;
       };
 
       docker = {
