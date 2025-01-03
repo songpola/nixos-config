@@ -2,7 +2,7 @@
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
+        device = "/dev/disk/by-id/nvme-WDS250G3X0C-00SJG0_191679805165_1";
         type = "disk";
         content = {
           type = "gpt";
@@ -14,13 +14,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/efi";
-              };
-            };
-            swap = {
-              size = "4G";
-              content = {
-                type = "swap";
-                discardPolicy = "both";
+                mountOptions = ["umask=0077"];
               };
             };
             root = {
@@ -29,6 +23,13 @@
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/";
+              };
+            };
+            swap = {
+              end = "-8G";
+              content = {
+                type = "swap";
+                discardPolicy = "both";
               };
             };
           };

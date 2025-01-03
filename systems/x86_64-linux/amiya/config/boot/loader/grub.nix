@@ -1,4 +1,0 @@
-{
-  device = "nodev";
-  efiSupport = true;
-}

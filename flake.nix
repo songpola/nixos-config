@@ -1,39 +1,20 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "home-manager/release-24.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixpkgs.url = "nixpkgs/nixos-24.11";
+
     snowfall-lib = {
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    haumea = {
-      url = "github:nix-community/haumea";
+
+    home-manager = {
+      url = "home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     disko = {
       url = "disko";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    snowfall-flake = {
-      url = "github:snowfallorg/flake";
-      inputs.nixpkgs.follows = "unstable";
-    };
-    bash-env-json = {
-      url = "github:tesujimath/bash-env-json";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    bash-env-nushell = {
-      url = "github:tesujimath/bash-env-nushell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.bash-env-json.follows = "bash-env-json";
     };
   };
 
@@ -41,19 +22,10 @@
     inputs.snowfall-lib.mkFlake {
       inherit inputs;
       src = ./.;
-      snowfall.namespace = "songpola";
 
-      systems.hosts = with inputs; {
-        amiya.modules = [
-          disko.nixosModules.default
-        ];
-        doctor.modules = [
-          nixos-wsl.nixosModules.default
-        ];
-      };
-
-      overlays = with inputs; [
-        snowfall-flake.overlays.default
+      # Add a module to a specific host.
+      systems.hosts.prts.modules = with inputs; [
+        disko.nixosModules.default
       ];
     };
 }
