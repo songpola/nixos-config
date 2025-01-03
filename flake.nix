@@ -28,6 +28,10 @@
       inherit inputs;
       src = ./.;
 
+      snowfall = {
+        namespace = "songpola";
+      };
+
       systems.hosts = with inputs; {
         prts.modules = [
           disko.nixosModules.default

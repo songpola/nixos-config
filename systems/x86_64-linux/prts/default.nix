@@ -7,7 +7,7 @@
   # # You also have access to your flake's inputs.
   # inputs,
   # # Additional metadata is provided by Snowfall Lib.
-  # namespace, # The namespace used for your flake, defaulting to "internal" if not set.
+  namespace, # The namespace used for your flake, defaulting to "internal" if not set.
   # system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
   # format, # A normalized name for the system target (eg. `iso`).
@@ -72,7 +72,7 @@ in {
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.root.openssh.authorizedKeys.keys = [
-    lib.songpola.sshPublicKey
+    lib.${namespace}.sshPublicKey
   ];
 
   # programs.firefox.enable = true;
