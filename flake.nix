@@ -16,6 +16,11 @@
       url = "disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -23,9 +28,14 @@
       inherit inputs;
       src = ./.;
 
-      # Add a module to a specific host.
-      systems.hosts.prts.modules = with inputs; [
-        disko.nixosModules.default
-      ];
+      systems.hosts = with inputs; {
+        prts.modules = [
+          disko.nixosModules.default
+        ];
+
+        doctor.modules = [
+          nixos-wsl.nixosModules.default
+        ];
+      };
     };
 }
