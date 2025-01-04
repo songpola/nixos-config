@@ -19,5 +19,7 @@
 }: {
   environment.variables = {
     EDITOR = "micro";
+    PAGER = "ov";
+    BAT_PAGER = "ov -F -H3";
   };
 }
