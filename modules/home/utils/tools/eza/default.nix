@@ -21,5 +21,6 @@
     enable = true;
     extraOptions = ["--group-directories-first"];
     enableBashIntegration = true;
+    enableNushellIntegration = true;
   };
 }
