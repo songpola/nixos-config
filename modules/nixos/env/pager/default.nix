@@ -17,10 +17,8 @@
   # config,
   ...
 }: {
-  programs.bat = {
-    enable = true;
-    config = {
-      wrap = "never";
-    };
+  environment.variables = {
+    PAGER = "ov";
+    BAT_PAGER = "ov -F -H3";
   };
 }
