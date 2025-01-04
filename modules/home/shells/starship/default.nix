@@ -19,5 +19,9 @@
 }: {
   programs.starship = {
     enable = true;
+    settings = {
+      # os.disabled = false;
+      shell.disabled = false;
+    };
   };
 }
