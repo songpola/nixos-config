@@ -19,8 +19,9 @@
 }: {
   programs.eza = {
     enable = true;
-    extraOptions = ["--group-directories-first"];
     enableBashIntegration = true;
     enableNushellIntegration = true;
+    extraOptions = ["--group-directories-first"];
+    icons = "always";
   };
 }
