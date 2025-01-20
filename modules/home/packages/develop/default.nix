@@ -19,5 +19,6 @@
 }: {
   home.packages = with pkgs; [
     devbox
+    just
   ];
 }

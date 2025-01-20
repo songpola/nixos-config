@@ -21,5 +21,7 @@
     ouch
     croc
     httpie
+    ov
+    uutils-coreutils-noprefix
   ];
 }
