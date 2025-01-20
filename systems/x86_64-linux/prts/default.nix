@@ -19,6 +19,9 @@
 }: let
   getMountpoint = disk: partition:
     config.disko.devices.disk.${disk}.content.partitions.${partition}.content.mountpoint;
+  authorizedKeys = [
+    lib.${namespace}.sshPublicKey
+  ];
 in {
   imports = [
     ./disk-config.nix
@@ -71,9 +74,10 @@ in {
   # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.root.openssh.authorizedKeys.keys = [
-    lib.${namespace}.sshPublicKey
-  ];
+  users.users = {
+    root.openssh.authorizedKeys.keys = authorizedKeys;
+    songpola.openssh.authorizedKeys.keys = authorizedKeys;
+  };
 
   # programs.firefox.enable = true;
 
