@@ -23,5 +23,8 @@
     httpie
     ov
     uutils-coreutils-noprefix
+    duf
+    dust
+    snowfallorg.flake
   ];
 }
