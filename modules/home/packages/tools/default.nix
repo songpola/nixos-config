@@ -20,5 +20,6 @@
   home.packages = with pkgs; [
     duf
     dust
+    snowfallorg.flake
   ];
 }
