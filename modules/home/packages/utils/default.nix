@@ -26,5 +26,6 @@
     duf
     dust
     snowfallorg.flake
+    doggo
   ];
 }
