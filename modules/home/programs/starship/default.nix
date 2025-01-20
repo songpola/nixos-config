@@ -22,6 +22,7 @@
     settings = {
       # os.disabled = false;
       shell.disabled = false;
+      nix_shell.heuristic = true;
     };
   };
 }
