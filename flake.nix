@@ -21,6 +21,11 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -31,6 +36,10 @@
       snowfall = {
         namespace = "songpola";
       };
+
+      overlays = with inputs; [
+        snowfall-flake.overlay
+      ];
 
       systems.hosts = with inputs; {
         prts.modules = [
