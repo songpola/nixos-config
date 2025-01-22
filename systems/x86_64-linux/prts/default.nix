@@ -76,7 +76,10 @@ in {
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
     root.openssh.authorizedKeys.keys = authorizedKeys;
-    songpola.openssh.authorizedKeys.keys = authorizedKeys;
+    songpola = {
+      openssh.authorizedKeys.keys = authorizedKeys;
+      extraGroups = ["docker"];
+    };
   };
 
   # programs.firefox.enable = true;
@@ -112,6 +115,8 @@ in {
       ];
     };
   };
+
+  virtualisation.docker.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
