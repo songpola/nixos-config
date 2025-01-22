@@ -18,7 +18,7 @@
               };
             };
             root = {
-              size = "100%";
+              end = "-8G";
               content = {
                 type = "filesystem";
                 format = "ext4";
@@ -26,7 +26,7 @@
               };
             };
             swap = {
-              end = "-8G";
+              size = "100%";
               content = {
                 type = "swap";
                 discardPolicy = "both";
