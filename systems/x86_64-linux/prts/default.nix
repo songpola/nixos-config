@@ -24,8 +24,9 @@
   ];
 in {
   imports = [
-    ./disk-config.nix
-    ./hardware-configuration.nix
+    ./vm/disk-config.nix
+    ./vm/hardware-configuration.nix
+    ./vm/zramSwap.nix
   ];
 
   security.sudo.wheelNeedsPassword = false;

@@ -13,3 +13,14 @@ remote host:
       --use-remote-sudo
       --use-substitutes
   )
+
+install host hostname:
+  #!/usr/bin/env nu
+  (
+    nix run nixos-anywhere --
+      --flake .#{{host}}
+      --generate-hardware-config nixos-generate-config ./systems/x86_64-linux/prts/vm/hardware-configuration.nix
+      # --build-on-remote
+      --debug
+      nixos@{{hostname}}
+  )
