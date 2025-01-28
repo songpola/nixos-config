@@ -25,13 +25,7 @@
                 mountpoint = "/";
               };
             };
-            swap = {
-              size = "100%";
-              content = {
-                type = "swap";
-                discardPolicy = "both";
-              };
-            };
+            swap.size = "100%"; # zramSwap backing device
           };
         };
       };
