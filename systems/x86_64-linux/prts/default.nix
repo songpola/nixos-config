@@ -78,7 +78,7 @@ in {
     root.openssh.authorizedKeys.keys = authorizedKeys;
     songpola = {
       openssh.authorizedKeys.keys = authorizedKeys;
-      extraGroups = ["docker"];
+      extraGroups = ["docker" "libvirtd"];
     };
   };
 
@@ -116,7 +116,10 @@ in {
     };
   };
 
-  virtualisation.docker.enable = true;
+  virtualisation = {
+    docker.enable = true;
+    libvirtd.enable = true;
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
