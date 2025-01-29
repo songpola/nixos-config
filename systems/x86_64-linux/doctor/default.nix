@@ -22,5 +22,7 @@
     enable = true;
     defaultUser = "songpola";
     docker-desktop.enable = true;
+    startMenuLaunchers = true;
   };
+  programs.virt-manager.enable = true;
 }
