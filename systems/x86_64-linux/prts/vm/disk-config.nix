@@ -1,4 +1,5 @@
 {
+  networking.hostId = "b4a16b88";
   disko.devices = {
     disk = {
       main = {
@@ -41,34 +42,41 @@
             swap.size = "100%"; # zramSwap backing device
           };
         };
-        ssd = {
-          device = "/dev/disk/by-id/wwn-0x5000c29cc95f4c89";
-          type = "disk";
-          content = {
-            type = "gpt";
-            partitions = {
-              zfs = {
-                size = "100%";
-                content = {
-                  type = "zfs";
-                  pool = "tank";
-                };
+      };
+      ssd = {
+        device = "/dev/disk/by-id/wwn-0x5000c29cc95f4c89";
+        type = "disk";
+        content = {
+          type = "gpt";
+          partitions = {
+            zslog = {
+              size = "16G";
+              content = {
+                type = "zfs";
+                pool = "tank";
+              };
+            };
+            zspecial = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "tank";
               };
             };
           };
         };
-        hdd = {
-          device = "/dev/disk/by-id/wwn-0x5000c29343f3840c";
-          type = "disk";
-          content = {
-            type = "gpt";
-            partitions = {
-              zfs = {
-                size = "100%";
-                content = {
-                  type = "zfs";
-                  pool = "tank";
-                };
+      };
+      hdd = {
+        device = "/dev/disk/by-id/wwn-0x5000c29343f3840c";
+        type = "disk";
+        content = {
+          type = "gpt";
+          partitions = {
+            zdata = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "tank";
               };
             };
           };
@@ -83,27 +91,32 @@
             type = "topology";
             vdev = [
               {
-                members = ["hdd"];
+                members = ["/dev/disk/by-partlabel/disk-hdd-zdata"];
+              }
+            ];
+            log = [
+              {
+                members = ["/dev/disk/by-partlabel/disk-ssd-zslog"];
               }
             ];
             special = [
               {
-                members = ["ssd"];
+                members = ["/dev/disk/by-partlabel/disk-ssd-zspecial"];
               }
             ];
           };
         };
         rootFsOptions = {
           compression = "zstd";
-          "com.sun:auto-snapshot" = "false";
+          # "com.sun:auto-snapshot" = "false";
         };
-        mountpoint = "/";
+        mountpoint = "/mnt/tank";
         datasets = {
           # See examples/zfs.nix for more comprehensive usage.
-          zfs_fs = {
+          test = {
             type = "zfs_fs";
-            mountpoint = "/zfs_fs";
-            options."com.sun:auto-snapshot" = "true";
+            mountpoint = "/mnt/tank/test";
+            # options."com.sun:auto-snapshot" = "true";
           };
         };
       };

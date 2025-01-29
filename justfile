@@ -14,7 +14,7 @@ remote host:
       --use-substitutes
   )
 
-install host hostname:
+install host hostname *FLAGS:
   #!/usr/bin/env nu
   (
     nix run nixos-anywhere --
@@ -22,5 +22,6 @@ install host hostname:
       --generate-hardware-config nixos-generate-config ./systems/x86_64-linux/prts/vm/hardware-configuration.nix
       # --build-on-remote
       --debug
-      nixos@{{hostname}}
+      {{FLAGS}}
+      {{hostname}}
   )
