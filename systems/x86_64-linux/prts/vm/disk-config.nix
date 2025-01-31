@@ -19,10 +19,9 @@
               };
             };
             root = {
-              end = "-8G";
+              end = "-24G"; # (100%)-16G-8G
               content = {
                 type = "btrfs";
-                # extraArgs = ["-f"]; # Override existing partition
                 subvolumes = {
                   "@" = {
                     mountOptions = ["compress=zstd"];
@@ -39,7 +38,17 @@
                 };
               };
             };
-            swap.size = "100%"; # zramSwap backing device
+            # zramSwap backing device
+            swap = {
+              end = "-8G"; # 100%-(16G)-8G
+            };
+            zfs = {
+              size = "100%"; # 100%-16G-(8G)
+              content = {
+                type = "zfs";
+                pool = "tank";
+              };
+            };
           };
         };
       };
@@ -49,14 +58,7 @@
         content = {
           type = "gpt";
           partitions = {
-            zslog = {
-              size = "16G";
-              content = {
-                type = "zfs";
-                pool = "tank";
-              };
-            };
-            zspecial = {
+            zfs = {
               size = "100%";
               content = {
                 type = "zfs";
@@ -72,7 +74,7 @@
         content = {
           type = "gpt";
           partitions = {
-            zdata = {
+            zfs = {
               size = "100%";
               content = {
                 type = "zfs";
@@ -91,32 +93,19 @@
             type = "topology";
             vdev = [
               {
-                members = ["/dev/disk/by-partlabel/disk-hdd-zdata"];
+                members = ["hdd"];
               }
             ];
             log = [
               {
-                members = ["/dev/disk/by-partlabel/disk-ssd-zslog"];
+                members = ["main"];
               }
             ];
             special = [
               {
-                members = ["/dev/disk/by-partlabel/disk-ssd-zspecial"];
+                members = ["ssd"];
               }
             ];
-          };
-        };
-        rootFsOptions = {
-          compression = "zstd";
-          # "com.sun:auto-snapshot" = "false";
-        };
-        mountpoint = "/mnt/tank";
-        datasets = {
-          # See examples/zfs.nix for more comprehensive usage.
-          test = {
-            type = "zfs_fs";
-            mountpoint = "/mnt/tank/test";
-            # options."com.sun:auto-snapshot" = "true";
           };
         };
       };
