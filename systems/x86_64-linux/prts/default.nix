@@ -24,9 +24,12 @@
   ];
 in {
   imports = [
-    ./vm/disk-config.nix
-    ./vm/hardware-configuration.nix
+    ./vm/qemu/disk-config.nix
+    ./vm/qemu/hardware-configuration.nix
+    # ./disk-config.nix
+    # ./hardware-configuration.nix
     ./zramSwap.nix
+    ./networking.nix
   ];
 
   security.sudo.wheelNeedsPassword = false;
@@ -117,7 +120,7 @@ in {
     };
   };
 
-  virtualisation.docker.enable = true;
+  # virtualisation.docker.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
