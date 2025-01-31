@@ -18,7 +18,7 @@
               };
             };
             root = {
-              end = "-8G";
+              end = "-8G"; # (100%)-16G-8G
               content = {
                 type = "btrfs";
                 # extraArgs = ["-f"]; # Override existing partition
@@ -38,9 +38,12 @@
                 };
               };
             };
-            swap.end = "-4G"; # zramSwap backing device
+            # zramSwap backing device
+            swap = {
+              end = "-4G"; # 100%-(4G)-4G
+            };
             zfs = {
-              size = "100%";
+              size = "100%"; # 100%-4G-(4G)
               content = {
                 type = "zfs";
                 pool = "tank";
