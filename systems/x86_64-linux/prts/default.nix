@@ -24,10 +24,8 @@
   ];
 in {
   imports = [
-    ./vm/qemu/disk-config.nix
-    ./vm/qemu/hardware-configuration.nix
-    # ./disk-config.nix
-    # ./hardware-configuration.nix
+    ./disk-config.nix
+    ./hardware-configuration.nix
     ./zramSwap.nix
     ./networking.nix
   ];
@@ -112,7 +110,7 @@ in {
       openFirewall = true;
       useRoutingFeatures = "server";
       extraSetFlags = [
-        "--advertise-routes=10.0.0.0/16"
+        "--advertise-routes=10.0.0.0/16,192.168.100.0/24"
         "--advertise-exit-node"
         "--operator=songpola"
         "--ssh"

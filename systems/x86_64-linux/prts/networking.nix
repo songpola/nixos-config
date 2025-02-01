@@ -13,8 +13,8 @@
     };
     networks = {
       # Connect the bridge ports to the bridge
-      "30-enp1s0" = {
-        matchConfig.Name = "enp1s0"; # vm-qemu
+      "30-eno1" = {
+        matchConfig.Name = "eno1";
         networkConfig.Bridge = "br0";
         linkConfig.RequiredForOnline = "enslaved";
       };
