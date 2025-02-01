@@ -18,20 +18,26 @@
               };
             };
             root = {
-              end = "-8G";
+              end = "-8G"; # (100%)-8G
               content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/";
+                type = "btrfs";
+                subvolumes = {
+                  "@" = {
+                    mountOptions = ["compress=zstd"];
+                    mountpoint = "/";
+                  };
+                  "@home" = {
+                    mountOptions = ["compress=zstd"];
+                    mountpoint = "/home";
+                  };
+                  "@nix" = {
+                    mountOptions = ["compress=zstd" "noatime"];
+                    mountpoint = "/nix";
+                  };
+                };
               };
             };
-            swap = {
-              size = "100%";
-              content = {
-                type = "swap";
-                discardPolicy = "both";
-              };
-            };
+            zramSwap.size="100%"; # 100%-(8G)
           };
         };
       };

@@ -26,6 +26,8 @@ in {
   imports = [
     ./disk-config.nix
     ./hardware-configuration.nix
+    ./zramSwap.nix
+    ./networking.nix
   ];
 
   security.sudo.wheelNeedsPassword = false;
@@ -108,7 +110,7 @@ in {
       openFirewall = true;
       useRoutingFeatures = "server";
       extraSetFlags = [
-        "--advertise-routes=10.0.0.0/16"
+        "--advertise-routes=10.0.0.0/16,192.168.100.0/24"
         "--advertise-exit-node"
         "--operator=songpola"
         "--ssh"
@@ -116,10 +118,10 @@ in {
     };
   };
 
-  virtualisation = {
-    docker.enable = true;
-    libvirtd.enable = true;
-  };
+  # virtualisation = {
+  #   docker.enable = true;
+  #   libvirtd.enable = true;
+  # };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
