@@ -3,10 +3,10 @@ set shell := ["nu", "-c"]
 switch:
   nh os switch .
 
-remote hostname host useSubstitutes="true":
+remote op hostname host useSubstitutes="true":
   #!/usr/bin/env nu
   (
-    nixos-rebuild switch
+    nixos-rebuild {{op}}
       --flake .#{{hostname}}
       --target-host {{host}}
       --build-host {{host}}
