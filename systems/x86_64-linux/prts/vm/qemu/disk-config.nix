@@ -18,7 +18,7 @@
               };
             };
             root = {
-              end = "-8G"; # (100%)-16G-8G
+              end = "-8G"; # (100%)-4G-4G
               content = {
                 type = "btrfs";
                 # extraArgs = ["-f"]; # Override existing partition
