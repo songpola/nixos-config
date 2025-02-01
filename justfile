@@ -1,26 +1,29 @@
+set unstable := true
 set shell := ["nu", "-c"]
+set script-interpreter := ["nu"]
 
 switch:
-  nh os switch .
+    nh os switch .
 
+[script]
 remote op hostname host useSubstitutes="true":
-  #!/usr/bin/env nu
-  (
-    nixos-rebuild {{op}}
-      --flake .#{{hostname}}
-      --target-host {{host}}
-      --build-host {{host}}
-      --use-remote-sudo
-      {{ if useSubstitutes == "true" { "--use-substitutes" } else { "" } }}
-  )
+    let flags =  [
+        --flake ".#{{ hostname }}"
+        --target-host {{ host }}
+        --build-host {{ host }}
+        --use-remote-sudo
+        (if {{ useSubstitutes }} { --use-substitutes })
+    ]
+    nixos-rebuild {{ op }} ...$flags
 
-install hostname host:
-  #!/usr/bin/env nu
-  (
-    nix run nixos-anywhere --
-      --flake .#{{hostname}}
-      --build-on-remote
-      --debug
-      # --generate-hardware-config nixos-generate-config ./systems/x86_64-linux/prts/vm/qemu/hardware-configuration.nix
-      {{host}}
-  )
+[script]
+install hostname host hardwareConfigPath="":
+    let flags =  [
+        --flake ".#{{ hostname }}"
+        --build-on-remote
+        --debug
+        (if ("{{ hardwareConfigPath }}" | is-not-empty) {
+            [--generate-hardware-config nixos-generate-config "{{ hardwareConfigPath }}"]
+        })
+    ] | flatten | compact
+    nix run nixos-anywhere -- ...$flags {{ host }}
