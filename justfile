@@ -6,7 +6,7 @@ switch:
     nh os switch .
 
 [script]
-remote op hostname host useSubstitutes="true":
+remote op host hostname useSubstitutes="true":
     let flags =  [
         --flake ".#{{ hostname }}"
         --target-host {{ host }}
@@ -17,7 +17,7 @@ remote op hostname host useSubstitutes="true":
     nixos-rebuild {{ op }} ...$flags
 
 [script]
-install hostname host hardwareConfigPath="":
+install host hostname hardwareConfigPath="":
     let flags =  [
         --flake ".#{{ hostname }}"
         --build-on-remote
