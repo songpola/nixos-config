@@ -3,28 +3,30 @@
   systemd.network = {
     enable = true;
     netdevs = {
-      # Create the bridge interface
-      "20-br0" = {
+      "10-br0" = {
         netdevConfig = {
           Name = "br0";
           Kind = "bridge";
+          MACAddress = "none";
         };
       };
     };
     networks = {
-      # Connect the bridge ports to the bridge
+      "20-br0" = {
+        matchConfig.Name = "br0";
+        networkConfig.DHCP = "yes";
+        linkConfig.RequiredForOnline = "routable";
+      };
       "30-eno1" = {
         matchConfig.Name = "eno1";
         networkConfig.Bridge = "br0";
         linkConfig.RequiredForOnline = "enslaved";
       };
-      # Configure the bridge for its desired function
+    };
+    links = {
       "40-br0" = {
-        matchConfig.Name = "br0";
-        # bridgeConfig = {};
-        networkConfig.DHCP = "yes";
-        # networkConfig.LinkLocalAddressing = "no"; # Disable address autoconfig when no IP configuration is required
-        linkConfig.RequiredForOnline = "carrier"; # or "routable" with IP addresses configured
+        matchConfig.OriginalName = "br0";
+        linkConfig.MACAddressPolicy = "none";
       };
     };
   };
