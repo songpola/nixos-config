@@ -28,6 +28,7 @@ in {
     ./hardware-configuration.nix
     ./zramSwap.nix
     ./networking.nix
+    ./zfs.nix
   ];
 
   security.sudo.wheelNeedsPassword = false;
