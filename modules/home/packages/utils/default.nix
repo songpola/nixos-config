@@ -18,14 +18,14 @@
   ...
 }: {
   home.packages = with pkgs; [
-    ouch
     croc
-    httpie
-    ov
-    uutils-coreutils-noprefix
+    doggo
     duf
     dust
+    httpie
+    ouch
+    ov
     snowfallorg.flake
-    doggo
+    uutils-coreutils-noprefix
   ];
 }
