@@ -9,14 +9,14 @@ in {
         content = {
           type = "gpt";
           partitions = {
-            zlog = {
+            zspecial = {
               end = "-16G";
               content = {
                 type = "zfs";
                 pool = "tank";
               };
             };
-            zspecial = {
+            zlog = {
               size = "100%";
               content = {
                 type = "zfs";
