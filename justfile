@@ -27,3 +27,12 @@ install host hostname hardwareConfigPath="":
         })
     ] | flatten | compact
     nix run nixos-anywhere -- ...$flags {{ host }}
+
+[script]
+disko diskConfig run="false" mode="destroy,format,mount":
+    let flags =  [
+        --mode "{{ mode }}"
+        --debug
+        (if not {{ run }} { --dry-run })
+    ] | flatten | compact
+    sudo nix run disko -- ...$flags {{ diskConfig }}
