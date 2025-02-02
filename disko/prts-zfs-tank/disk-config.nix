@@ -71,8 +71,7 @@ in {
         };
         rootFsOptions = {
           atime = "off";
-          recordsize = "1M";
-          special_small_blocks = "4k";
+          special_small_blocks = "128k";
           compression = "zstd";
         };
         mountpoint = "/mnt/tank";
