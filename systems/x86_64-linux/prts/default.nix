@@ -65,10 +65,13 @@ in {
     };
   };
 
-  # virtualisation = {
-  #   docker.enable = true;
-  #   libvirtd.enable = true;
-  # };
+  virtualisation = {
+    docker = {
+      enable = true;
+      storageDriver = "zfs";
+    };
+    libvirtd.enable = true;
+  };
 
   system.stateVersion = "24.11";
 }
