@@ -1,5 +1,11 @@
 {
-  boot.supportedFilesystems = ["zfs"];
-  boot.zfs.forceImportRoot = false;
+  boot = {
+    supportedFilesystems = ["zfs"];
+    zfs = {
+      forceImportRoot = false;
+      extraPools = ["tank"];
+      devNodes = "/dev/disk/by-partlabel";
+    };
+  };
   networking.hostId = "eb8b6756";
 }
