@@ -16,7 +16,7 @@
   # # All other arguments come from the system system.
   config,
   ...
-}: let
+} @ args: let
   getMountpoint = disk: partition:
     config.disko.devices.disk.${disk}.content.partitions.${partition}.content.mountpoint;
   authorizedKeys = [
@@ -29,6 +29,8 @@ in {
     ./zramSwap.nix
     ./networking.nix
     ./zfs.nix
+    ./services.nix
+    (import ./nix.nix args)
   ];
 
   security.sudo.wheelNeedsPassword = false;
@@ -47,21 +49,6 @@ in {
     songpola = {
       openssh.authorizedKeys.keys = authorizedKeys;
       extraGroups = ["docker" "libvirtd"];
-    };
-  };
-
-  services = {
-    openssh.enable = true;
-    tailscale = {
-      enable = true;
-      openFirewall = true;
-      useRoutingFeatures = "server";
-      extraSetFlags = [
-        "--advertise-routes=10.0.0.0/16"
-        "--advertise-exit-node"
-        "--operator=songpola"
-        "--ssh"
-      ];
     };
   };
 
