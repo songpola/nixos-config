@@ -78,6 +78,21 @@ in {
             type = "zfs_fs";
             mountpoint = "/var/lib/docker";
           };
+          data.type = "zfs_fs";
+          "data/docker".type = "zfs_fs";
+          "data/docker/dockge".type = "zfs_fs";
+          "data/docker/nocodb".type = "zfs_fs";
+          "data/docker/nocodb/db-data" = {
+            type = "zfs_fs";
+            options = {
+              recordsize = "16K"; # Matches PostgreSQL page size
+              compression = "lz4"; # Fast and efficient compression
+              atime = "off"; # Avoid extra writes for access time updates
+              logbias = "throughput"; # Balance between latency and throughput
+              primarycache = "all"; # Cache both metadata and data
+              secondarycache = "all"; # Optimize for read performance
+            };
+          };
         };
       };
     };
