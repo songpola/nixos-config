@@ -70,9 +70,7 @@ in {
           ashift = "12";
         };
         rootFsOptions = {
-          atime = "off";
           special_small_blocks = "128k";
-          compression = "zstd";
         };
         mountpoint = "/mnt/tank";
         datasets = {
