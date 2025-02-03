@@ -17,12 +17,14 @@
   # config,
   ...
 }: {
-  nix.settings.trusted-users = ["nix-ssh"];
-  nix.sshServe = {
-    enable = true;
-    keys = [
-      lib.${namespace}.sshPublicKey
-    ];
-    write = true;
+  nix = {
+    settings.trusted-users = ["nix-ssh"];
+    sshServe = {
+      enable = true;
+      keys = [
+        lib.${namespace}.sshPublicKey
+      ];
+      write = true;
+    };
   };
 }

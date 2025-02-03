@@ -36,10 +36,14 @@ in {
   security.sudo.wheelNeedsPassword = false;
 
   boot.loader = {
-    efi.canTouchEfiVariables = true;
-    efi.efiSysMountPoint = getMountpoint "main" "ESP";
-    grub.device = "nodev";
-    grub.efiSupport = true;
+    efi = {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = getMountpoint "main" "ESP";
+    };
+    grub = {
+      device = "nodev";
+      efiSupport = true;
+    };
   };
 
   time.timeZone = "Asia/Bangkok";

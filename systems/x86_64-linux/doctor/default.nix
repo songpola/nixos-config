@@ -17,12 +17,18 @@
   # config,
   ...
 }: {
-  system.stateVersion = "24.05";
+  imports = [
+    ./nix.nix
+  ];
+
   wsl = {
     enable = true;
     defaultUser = "songpola";
     docker-desktop.enable = true;
     startMenuLaunchers = true;
   };
+
   programs.virt-manager.enable = true;
+
+  system.stateVersion = "24.05";
 }
