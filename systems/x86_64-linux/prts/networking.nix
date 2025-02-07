@@ -14,7 +14,10 @@
     networks = {
       "20-br0" = {
         matchConfig.Name = "br0";
-        networkConfig.DHCP = "yes";
+        networkConfig = {
+          DHCP = "yes";
+          UseDomains = "yes";
+        };
         linkConfig.RequiredForOnline = "routable";
       };
       "30-eno1" = {
