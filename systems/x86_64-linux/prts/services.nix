@@ -1,6 +1,13 @@
 {
   services = {
-    openssh.enable = true;
+    openssh = {
+      enable = true;
+      settings = {
+        ClientAliveInterval = 30;
+        ClientAliveCountMax = 5;
+        TCPKeepAlive = "yes";
+      };
+    };
 
     tailscale = {
       enable = true;
