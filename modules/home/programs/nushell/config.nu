@@ -7,3 +7,6 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME)
 alias l = ls
 alias gcm = czg emoji gpg
 alias nos = nh os switch
+alias bm = batman
+alias j = just
+alias c = clear
