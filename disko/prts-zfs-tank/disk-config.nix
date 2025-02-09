@@ -70,6 +70,7 @@ in {
           ashift = "12";
         };
         rootFsOptions = {
+          xattr = "sa";
           special_small_blocks = "128k";
         };
         mountpoint = "/mnt/tank";
