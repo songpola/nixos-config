@@ -25,5 +25,12 @@
       enable = true;
       openFirewall = true;
     };
+
+    syncthing = {
+      enable = true;
+      openDefaultPorts = true;
+      overrideDevices = false;
+      overrideFolders = false;
+    };
   };
 }
