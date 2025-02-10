@@ -3,8 +3,16 @@
     useDHCP = false;
     nftables.enable = true;
     firewall = {
-      allowedTCPPorts = [80 443]; # caddy: HTTP and HTTPS
-      allowedUDPPorts = [443]; # caddy: HTTP/3 support
+      allowedTCPPorts = [
+        # caddy
+        80
+        443
+        # syncthing
+        8384
+      ];
+      allowedUDPPorts = [
+        443 # caddy: HTTP/3
+      ];
     };
   };
   systemd.network = {

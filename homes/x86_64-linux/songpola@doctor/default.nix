@@ -7,12 +7,11 @@
   # # You also have access to your flake's inputs.
   # inputs,
   # # Additional metadata is provided by Snowfall Lib.
-  # # Additional metadata is provided by Snowfall Lib.
   # ---
   # Infinite recursion when using namespace in home configuration
   # https://github.com/snowfallorg/lib/issues/142
   #
-  # namespace, # The namespace used for your flake, defaulting to "internal" if not set.
+  namespace, # The namespace used for your flake, defaulting to "internal" if not set.
   # ---
   # system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
@@ -23,11 +22,13 @@
   # config,
   ...
 }: {
+  home.stateVersion = "24.11";
+
   programs.git.extraConfig = {
     commit.gpgsign = true;
     core.sshCommand = "ssh.exe";
     gpg.format = "ssh";
     gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-    user.signingkey = lib.songpola.sshPublicKey;
+    user.signingkey = lib.${namespace}.sshPublicKey;
   };
 }

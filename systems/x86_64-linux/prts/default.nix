@@ -29,7 +29,7 @@ in {
     ./zramSwap.nix
     ./networking.nix
     ./zfs.nix
-    ./services.nix
+    (import ./services.nix args)
     (import ./nix.nix args)
   ];
 
@@ -50,7 +50,7 @@ in {
 
   users.users = {
     root.openssh.authorizedKeys.keys = authorizedKeys;
-    songpola = {
+    ${lib.songpola.username} = {
       openssh.authorizedKeys.keys = authorizedKeys;
       extraGroups = ["docker" "libvirtd"];
     };

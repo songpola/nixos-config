@@ -9,5 +9,15 @@
   # # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: {
-  sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz songpola";
+  mkSyncthingConfig = config: username: let
+    _user = config.users.users.${username};
+  in {
+    enable = true;
+    user = username;
+    group = _user.group;
+    dataDir = _user.home;
+    configDir = _user.home + "/.local/state/syncthing"; # XDG_STATE_HOME
+    overrideDevices = false;
+    overrideFolders = false;
+  };
 }

@@ -1,7 +1,7 @@
 {
   # # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # # as well as the libraries available from your flake's inputs.
-  # lib,
+  lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
   # pkgs,
   # # You also have access to your flake's inputs.
@@ -14,21 +14,30 @@
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
   # # All other arguments come from the system system.
-  # config,
+  config,
   ...
-}: {
+}: let
+  mkSyncthingConfig = lib.songpola.mkSyncthingConfig config;
+  defaultUser = lib.songpola.username;
+in {
   imports = [
     ./nix.nix
   ];
 
   wsl = {
     enable = true;
-    defaultUser = "songpola";
+    inherit defaultUser;
     docker-desktop.enable = true;
     startMenuLaunchers = true;
   };
 
   programs.virt-manager.enable = true;
+
+  services.syncthing =
+    (mkSyncthingConfig defaultUser)
+    // {
+      guiAddress = "127.0.0.1:8385";
+    };
 
   system.stateVersion = "24.05";
 }

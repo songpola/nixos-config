@@ -2,7 +2,10 @@ set unstable := true
 set shell := ["nu", "-c"]
 set script-interpreter := ["nu"]
 
-switch:
+check:
+    nix flake check
+
+sw:
     nh os switch .
 
 [script]
