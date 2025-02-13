@@ -11,4 +11,8 @@
 }: {
   username = "songpola";
   sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz songpola";
+  prts = {
+    fqdn = "prts.tail7623c.ts.net";
+    binaryCachePublicKey = "prts.tail7623c.ts.net:Z36PCOr0eHE/8X3Dzb2DCOXgAuMCysAh9LX9Q1nbaok=";
+  };
 }

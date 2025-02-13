@@ -26,6 +26,7 @@
     httpie
     ouch
     ov
+    rclone
     snowfallorg.flake
     uutils-coreutils-noprefix
   ];

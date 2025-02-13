@@ -16,12 +16,12 @@
   # # All other arguments come from the system system.
   config,
   ...
-}: let
+} @ args: let
   mkSyncthingConfig = lib.songpola.mkSyncthingConfig config;
   defaultUser = lib.songpola.username;
 in {
   imports = [
-    ./nix.nix
+    (import ./nix.nix args)
   ];
 
   wsl = {

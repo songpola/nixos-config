@@ -21,7 +21,9 @@
   # # All other arguments come from the system system.
   # config,
   ...
-}: {
+}: let
+  inherit (lib.${namespace}) sshPublicKey prts;
+in {
   home.stateVersion = "24.11";
 
   programs.git.extraConfig = {
@@ -29,6 +31,12 @@
     core.sshCommand = "ssh.exe";
     gpg.format = "ssh";
     gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-    user.signingkey = lib.${namespace}.sshPublicKey;
+    user.signingkey = sshPublicKey;
   };
+
+  xdg.configFile."rclone/rclone.conf".text = ''
+    [prts]
+    type = sftp
+    host = ${prts.fqdn}
+  '';
 }
