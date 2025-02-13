@@ -17,10 +17,12 @@
   # config,
   ...
 }: {
-  environment.variables = {
-    EDITOR = "micro";
-    PAGER = "ov";
-    BAT_PAGER = "ov -F -H3";
-    MANPAGER = "ov";
+  environment = {
+    variables = {
+      EDITOR = "micro";
+      PAGER = "ov";
+      BAT_PAGER = "ov -F -H3";
+      MANPAGER = "ov";
+    };
   };
 }
