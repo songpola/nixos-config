@@ -2,9 +2,12 @@
   nix = {
     settings = {
       substituters = [
-        "http://prts:5000/"
+        "http://prts.tail7623c.ts.net:5000/"
         # "https://nix-community.cachix.org"
         # "https://cache.nixos.org/" # default
+      ];
+      trusted-public-keys = [
+        "prts.tail7623c.ts.net:Z36PCOr0eHE/8X3Dzb2DCOXgAuMCysAh9LX9Q1nbaok="
       ];
     };
     # You can see the resulting builder-strings of this NixOS-configuration with "cat /etc/nix/machines".

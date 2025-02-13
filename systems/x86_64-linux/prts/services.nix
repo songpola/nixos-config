@@ -42,9 +42,9 @@ in {
       ];
     };
 
-    nix-serve = {
+    harmonia = {
       enable = true;
-      openFirewall = true;
+      signKeyPaths = ["/var/lib/secrets/harmonia.secret"];
     };
 
     syncthing =
