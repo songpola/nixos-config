@@ -2,12 +2,15 @@ set unstable := true
 set shell := ["nu", "-c"]
 set script-interpreter := ["nu"]
 
+alias c := check
 check:
     nix flake check
 
-sw:
-    nh os switch .
+alias s := switch
+switch host=".":
+    nh os switch {{ host }}
 
+alias r := remote
 [script]
 remote op host hostname useSubstitutes="true":
     let flags =  [
@@ -19,6 +22,7 @@ remote op host hostname useSubstitutes="true":
     ]
     nixos-rebuild {{ op }} ...$flags
 
+alias i := install
 [script]
 install host hostname hardwareConfigPath="":
     let flags =  [
