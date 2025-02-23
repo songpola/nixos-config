@@ -2,5 +2,8 @@
   enable = true;
   enableBashIntegration = true;
   enableNushellIntegration = true;
-  extraOptions = ["-g --group-directories-first"];
+  extraOptions = [
+    "-g"
+    "--group-directories-first"
+  ];
 }
