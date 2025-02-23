@@ -1,0 +1,7 @@
+{
+  users = {
+    songpola = {
+      admin = true;
+    };
+  };
+}
