@@ -1,4 +1,4 @@
-{inputs}: {
+{config}: {
   enable = true;
-  writebackDevice = inputs.config.disko.devices.disk.main.content.partitions.swap.device;
+  writebackDevice = config.disko.devices.disk.main.content.partitions.swap.device;
 }

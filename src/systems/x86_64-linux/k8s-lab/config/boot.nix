@@ -1,4 +1,4 @@
-{inputs}: {
+{config}: {
   loader = {
     grub = {
       device = "nodev";
@@ -6,7 +6,7 @@
     };
     efi = {
       canTouchEfiVariables = true;
-      efiSysMountPoint = inputs.config.disko.devices.disk.main.content.partitions.ESP.content.mountpoint;
+      efiSysMountPoint = config.disko.devices.disk.main.content.partitions.ESP.content.mountpoint;
     };
   };
 }

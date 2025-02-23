@@ -7,8 +7,8 @@ check:
     nix flake check
 
 alias s := switch
-switch host=".":
-    nh os switch {{ host }}
+switch host="." flags="":
+    nh os switch {{ host }} {{ flags }}
 
 alias r := remote
 [script]

@@ -1,0 +1,20 @@
+{pkgs}:
+with pkgs; [
+  alejandra
+  btop
+  croc
+  devbox
+  doggo
+  duf
+  dust
+  httpie
+  just
+  nil
+  nixd
+  nodejs
+  ouch
+  ov
+  pnpm
+  rclone
+  uutils-coreutils-noprefix
+]

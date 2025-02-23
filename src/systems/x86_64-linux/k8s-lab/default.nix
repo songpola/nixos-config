@@ -17,29 +17,5 @@
   # # All other arguments come from the system system.
   # config,
   ...
-} @ inputs: let
-  inherit (lib) haumea;
-
-  loadAttrs = path:
-    haumea.load {
-      src = path;
-      inputs = {
-        inherit inputs;
-        lib = lib.${namespace};
-      };
-    };
-  loads = path:
-    haumea.load {
-      src = path;
-      loader = haumea.loaders.path;
-      # transformer = [
-      #   haumea.transformers.hoistLists
-      # ];
-    };
-in
-  {
-    config = loadAttrs ./config;
-  }
-  // lib.optionalAttrs (lib.pathExists ./imports) {
-    imports = lib.attrValues (loads ./imports);
-  }
+} @ inputs:
+lib.${namespace}.mkHaumeaModule inputs ./.

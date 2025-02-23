@@ -30,6 +30,7 @@
 
       systems.modules.nixos = with inputs; [
         disko.nixosModules.default
+        nixos-wsl.nixosModules.default
       ];
     };
 }
