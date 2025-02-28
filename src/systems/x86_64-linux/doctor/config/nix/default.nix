@@ -1,0 +1,3 @@
+{
+  distributedBuilds = true;
+}
