@@ -3,9 +3,11 @@
 # Also see https://github.com/Mic92/dotfiles/blob/d6114726d859df36ccaa32891c4963ae5717ef7f/nixos/.sops.yaml
 # for a more complex example.
 keys:
-  - &songpola age1uxg5gf3ylxlny32kgt3ucgxvy39p87pz3qskp4elydkzqewquveqvtr5gx
+  - &doctor age1uxg5gf3ylxlny32kgt3ucgxvy39p87pz3qskp4elydkzqewquveqvtr5gx
+  - &prts age1lew4ex3dyrap05gjtk6h3tx94yjvh9kcax69xpfrr6z59q925pdqy047mh
 creation_rules:
   - path_regex: src/lib/secrets/sops-nix/secrets.yaml$
     key_groups:
       - age:
-          - *songpola
+          - *doctor
+          - *prts

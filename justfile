@@ -44,5 +44,10 @@ disko diskConfig run="false" mode="destroy,format,mount":
     ] | flatten | compact
     sudo nix run disko -- ...$flags {{ diskConfig }}
 
+secrets := "src/lib/secrets/sops-nix/secrets.yaml"
+
 sops:
-    sops src/lib/secrets/sops-nix/secrets.yaml
+    sops {{ secrets }}
+
+sops-updatekeys:
+    sops updatekeys {{ secrets }}
