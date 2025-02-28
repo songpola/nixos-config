@@ -13,6 +13,7 @@ with pkgs; [
   nil
   nixd
   nodejs
+  opnix
   ouch
   ov
   pnpm

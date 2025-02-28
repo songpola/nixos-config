@@ -26,6 +26,10 @@
     # https://github.com/Mic92/sops-nix
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # https://github.com/brizzbuzz/opnix
+    opnix.url = "github:brizzbuzz/opnix";
+    opnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs:
@@ -33,14 +37,21 @@
       inherit inputs;
       src = ./src;
 
+      overlays = with inputs; [
+        opnix.overlays.default
+      ];
+
       systems.modules.nixos = with inputs;
         map (input: input.nixosModules.default) [
           disko
           nixos-wsl
+          sops-nix
+          opnix
         ];
 
       homes.modules = with inputs; [
         sops-nix.homeManagerModules.sops
+        opnix.homeManagerModules.default
       ];
     };
 }
