@@ -4,7 +4,7 @@
     80
     443
     # harmonia
-    # 5000
+    5000
     # syncthing
     8384
   ];
