@@ -1,5 +1,6 @@
 {pkgs}:
 with pkgs; [
+  age
   alejandra
   btop
   croc
@@ -16,5 +17,6 @@ with pkgs; [
   ov
   pnpm
   rclone
+  sops
   uutils-coreutils-noprefix
 ]
