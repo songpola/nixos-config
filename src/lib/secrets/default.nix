@@ -10,9 +10,12 @@
   # # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: {
-  getOpnixSecret = config: path: "${config.services.onepassword-secrets.outputDir}/${path}";
-  secrets = {
-    opnix = ./opnix/secrets.json;
-    sops-nix = ./sops-nix/secrets.yaml;
+  opnix = {
+    configFile = ./opnix/secrets.json;
+    mkSecretPath = config: secret: "${config.services.onepassword-secrets.outputDir}/${secret}";
+  };
+  sops-nix = {
+    defaultSopsFile = ./sops-nix/secrets.yaml;
+    mkSecretPath = config: secret: config.sops.secrets.${secret}.path;
   };
 }

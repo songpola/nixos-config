@@ -1,5 +1,5 @@
 {_lib}: {
   enable = true;
-  users = [ "songpola" ];
-  configFile = _lib.secrets.opnix;
+  users = ["songpola"];
+  inherit (_lib.opnix) configFile;
 }
