@@ -43,3 +43,6 @@ disko diskConfig run="false" mode="destroy,format,mount":
         (if not {{ run }} { --dry-run })
     ] | flatten | compact
     sudo nix run disko -- ...$flags {{ diskConfig }}
+
+sops:
+    sops src/lib/secrets/secrets.yaml

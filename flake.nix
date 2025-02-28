@@ -22,6 +22,10 @@
     # https://nix-community.github.io/NixOS-WSL/
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
+    # https://github.com/Mic92/sops-nix
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs:
@@ -29,9 +33,14 @@
       inherit inputs;
       src = ./src;
 
-      systems.modules.nixos = with inputs; [
-        disko.nixosModules.default
-        nixos-wsl.nixosModules.default
+      systems.modules.nixos = with inputs;
+        map (input: input.nixosModules.default) [
+          disko
+          nixos-wsl
+        ];
+
+      homes.modules = with inputs; [
+        sops-nix.homeManagerModules.sops
       ];
     };
 }
