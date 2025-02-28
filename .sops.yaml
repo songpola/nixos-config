@@ -5,7 +5,7 @@
 keys:
   - &songpola age1uxg5gf3ylxlny32kgt3ucgxvy39p87pz3qskp4elydkzqewquveqvtr5gx
 creation_rules:
-  - path_regex: src/lib/secrets/secrets.yaml$
+  - path_regex: src/lib/secrets/sops-nix/secrets.yaml$
     key_groups:
       - age:
           - *songpola
