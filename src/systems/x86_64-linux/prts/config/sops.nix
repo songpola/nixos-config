@@ -1,5 +1,5 @@
 {
   secrets = {
-    # "atticd.env" = {};
+    "harmonia/prts-1/secret" = {};
   };
 }
