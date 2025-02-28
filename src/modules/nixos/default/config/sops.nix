@@ -1,3 +1,3 @@
 {_lib}: {
-  inherit (_lib.sops-nix) defaultSopsFile;
+  inherit (_lib.secrets.sops-nix) defaultSopsFile;
 }

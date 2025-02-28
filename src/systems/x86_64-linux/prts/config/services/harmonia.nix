@@ -2,7 +2,7 @@
   config,
   _lib,
 }: let
-  harmoniaSecret = _lib.sops-nix.mkSecretPath config "harmonia/prts-1/secret";
+  harmoniaSecret = _lib.secrets.sops-nix.mkSecretPath config "harmonia";
 in {
   enable = true;
   signKeyPaths = [

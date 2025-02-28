@@ -2,7 +2,7 @@
   users = {
     songpola = {
       openssh.authorizedKeys.keys = [
-        _lib.sshPublicKey
+        _lib.public.ssh
       ];
       extraGroups = [
         "docker"
