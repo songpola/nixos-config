@@ -2,7 +2,7 @@
   # # https://snowfall.org/guides/lib/modules/
   # # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # # as well as the libraries available from your flake's inputs.
-  # lib,
+  lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
   # pkgs,
   # # You also have access to your flake's inputs.
@@ -21,6 +21,12 @@
   programs.nushell = {
     enable = true;
     configFile.source = ./config.nu;
-    # extraConfig = lib.mkAfter (lib.readFile ./external_completer.nu);
+    extraConfig = lib.mkAfter (lib.readFile ./external_completer.nu);
+    environmentVariables = {
+      EDITOR = "micro";
+      PAGER = "ov";
+      BAT_PAGER = "ov -F -H3";
+      MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
+    };
   };
 }

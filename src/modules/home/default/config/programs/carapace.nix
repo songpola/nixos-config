@@ -1,3 +1,4 @@
 {
   enable = true;
+  enableNushellIntegration = false;
 }
