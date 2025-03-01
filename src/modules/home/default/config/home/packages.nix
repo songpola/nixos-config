@@ -20,4 +20,5 @@ with pkgs; [
   rclone
   sops
   uutils-coreutils-noprefix
+  watchexec
 ]
