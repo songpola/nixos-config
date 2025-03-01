@@ -21,4 +21,5 @@ with pkgs; [
   sops
   uutils-coreutils-noprefix
   watchexec
+  wget
 ]
