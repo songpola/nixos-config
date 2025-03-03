@@ -10,6 +10,7 @@ with pkgs; [
   dust
   httpie
   just
+  lsof
   nil
   nixd
   nodejs
