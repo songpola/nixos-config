@@ -5,12 +5,17 @@
     443
     # harmonia
     5000
-    # syncthing
-    # 8384
     # tsdproxy
     8080
+    # syncthing
+    8384
+    22000
   ];
   allowedUDPPorts = [
-    443 # caddy: HTTP/3
+    # caddy: HTTP/3
+    443
+    # syncthing
+    21027
+    22000
   ];
 }
