@@ -3,6 +3,8 @@ with pkgs; [
   age
   alejandra
   btop
+  caddy
+  coder
   croc
   devbox
   doggo
