@@ -23,4 +23,5 @@ with pkgs; [
   uutils-coreutils-noprefix
   watchexec
   wget
+  xkcdpass
 ]
