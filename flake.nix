@@ -37,6 +37,8 @@
       inherit inputs;
       src = ./src;
 
+      channels-config.allowUnfree = true;
+
       overlays = with inputs; [
         opnix.overlays.default
       ];
