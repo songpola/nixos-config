@@ -5,8 +5,6 @@
     443
     # harmonia
     5000
-    # tsdproxy
-    8080
     # syncthing
     8384
     22000
