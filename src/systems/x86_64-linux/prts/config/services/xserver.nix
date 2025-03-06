@@ -1,0 +1,3 @@
+{
+  videoDrivers = ["nvidia"];
+}
