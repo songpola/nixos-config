@@ -14,4 +14,8 @@
   ...
 }: final: prev: {
   inherit (channels.unstable) tailscale;
+
+  btop = prev.btop.override {
+    cudaSupport = true;
+  };
 }
