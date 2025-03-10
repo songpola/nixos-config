@@ -2,6 +2,9 @@ set unstable := true
 set shell := ["nu", "-c"]
 set script-interpreter := ["nu"]
 
+repl:
+    nix repl .
+
 alias c := check
 check:
     nix flake check
@@ -12,7 +15,7 @@ switch host="." flags="":
 
 alias r := remote
 [script]
-remote op host hostname useSubstitutes="true":
+remote op hostname host useSubstitutes="true":
     let flags =  [
         --flake ".#{{ hostname }}"
         --target-host {{ host }}
@@ -24,13 +27,28 @@ remote op host hostname useSubstitutes="true":
 
 alias i := install
 [script]
-install host hostname hardwareConfigPath="":
+install hostname host generateHardwareConfig="" buildOnRemote="true":
     let flags =  [
         --flake ".#{{ hostname }}"
-        --build-on-remote
         --debug
-        (if ("{{ hardwareConfigPath }}" | is-not-empty) {
-            [--generate-hardware-config nixos-generate-config "{{ hardwareConfigPath }}"]
+        (if "{{ generateHardwareConfig }}" == "nixos-generate-config" {
+            [
+                --generate-hardware-config
+                nixos-generate-config
+                "src/systems/x86_64-linux/{{ hostname }}/imports/hardware-configuration.nix"
+            ]
+        })
+        (if "{{ generateHardwareConfig }}" == "nixos-facter" {
+            [
+                --generate-hardware-config
+                nixos-facter
+                "src/systems/x86_64-linux/{{ hostname }}/config/facter/facter.json"
+            ]
+        })
+        (if {{ buildOnRemote }} {
+            [
+                --build-on-remote
+            ]
         })
     ] | flatten | compact
     nix run nixos-anywhere -- ...$flags {{ host }}

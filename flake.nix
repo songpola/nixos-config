@@ -30,6 +30,10 @@
     # https://github.com/brizzbuzz/opnix
     opnix.url = "github:brizzbuzz/opnix";
     opnix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # https://github.com/nix-community/nixos-facter
+    # https://github.com/nix-community/nixos-facter-modules
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
   outputs = inputs:
@@ -44,11 +48,16 @@
       ];
 
       systems.modules.nixos = with inputs;
-        map (input: input.nixosModules.default) [
-          disko
-          nixos-wsl
-          sops-nix
-          opnix
+        (
+          map (input: input.nixosModules.default) [
+            disko
+            nixos-wsl
+            sops-nix
+            opnix
+          ]
+        )
+        ++ [
+          nixos-facter-modules.nixosModules.facter
         ];
 
       homes.modules = with inputs; [
