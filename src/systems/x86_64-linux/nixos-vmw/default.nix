@@ -4,6 +4,9 @@
   # # as well as the libraries available from your flake's inputs.
   lib,
   # # An instance of `pkgs` with your overlays and packages applied is also available.
+  # # FIXME: `error: attribute 'pkgs' missing`
+  # # When: comment out this line (like now) and try to use `pkgs` in config.
+  # # Example: `{ pkgs, ... }: { ... = with pkgs; ... }`
   # pkgs,
   # # You also have access to your flake's inputs.
   # inputs,
