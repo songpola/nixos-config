@@ -22,6 +22,7 @@ with pkgs; [
   pixi
   pnpm
   rclone
+  rustscan
   sops
   uutils-coreutils-noprefix
   watchexec
