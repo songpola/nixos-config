@@ -19,6 +19,7 @@ with pkgs; [
   opnix
   ouch
   ov
+  pixi
   pnpm
   rclone
   sops
