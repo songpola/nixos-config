@@ -2,6 +2,10 @@ set unstable := true
 set shell := ["nu", "-c"]
 set script-interpreter := ["nu"]
 
+buildOnRemote := "true"
+useSubstitutes := "true"
+generateHardwareConfig := ""
+
 repl:
     nix repl .
 
@@ -15,19 +19,21 @@ switch host="." flags="":
 
 alias r := remote
 [script]
-remote op hostname host useSubstitutes="true":
+remote op hostname host="":
+    let host = "{{ if host != "" { host } else { hostname } }}"
     let flags =  [
         --flake ".#{{ hostname }}"
-        --target-host {{ host }}
-        --build-host {{ host }}
         --use-remote-sudo
+        --target-host $host
+        (if {{ buildOnRemote }} { [--build-host $host ] })
         (if {{ useSubstitutes }} { --use-substitutes })
-    ]
+    ] | flatten | compact
     nixos-rebuild {{ op }} ...$flags
 
 alias i := install
 [script]
-install hostname host generateHardwareConfig="" buildOnRemote="true":
+install hostname host="":
+    let host = "{{ if host != "" { host } else { hostname } }}"
     let flags =  [
         --flake ".#{{ hostname }}"
         --debug
@@ -45,13 +51,9 @@ install hostname host generateHardwareConfig="" buildOnRemote="true":
                 "src/systems/x86_64-linux/{{ hostname }}/config/facter/facter.json"
             ]
         })
-        (if {{ buildOnRemote }} {
-            [
-                --build-on-remote
-            ]
-        })
+        (if {{ buildOnRemote }} { --build-on-remote })
     ] | flatten | compact
-    nix run nixos-anywhere -- ...$flags {{ host }}
+    nix run nixos-anywhere -- ...$flags $host
 
 [script]
 disko diskConfig run="false" mode="destroy,format,mount":
