@@ -1,0 +1,3 @@
+{
+  autologinUser = "songpola";
+}
