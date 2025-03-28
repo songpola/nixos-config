@@ -21,7 +21,14 @@
   programs.nushell = {
     enable = true;
     configFile.source = ./config.nu;
-    extraConfig = lib.mkAfter (lib.readFile ./external_completer.nu);
+    extraConfig = lib.mkAfter (
+      lib.concatLines (
+        map (f: lib.readFile f) [
+          ./pixi.nu
+          ./external_completer.nu
+        ]
+      )
+    );
     environmentVariables = {
       EDITOR = "micro";
       PAGER = "ov";
