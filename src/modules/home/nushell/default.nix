@@ -6,7 +6,7 @@
   # # An instance of `pkgs` with your overlays and packages applied is also available.
   # pkgs,
   # # You also have access to your flake's inputs.
-  inputs,
+  # inputs,
   # # Additional metadata is provided by Snowfall Lib.
   # namespace, # The namespace used for your flake, defaulting to "internal" if not set.
   # system, # The system architecture for this host (eg. `x86_64-linux`).
@@ -18,28 +18,24 @@
   # config,
   ...
 }: let
-  # https://github.com/nushell/nu_scripts/blob/main/nu-hooks/nu-hooks/direnv/config.nu
-  direnvHook = ''
-    $env.config.hooks.pre_prompt = (
-        $env.config.hooks.pre_prompt | append (source ${inputs.nu_scripts + "/nu-hooks/nu-hooks/direnv/config.nu"})
-    )
-  '';
+  extraConfigBefore = lib.readFile ./config.nu;
+  extraConfigAfter = lib.concatLines (
+    map (f: lib.readFile f) [
+      ./pixi.nu
+      ./external_completer.nu
+    ]
+  );
 in {
   programs.nushell = {
     enable = true;
-    configFile.source = ./config.nu;
-    extraConfig = lib.mkAfter (
-      lib.concatLines (
-        [
-          direnvHook
-        ]
-        ++ map (f: lib.readFile f) [
-          ./pixi.nu
-          ./external_completer.nu
-        ]
-      )
-    );
+    envFile.source = ./default_env.nu;
+    configFile.source = ./default_config.nu;
+    extraConfig = lib.mkMerge [
+      (lib.mkBefore extraConfigBefore)
+      (lib.mkAfter extraConfigAfter)
+    ];
     environmentVariables = {
+      VISUAL = ["code" "--wait"];
       EDITOR = "micro";
       PAGER = "ov";
       BAT_PAGER = "ov -F -H3";
