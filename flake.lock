@@ -198,6 +198,22 @@
         "type": "indirect"
       }
     },
+    "nu_scripts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742736308,
+        "narHash": "sha256-fzQ8f6mB7cVRbwVOCxPD/4nFmI3s5mXzJagn8us6ngA=",
+        "owner": "nushell",
+        "repo": "nu_scripts",
+        "rev": "e956708244820d2b98620ef0ed10e63cb7d42b3a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nushell",
+        "repo": "nu_scripts",
+        "type": "github"
+      }
+    },
     "opnix": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -227,6 +243,7 @@
         "nixos-facter-modules": "nixos-facter-modules",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
+        "nu_scripts": "nu_scripts",
         "opnix": "opnix",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
