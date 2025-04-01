@@ -1,3 +1,0 @@
-{
-  virt-manager.enable = true;
-}

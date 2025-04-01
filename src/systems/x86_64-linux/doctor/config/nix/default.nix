@@ -1,3 +1,0 @@
-{
-  distributedBuilds = true;
-}

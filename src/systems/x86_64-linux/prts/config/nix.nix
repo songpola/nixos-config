@@ -1,3 +1,0 @@
-{
-  settings.trusted-users = ["songpola"];
-}

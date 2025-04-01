@@ -1,5 +1,0 @@
-{
-  secrets = {
-    harmonia = {};
-  };
-}
