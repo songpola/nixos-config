@@ -25,9 +25,14 @@
 
     profiles.wsl.enable = true;
 
+    tools.enable = true;
+
     docker.enable = true;
 
     libvirtd.enable = true;
+
+    secrets.enable = true;
+    secrets.enableOpnix = true;
   };
 
   programs.virt-manager.enable = true;

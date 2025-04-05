@@ -23,31 +23,26 @@
       home = "24.11";
     };
 
-    profiles = {
-      server.enable = true;
-    };
+    profiles.server.enable = true;
 
     bootloader.grubEfi.enable = true;
 
-    zfs = {
-      enable = true;
-      hostId = "eb8b6756";
-    };
+    zfs.enable = true;
+    zfs.hostId = "eb8b6756";
 
     zramSwap.useDiskoPartition = true;
 
-    hardware.nvidia = {
-      enable = true;
-      # 1050Ti (Pascal) doesn't support open-source kernel module
-      useProprietaryKernelModule = true;
-    };
+    hardware.nvidia.enable = true;
+    # 1050Ti (Pascal) doesn't support open-source kernel module
+    hardware.nvidia.useProprietaryKernelModule = true;
 
-    docker = {
-      enable = true;
-      useZfsStorageDriver = true;
-    };
+    docker.enable = true;
+    docker.useZfsStorageDriver = true;
 
     libvirtd.enable = true;
+
+    secrets.enable = true;
+    secrets.enableSops = true;
   };
 
   imports = [

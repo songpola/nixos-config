@@ -1,9 +1,9 @@
 {
   # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # as well as the libraries available from your flake's inputs.
-  # lib,
+  lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -13,37 +13,22 @@
   # format, # A normalized name for the system target (eg. `iso`).
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
-  # All other arguments come from the system system.
-  # config,
+  # All other arguments come from the module system.
+  config,
   ...
-}: {
-  ${namespace} = {
-    stateVersions = {
-      system = "24.11";
-      home = "24.11";
-    };
-
-    profiles = {
-      guest = {
-        enable = true;
-        vmware = true;
-      };
-      server.enable = true;
-    };
-
-    bootloader.grubEfi.enable = true;
-
-    zfs.enable = true;
-    zfs.hostId = "9ba97379";
-
-    zramSwap.useDiskoPartition = true;
-
-    docker.enable = true;
-
-    libvirtd.enable = true;
+}: let
+  inherit (lib) mkEnableOption mkIf mkAfter readFile;
+  this = builtins.baseNameOf ./.;
+  cfg = config.${namespace}.${this};
+in {
+  options.${namespace}.${this} = {
+    enable = mkEnableOption "pixi";
   };
-
-  imports = [./disko.nix];
-
-  facter.reportPath = ./facter.json;
+  config = mkIf cfg.enable {
+    # Home Manager configs
+    snowfallorg.users.${namespace}.home.config = {
+      home.packages = [pkgs.pixi];
+      programs.nushell.extraConfig = mkAfter (readFile ./completion.nu); # autocompletion
+    };
+  };
 }

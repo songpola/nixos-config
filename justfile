@@ -9,6 +9,7 @@ generateHardwareConfig := ""
 repl:
     nix repl .
 
+alias l := lock
 lock:
     nix flake lock
 

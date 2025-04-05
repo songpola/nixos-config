@@ -33,10 +33,6 @@ in {
     };
     wsl.enable = mkEnableOption "profile for WSL";
     server.enable = mkEnableOption "profile for servers";
-    hardware.nvidia = {
-      enable = mkEnableOption "profile for NVIDIA hardwares";
-      useOpenSourceDriver = mkEnableOption "profile for NVIDIA hardwares";
-    };
   };
   config = mkMerge [
     (
@@ -74,16 +70,6 @@ in {
             ];
           };
         };
-      }
-    )
-    (
-      mkIf cfg.hardware.nvidia.enable {
-        # auto enable by nvidia-container-toolkit if needed
-        # https://github.com/NixOS/nixpkgs/blob/5115ec98d541f12b7b14eb0b91626cddaf3ae5b7/nixos/modules/services/hardware/nvidia-container-toolkit/default.nix#L123
-        #
-        # hardware.graphics.enable = true;
-
-        services.xserver.videoDrivers = ["nvidia"];
       }
     )
   ];

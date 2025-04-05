@@ -17,29 +17,37 @@
   config,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib) mkEnableOption mkIf mkMerge;
+  inherit (lib.${namespace}) public mkDefaultEnableOption;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
-    enable = mkEnableOption "Docker support";
-    useZfsStorageDriver = mkEnableOption "ZFS as the storage driver for Docker";
-    enableNvidiaGPU =
-      mkEnableOption "NVIDIA GPU support for Docker"
-      // {
-        default = config.${namespace}.hardware.nvidia.enable;
-      };
+    enable = mkDefaultEnableOption "Git default config";
+    use1PasswordWSL = mkEnableOption "the 1Password SSH agent with WSL integration";
   };
   config = mkIf cfg.enable {
-    # Don't install Docker on WSL
-    virtualisation.docker.enable = mkIf (!config.wsl.enable) true;
-    # Use Docker Desktop instead
-    wsl.docker-desktop.enable = true;
-
-    users.users.${namespace}.extraGroups = ["docker"];
-
-    virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
-
-    hardware.nvidia-container-toolkit.enable = mkIf cfg.enableNvidiaGPU true;
+    # Home Manager configs
+    snowfallorg.users.${namespace}.home.config = {
+      programs.git = {
+        enable = true;
+        userEmail = "1527535+songpola@users.noreply.github.com";
+        userName = "Songpol Anannetikul";
+        extraConfig = mkMerge [
+          {
+            init.defaultBranch = "main";
+          }
+          (mkIf cfg.use1PasswordWSL {
+            # Use the 1Password SSH agent with WSL integration
+            core.sshCommand = "ssh.exe";
+            # Sign Git commits with SSH
+            commit.gpgsign = true;
+            gpg.format = "ssh";
+            gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
+            user.signingkey = public.ssh;
+          })
+        ];
+      };
+    };
   };
 }

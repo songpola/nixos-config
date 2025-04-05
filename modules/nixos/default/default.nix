@@ -42,6 +42,7 @@ in {
       admin = true;
       home.config = {
         home.stateVersion = cfg.stateVersions.home;
+        programs.nh.enable = true;
       };
     };
 
@@ -51,10 +52,7 @@ in {
 
     security.sudo.wheelNeedsPassword = false;
 
-    programs = {
-      nh.enable = true;
-      nix-ld.enable = true;
-    };
+    programs.nix-ld.enable = true;
 
     nix = {
       # flake-utils-plus
