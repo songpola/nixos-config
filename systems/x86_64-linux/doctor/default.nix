@@ -25,11 +25,11 @@
 
     profiles.wsl.enable = true;
 
+    git.use1PasswordWSL = true;
+
     tools.enable = true;
 
     docker.enable = true;
-
-    libvirtd.enable = true;
 
     secrets.enable = true;
     secrets.enableOpnix = true;
