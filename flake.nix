@@ -1,44 +1,58 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.11";
-    unstable.url = "nixpkgs/nixos-unstable";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+
+    # https://nixos.org/manual/nixpkgs/stable/
+    nixpkgs.url = "nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
+    unstable.url = "nixpkgs/nixos-unstable"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable
 
     # https://snowfall.org/reference/lib/
-    snowfall-lib.url = "github:snowfallorg/lib";
-    snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # https://nix-community.github.io/home-manager/
-    home-manager.url = "home-manager/release-24.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      # https://github.com/nix-community/home-manager
+      url = "home-manager/release-24.11";
+      inputs.nixpkgs.follows = "unstable";
+    };
 
-    # https://github.com/nix-community/disko
-    disko.url = "disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko = {
+      # https://github.com/nix-community/disko
+      url = "disko";
+      inputs.nixpkgs.follows = "unstable";
+    };
 
-    # https://github.com/nix-community/nixos-facter
-    # https://github.com/nix-community/nixos-facter-modules
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+    nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 
     # https://nix-community.github.io/NixOS-WSL/
-    nixos-wsl.url = "github:nix-community/NixOS-WSL";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # https://github.com/brizzbuzz/opnix
-    opnix.url = "github:brizzbuzz/opnix";
-    opnix.inputs.nixpkgs.follows = "nixpkgs";
+    opnix = {
+      url = "github:brizzbuzz/opnix";
+      inputs.nixpkgs.follows = "unstable";
+    };
 
-    # https://github.com/Mic92/sops-nix
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "unstable";
+    };
   };
 
   outputs = inputs:
-    inputs.snowfall-lib.mkFlake {
+    with inputs; (snowfall-lib.mkFlake {
       inherit inputs;
       src = ./.;
       snowfall.namespace = "songpola";
-      systems.modules.nixos = with inputs;
+      channels-config.allowUnfree = true;
+      systems.modules.nixos =
         map (input: input.nixosModules.default) [
+          determinate
           disko
           nixos-wsl
           opnix
@@ -47,10 +61,9 @@
         ++ [
           nixos-facter-modules.nixosModules.facter
         ];
-      homes.modules = with inputs; [
+      homes.modules = [
         opnix.homeManagerModules.default
         sops-nix.homeManagerModules.sops
       ];
-      channels-config.allowUnfree = true;
-    };
+    });
 }
