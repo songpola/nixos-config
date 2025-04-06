@@ -61,7 +61,7 @@ in {
       linkInputs = true;
 
       settings = {
-        # To prevent the error: cannot ... because it lacks a signature by a trusted key
+        # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
         trusted-users = ["@wheel"];
 
         substituters = [
