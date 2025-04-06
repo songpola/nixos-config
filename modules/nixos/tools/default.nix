@@ -46,6 +46,7 @@ in {
           nil
           nixd
           alejandra
+          deploy-rs
           # node
           nodejs
           pnpm
@@ -56,6 +57,7 @@ in {
           dust # `du` replacement
           rustscan # port scanner
           lsof # list open files
+          isd # interactive systemd
         ])
         ++ (optionals cfg.utils [
           doggo # DNS client
@@ -64,9 +66,8 @@ in {
           croc # file transfer
           jq # JSON processor
           ouch # archive extractor
-          # security
-          sops
-          xkcdpass
+          sops # secrets management
+          xkcdpass # password generator
         ]);
     };
   };
