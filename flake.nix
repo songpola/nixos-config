@@ -78,9 +78,13 @@
           mkDeployNodes = self.lib.deploy.mkDeployNodes self;
         in {
           nodes = mkDeployNodes {
-            nixos-vmw = {
-              hostname = "192.168.146.128";
-              fastConnection = false;
+            # nixos-vmw = {
+            #   hostname = "192.168.146.128";
+            #   fastConnection = true;
+            # };
+            prts = {
+              hostname = "prts.tail7623c.ts.net";
+              remoteBuild = true;
             };
           };
         };
