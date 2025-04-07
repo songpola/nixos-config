@@ -31,8 +31,10 @@
 
     docker.enable = true;
 
-    secrets.enable = true;
-    secrets.enableOpnix = true;
+    secrets = {
+      enable = true;
+      enableOpnix = true;
+    };
   };
 
   programs.virt-manager.enable = true;

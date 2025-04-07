@@ -33,8 +33,10 @@
 
     bootloader.grubEfi.enable = true;
 
-    zfs.enable = true;
-    zfs.hostId = "9ba97379";
+    zfs = {
+      enable = true;
+      hostId = "9ba97379";
+    };
 
     zramSwap.useDiskoPartition = true;
 
