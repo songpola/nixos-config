@@ -2673,7 +2673,7 @@
           "value": 132
         },
         "slot": {
-          "bus": 2,
+          "bus": 3,
           "number": 0
         },
         "base_class": {
@@ -2708,8 +2708,8 @@
         },
         "model": "NECVMWar VMware SATA CD00",
         "sysfs_id": "/class/block/sr0",
-        "sysfs_bus_id": "2:0:0:0",
-        "sysfs_device_link": "/devices/pci0000:00/0000:00:11.0/0000:02:04.0/ata3/host2/target2:0:0/2:0:0:0",
+        "sysfs_bus_id": "3:0:0:0",
+        "sysfs_device_link": "/devices/pci0000:00/0000:00:11.0/0000:02:04.0/ata3/host3/target3:0:0/3:0:0:0",
         "unix_device_name": "/dev/sr0",
         "unix_device_number": {
           "type": 98,
@@ -2719,13 +2719,12 @@
         },
         "unix_device_names": [
           "/dev/cdrom",
-          "/dev/disk/by-diskseq/13",
+          "/dev/disk/by-diskseq/5",
           "/dev/disk/by-id/ata-VMware_Virtual_SATA_CDRW_Drive_00000000000000000001",
           "/dev/disk/by-label/nixos-24.11-x86_64",
           "/dev/disk/by-path/pci-0000:02:04.0-ata-1",
           "/dev/disk/by-path/pci-0000:02:04.0-ata-1.0",
           "/dev/disk/by-uuid/1980-01-01-00-00-00-00",
-          "/dev/root",
           "/dev/sr0"
         ],
         "unix_device_name2": "/dev/sg0",
@@ -2781,7 +2780,6 @@
           "constant_tsc",
           "rep_good",
           "nopl",
-          "xtopology",
           "tsc_reliable",
           "nonstop_tsc",
           "cpuid",
@@ -2926,13 +2924,12 @@
           "range": 0
         },
         "unix_device_names": [
-          "/dev/disk/by-diskseq/9",
+          "/dev/disk/by-diskseq/1",
           "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_1",
           "/dev/disk/by-id/nvme-eui.5516b96f804c0b2b000c296b2d267e42",
           "/dev/disk/by-path/pci-0000:03:00.0-nvme-1",
           "/dev/nvme0n1"
         ],
-        "rom_id": "0x80",
         "resources": [
           {
             "type": "disk_geo",
@@ -3005,17 +3002,16 @@
         "unix_device_number": {
           "type": 98,
           "major": 259,
-          "minor": 1,
+          "minor": 4,
           "range": 0
         },
         "unix_device_names": [
-          "/dev/disk/by-diskseq/10",
+          "/dev/disk/by-diskseq/2",
           "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_2",
           "/dev/disk/by-id/nvme-eui.2a6f9d7ce9cb72e5000c2963957cab07",
           "/dev/disk/by-path/pci-0000:03:00.0-nvme-2",
           "/dev/nvme0n2"
         ],
-        "rom_id": "0x81",
         "resources": [
           {
             "type": "disk_geo",
@@ -3039,6 +3035,39 @@
       },
       {
         "index": 59,
+        "attached_to": 0,
+        "class_list": ["disk", "block_device"],
+        "base_class": {
+          "hex": "0106",
+          "name": "Mass Storage Device",
+          "value": 262
+        },
+        "sub_class": {
+          "hex": "0000",
+          "name": "Disk",
+          "value": 0
+        },
+        "model": "Disk",
+        "sysfs_id": "/class/block/zram0",
+        "unix_device_name": "/dev/zram0",
+        "unix_device_number": {
+          "type": 98,
+          "major": 253,
+          "minor": 0,
+          "range": 1
+        },
+        "unix_device_names": ["/dev/zram0"],
+        "resources": [
+          {
+            "type": "size",
+            "unit": "sectors",
+            "value_1": 1011200,
+            "value_2": 4096
+          }
+        ]
+      },
+      {
+        "index": 60,
         "attached_to": 8,
         "class_list": ["disk", "block_device", "nvme"],
         "bus_type": {
@@ -3088,18 +3117,17 @@
         "unix_device_number": {
           "type": 98,
           "major": 259,
-          "minor": 2,
+          "minor": 7,
           "range": 0
         },
         "unix_device_names": [
-          "/dev/disk/by-diskseq/11",
+          "/dev/disk/by-diskseq/3",
           "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000",
           "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_3",
           "/dev/disk/by-id/nvme-eui.e6e09eaa2d6f9c47000c296ff4a0ea10",
           "/dev/disk/by-path/pci-0000:03:00.0-nvme-3",
           "/dev/nvme0n3"
         ],
-        "rom_id": "0x82",
         "resources": [
           {
             "type": "disk_geo",
@@ -3246,8 +3274,8 @@
     ],
     "hub": [
       {
-        "index": 61,
-        "attached_to": 63,
+        "index": 62,
+        "attached_to": 64,
         "class_list": ["usb", "hub"],
         "bus_type": {
           "hex": "0086",
@@ -3323,7 +3351,7 @@
         "module_alias": "usb:v0E0Fp0002d0100dc09dsc00dp00ic09isc00ip00in00"
       },
       {
-        "index": 62,
+        "index": 63,
         "attached_to": 21,
         "class_list": ["usb", "hub"],
         "bus_type": {
@@ -3342,7 +3370,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 6.12.17 ehci_hcd",
+          "name": "Linux 6.6.85 ehci_hcd",
           "value": 7531
         },
         "device": {
@@ -3352,11 +3380,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "6.12",
+          "name": "6.06",
           "value": 0
         },
         "serial": "0000:02:03.0",
-        "model": "Linux 6.12.17 ehci_hcd EHCI Host Controller",
+        "model": "Linux 6.6.85 ehci_hcd EHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-0:1.0",
         "sysfs_bus_id": "1-0:1.0",
         "resources": [
@@ -3398,10 +3426,10 @@
         "hotplug": "usb",
         "driver": "hub",
         "drivers": ["hub"],
-        "module_alias": "usb:v1D6Bp0002d0612dc09dsc00dp00ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0002d0606dc09dsc00dp00ic09isc00ip00in00"
       },
       {
-        "index": 63,
+        "index": 64,
         "attached_to": 16,
         "class_list": ["usb", "hub"],
         "bus_type": {
@@ -3420,7 +3448,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 6.12.17 uhci_hcd",
+          "name": "Linux 6.6.85 uhci_hcd",
           "value": 7531
         },
         "device": {
@@ -3430,11 +3458,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "6.12",
+          "name": "6.06",
           "value": 0
         },
         "serial": "0000:02:00.0",
-        "model": "Linux 6.12.17 uhci_hcd UHCI Host Controller",
+        "model": "Linux 6.6.85 uhci_hcd UHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:11.0/0000:02:00.0/usb2/2-0:1.0",
         "sysfs_bus_id": "2-0:1.0",
         "resources": [
@@ -3476,7 +3504,7 @@
         "hotplug": "usb",
         "driver": "hub",
         "drivers": ["hub"],
-        "module_alias": "usb:v1D6Bp0001d0612dc09dsc00dp00ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0001d0606dc09dsc00dp00ic09isc00ip00in00"
       }
     ],
     "memory": [
@@ -3499,7 +3527,7 @@
           {
             "type": "mem",
             "base": 0,
-            "range": 8280866816,
+            "range": 8284565504,
             "enabled": true,
             "access": "read_write",
             "prefetch": "unknown"
@@ -3513,8 +3541,8 @@
     ],
     "mouse": [
       {
-        "index": 60,
-        "attached_to": 63,
+        "index": 61,
+        "attached_to": 64,
         "class_list": ["mouse", "usb"],
         "bus_type": {
           "hex": "0086",
@@ -3747,7 +3775,26 @@
     ],
     "network_interface": [
       {
-        "index": 64,
+        "index": 67,
+        "attached_to": 0,
+        "class_list": ["network_interface"],
+        "base_class": {
+          "hex": "0107",
+          "name": "Network Interface",
+          "value": 263
+        },
+        "sub_class": {
+          "hex": "0000",
+          "name": "Loopback",
+          "value": 0
+        },
+        "model": "Loopback network interface",
+        "sysfs_id": "/class/net/lo",
+        "unix_device_name": "lo",
+        "unix_device_names": ["lo"]
+      },
+      {
+        "index": 68,
         "attached_to": 49,
         "class_list": ["network_interface"],
         "base_class": {
@@ -3779,25 +3826,6 @@
         "driver_module": "e1000",
         "drivers": ["e1000"],
         "driver_modules": ["e1000"]
-      },
-      {
-        "index": 65,
-        "attached_to": 0,
-        "class_list": ["network_interface"],
-        "base_class": {
-          "hex": "0107",
-          "name": "Network Interface",
-          "value": 263
-        },
-        "sub_class": {
-          "hex": "0000",
-          "name": "Loopback",
-          "value": 0
-        },
-        "model": "Loopback network interface",
-        "sysfs_id": "/class/net/lo",
-        "unix_device_name": "lo",
-        "unix_device_names": ["lo"]
       }
     ],
     "pci": [
@@ -4111,7 +4139,7 @@
             "type": "io",
             "base": 8192,
             "range": 256,
-            "enabled": true,
+            "enabled": false,
             "access": "read_write"
           },
           {
@@ -4147,7 +4175,7 @@
         ],
         "detail": {
           "function": 0,
-          "command": 7,
+          "command": 6,
           "header_type": 0,
           "secondary_bus": 0,
           "irq": 17,
@@ -4211,7 +4239,7 @@
             "type": "io",
             "base": 12288,
             "range": 8,
-            "enabled": true,
+            "enabled": false,
             "access": "read_write"
           },
           {
@@ -4239,7 +4267,7 @@
         ],
         "detail": {
           "function": 0,
-          "command": 1031,
+          "command": 1030,
           "header_type": 0,
           "secondary_bus": 0,
           "irq": 19,
@@ -4405,7 +4433,7 @@
         "resources": [
           {
             "type": "irq",
-            "base": 91,
+            "base": 88,
             "triggered": 0,
             "enabled": true
           },
@@ -4431,7 +4459,7 @@
           "command": 1030,
           "header_type": 0,
           "secondary_bus": 0,
-          "irq": 91,
+          "irq": 88,
           "prog_if": 1
         },
         "driver": "ahci",
@@ -5250,8 +5278,6 @@
           "value": 2
         },
         "syndrome": 0,
-        "array_address": 9223372036854775808,
-        "device_address": 9223372036854775808,
         "range": 2147483648
       }
     ],
