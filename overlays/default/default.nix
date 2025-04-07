@@ -15,7 +15,7 @@
   inherit (channels.unstable) tailscale isd lazydocker;
   inherit (channels.unstable-small) carapace;
 
-  btop = prev.btop.override {
+  btopCuda = prev.btop.override {
     cudaSupport = true;
   };
 }

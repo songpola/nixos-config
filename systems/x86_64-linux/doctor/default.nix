@@ -25,16 +25,16 @@
 
     profiles.wsl.enable = true;
 
-    git.use1PasswordWSL = true;
-
-    tools.enable = true;
-
-    docker.enable = true;
-
     secrets = {
       enable = true;
       enableOpnix = true;
     };
+
+    docker.enable = true;
+
+    git.use1PasswordWSL = true;
+
+    tools.development = true;
   };
 
   programs.virt-manager.enable = true;

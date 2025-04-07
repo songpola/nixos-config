@@ -17,60 +17,81 @@
   config,
   ...
 }: let
-  inherit (lib) mkEnableOption mkIf optionals;
+  inherit (lib) mkEnableOption mkIf optionals mkMerge;
   inherit (lib.${namespace}) mkDefaultEnableOption;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
-    enable = mkEnableOption "tools module";
-    development = mkDefaultEnableOption "development tools";
-    sysadmin = mkDefaultEnableOption "sysadmin tools";
+    enable = mkDefaultEnableOption "tools module";
     utils = mkDefaultEnableOption "utility tools";
+    sysadmin = mkDefaultEnableOption "sysadmin tools";
+    development = mkEnableOption "development tools";
   };
-  config = mkIf cfg.enable {
-    # python: pixi
-    ${namespace}.pixi.enable = mkIf cfg.development true;
+  config = mkIf cfg.enable (
+    mkMerge [
+      (mkIf cfg.utils {
+        # Home Manager configs
+        snowfallorg.users.${namespace}.home.config = {
+          programs = {
+            jq.enable = true;
+          };
+          home.packages = with pkgs; [
+            doggo # DNS client
+            httpie # HTTP client
+            wget # file downloader
+            croc # file transfer
+            ouch # archive extractor
+            sops # secrets management
+            xkcdpass # password generator
+          ];
+        };
+      })
+      (mkIf cfg.sysadmin {
+        # Home Manager configs
+        snowfallorg.users.${namespace}.home.config = {
+          programs = {
+            btop = {
+              enable = true;
+              # Enable CUDA support for btop if NVIDIA GPU is enabled
+              package = mkIf (config.${namespace}.hardware.nvidia.enable) pkgs.btopCuda;
+            };
+          };
+          home.packages = with pkgs; [
+            duf # `df` replacement
+            dust # `du` replacement
+            rustscan # port scanner
+            lsof # list open files
+            isd # interactive systemd
+          ];
+        };
+      })
+      (mkIf cfg.development {
+        # pixi (python)
+        ${namespace}.pixi.enable = true;
 
-    # Home Manager configs
-    snowfallorg.users.${namespace}.home.config = {
-      home.packages = with pkgs;
-        (optionals cfg.development [
-          just # task runner
-          watchexec # file watcher
-          caddy # use as formatter
-          # dev environment
-          devbox
-          coder
-          # nix
-          nil
-          nixd
-          alejandra
-          deploy-rs
-          nix-diff
-          nvd
-          # node
-          nodejs
-          pnpm
-        ])
-        ++ (optionals cfg.sysadmin [
-          btop # system monitor
-          duf # `df` replacement
-          dust # `du` replacement
-          rustscan # port scanner
-          lsof # list open files
-          isd # interactive systemd
-        ])
-        ++ (optionals cfg.utils [
-          doggo # DNS client
-          httpie # HTTP client
-          wget # file downloader
-          croc # file transfer
-          jq # JSON processor
-          ouch # archive extractor
-          sops # secrets management
-          xkcdpass # password generator
-        ]);
-    };
-  };
+        # Home Manager configs
+        snowfallorg.users.${namespace}.home.config = {
+          home.packages = with pkgs; (optionals cfg.development [
+            just # task runner
+            watchexec # file watcher
+            caddy # use as formatter
+            # dev environment
+            devbox
+            coder
+            # nix
+            nil
+            nixd
+            alejandra
+            deploy-rs
+            nix-diff
+            nvd
+            # node
+            nodejs
+            pnpm
+          ]);
+        };
+      })
+    ]
+  );
 }
