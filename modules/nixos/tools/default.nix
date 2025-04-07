@@ -47,6 +47,8 @@ in {
           nixd
           alejandra
           deploy-rs
+          nix-diff
+          nvd
           # node
           nodejs
           pnpm
