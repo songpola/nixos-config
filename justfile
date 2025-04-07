@@ -5,6 +5,7 @@ set script-interpreter := ["nu"]
 buildOnRemote := "true"
 useSubstitutes := "true"
 generateHardwareConfig := ""
+secrets := "modules/nixos/secrets/sops-nix.yaml"
 
 repl:
     nix repl .
@@ -22,7 +23,6 @@ switch host="." *FLAGS="":
     nh os switch {{ host }} {{ FLAGS }}
 
 alias d := diff
-[script]
 diff host pathA pathB *FLAGS="":
     let a = nix build --no-link --print-out-paths "{{ pathA }}#nixosConfigurations.{{ host }}.config.system.build.toplevel"
     let b = nix build --no-link --print-out-paths "{{ pathB }}#nixosConfigurations.{{ host }}.config.system.build.toplevel"
@@ -80,8 +80,6 @@ disko diskConfig run="false" mode="destroy,format,mount":
         (if not {{ run }} { --dry-run })
     ] | flatten | compact
     sudo nix run disko -- ...$flags {{ diskConfig }}
-
-secrets := "src/lib/secrets/sops-nix.yaml"
 
 sops:
     sops {{ secrets }}
