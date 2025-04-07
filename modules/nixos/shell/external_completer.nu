@@ -6,6 +6,7 @@
 
 let zoxide_completer = {|spans: list<string>|
     $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD}
+    | if ($in | is-not-empty) { $in } else { null }
 }
 
 # NOTE: As of carapace v1.3.0,
@@ -19,7 +20,8 @@ let zoxide_completer = {|spans: list<string>|
 # ```
 let _carapace_completer = $env.config.completions.external.completer # from carapace.enableNushellIntegration
 let carapace_completer = {|spans: list<string>|
-    do $_carapace_completer $spans | if ($in | default [] | where value =~ 'ERR' | is-empty) { $in } else { null }
+    # return null to fall back to Nushell's built-in file completions
+    do $_carapace_completer $spans | if ($in | is-not-empty) { $in } else { null }
 }
 
 let expand_alias = {|spans: list<string>|
