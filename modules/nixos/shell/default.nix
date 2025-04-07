@@ -73,11 +73,8 @@ in {
           # '';
         };
 
-        # autocompletion
-        carapace = {
-          enable = true;
-          enableNushellIntegration = false; # use custom external_completer script
-        };
+        # completer
+        carapace.enable = true;
 
         # prompt
         starship = {

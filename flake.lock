@@ -465,7 +465,8 @@
         "opnix": "opnix",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
-        "unstable": "unstable"
+        "unstable": "unstable",
+        "unstable-small": "unstable-small"
       }
     },
     "snowfall-lib": {
@@ -567,6 +568,21 @@
       "original": {
         "id": "nixpkgs",
         "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
+    "unstable-small": {
+      "locked": {
+        "lastModified": 1743948488,
+        "narHash": "sha256-uKcMmNPvGPb58MhAFru/CMDYl69nZRK3A3SLch9ejgA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "da98c5d529f118c82e80a3f9b4fb01fdeba3cf7a",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable-small",
         "type": "indirect"
       }
     },
