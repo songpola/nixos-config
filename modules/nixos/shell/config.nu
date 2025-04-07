@@ -12,8 +12,8 @@ $env.PATH = (
 )
 
 alias l = ls
+alias ga = git add .
 alias gcm = czg emoji gpg
-alias nos = nh os switch
 alias bm = batman
 alias j = just
 alias c = clear
