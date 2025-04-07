@@ -22,7 +22,7 @@
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
-    enable = mkEnableOption "ZFS support";
+    enable = mkEnableOption "ZFS module";
     hostId = mkOption {
       type = lib.types.str;
       example = "9ba97379";

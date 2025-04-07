@@ -23,7 +23,7 @@
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
-    enable = mkEnableOption "sets of tools";
+    enable = mkEnableOption "tools module";
     development = mkDefaultEnableOption "development tools";
     sysadmin = mkDefaultEnableOption "sysadmin tools";
     utils = mkDefaultEnableOption "utility tools";

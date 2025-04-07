@@ -23,7 +23,7 @@
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
-    enable = mkEnableOption "secrets features";
+    enable = mkEnableOption "secrets module";
     enableSops = mkEnableOption "SOPS (sops-nix)";
     enableOpnix = mkEnableOption "OPNix (1Password Secrets for NixOS)";
   };

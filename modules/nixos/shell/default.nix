@@ -35,7 +35,7 @@
   };
 in {
   options.${namespace}.${this} = {
-    enable = mkDefaultEnableOption "shell settings";
+    enable = mkDefaultEnableOption "shell module";
   };
   config = mkIf cfg.enable {
     # Home Manager configs
