@@ -21,6 +21,13 @@ alias s := switch
 switch host="." *FLAGS="":
     nh os switch {{ host }} {{ FLAGS }}
 
+alias d := diff
+[script]
+diff host pathA pathB *FLAGS="":
+    let a = nix build --no-link --print-out-paths "{{ pathA }}#nixosConfigurations.{{ host }}.config.system.build.toplevel"
+    let b = nix build --no-link --print-out-paths "{{ pathB }}#nixosConfigurations.{{ host }}.config.system.build.toplevel"
+    nvd diff $a $b
+
 alias r := remote
 [script]
 remote op hostname host="" *FLAGS="":
