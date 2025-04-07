@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -41,5 +41,11 @@ in {
     virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
 
     hardware.nvidia-container-toolkit.enable = mkIf cfg.enableNvidiaGPU true;
+
+    snowfallorg.users.${namespace}.home.config = {
+      home.packages = with pkgs; [
+        lazydocker
+      ];
+    };
   };
 }

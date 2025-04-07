@@ -12,7 +12,7 @@
   # inputs,
   ...
 }: final: prev: {
-  inherit (channels.unstable) tailscale isd;
+  inherit (channels.unstable) tailscale isd lazydocker;
   inherit (channels.unstable-small) carapace;
 
   btop = prev.btop.override {
