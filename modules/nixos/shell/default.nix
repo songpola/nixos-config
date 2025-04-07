@@ -29,6 +29,7 @@
     PAGER = "ov";
     BAT_PAGER = "ov -F -H3";
     MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
+    SYSTEMD_PAGER = "lnav";
     SYSTEMD_PAGERSECURE = "false"; # no need to set LESSSECURE=1 for ov pager
   };
   envVarsNushellOverride = {
@@ -45,6 +46,7 @@ in {
         packages = with pkgs; [
           uutils-coreutils-noprefix # coreutils replacement
           ov # pager
+          lnav # log viewer
         ];
         shellAliases = {
           n = "nu";
