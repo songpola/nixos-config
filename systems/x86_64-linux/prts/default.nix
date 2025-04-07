@@ -27,28 +27,43 @@
 
     bootloader.grubEfi.enable = true;
 
-    zfs.enable = true;
-    zfs.hostId = "eb8b6756";
+    zfs = {
+      enable = true;
+      hostId = "eb8b6756";
+    };
 
     zramSwap.useDiskoPartition = true;
 
-    hardware.nvidia.enable = true;
-    # 1050Ti (Pascal) doesn't support open-source kernel module
-    hardware.nvidia.useProprietaryKernelModule = true;
+    network = {
+      enable = true;
+      bridge = {
+        enable = true;
+        interface = "eno1";
+      };
+    };
 
-    docker.enable = true;
-    docker.useZfsStorageDriver = true;
+    hardware = {
+      nvidia.enable = true;
+      # 1050Ti (Pascal) doesn't support open-source kernel module
+      nvidia.useProprietaryKernelModule = true;
+    };
+
+    secrets = {
+      enable = true;
+      enableSops = true;
+    };
+
+    docker = {
+      enable = true;
+      useZfsStorageDriver = true;
+    };
 
     libvirtd.enable = true;
-
-    secrets.enable = true;
-    secrets.enableSops = true;
   };
 
-  imports = [
-    ./hardware-configuration.nix
-    ./disko.nix
-  ];
+  imports = [./disko.nix];
+
+  facter.reportPath = ./facter.json;
 
   services.tailscale.extraSetFlags = [
     "--advertise-routes=10.0.0.0/16"
