@@ -1,9 +1,3 @@
-# let fish_completer = {|spans: list<string>|
-#     fish --command $'complete "--do-complete=($spans | str join " ")"'
-#     | from tsv --flexible --noheaders --no-infer
-#     | rename value description
-# }
-
 let zoxide_completer = {|spans: list<string>|
     $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD}
     | if ($in | is-not-empty) { $in } else { null }

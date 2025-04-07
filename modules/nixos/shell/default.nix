@@ -23,6 +23,7 @@
   cfg = config.${namespace}.${this};
 
   envVars = {
+    CARAPACE_BRIDGES = "fish";
     VISUAL = "code --wait";
     EDITOR = "micro";
     PAGER = "ov";
@@ -62,6 +63,8 @@ in {
           ];
           environmentVariables = envVars // envVarsNushellOverride;
         };
+
+        fish.enable = true; # use as completer
 
         bash = {
           enable = true;
