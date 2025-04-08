@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkIf mkMerge mkBefore mkAfter readFile;
-  inherit (lib.${namespace}) mkDefaultEnableOption;
+  inherit (lib.${namespace}) mkDefaultEnableOption mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 
@@ -39,107 +39,102 @@ in {
   options.${namespace}.${this} = {
     enable = mkDefaultEnableOption "shells module";
   };
-  config = mkIf cfg.enable {
-    # Home Manager configs
-    snowfallorg.users.${namespace}.home.config = {
-      home = {
-        packages = with pkgs; [
-          uutils-coreutils-noprefix # coreutils replacement
-          ov # pager
-          lnav # log viewer
-        ];
-        shellAliases = {
-          n = "nu";
-          c = "clear";
-          e = "exit";
-        };
-      };
-      programs = {
-        nushell = {
-          enable = true;
-          envFile.source = ./default_env.nu;
-          configFile.source = ./default_config.nu;
-          extraConfig = mkMerge [
-            (mkBefore (readFile ./config.nu))
-            (mkAfter (readFile ./external_completer.nu))
-          ];
-          environmentVariables = envVars // envVarsNushellOverride;
-        };
-
-        fish.enable = true; # use as completer
-
-        bash = {
-          enable = true;
-          sessionVariables = envVars;
-          initExtra = mkAfter ''
-            # Use nushell in place of bash
-            # keep this line at the bottom of ~/.bashrc
-            command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
-          '';
-        };
-
-        # completer
-        carapace.enable = true;
-
-        # prompt
-        starship = {
-          enable = true;
-          settings = {
-            shell.disabled = false;
-            nix_shell.heuristic = true;
-          };
-        };
-
-        # `cat` and `man` replacements
-        bat = {
-          enable = true;
-          extraPackages = with pkgs.bat-extras; [
-            batman
-            batgrep
-          ];
-          config = {
-            wrap = "never";
-          };
-        };
-
-        # `ls` replacement
-        eza = {
-          enable = true;
-          enableBashIntegration = true;
-          enableNushellIntegration = true;
-          extraOptions = [
-            "-g"
-            "--group-directories-first"
-          ];
-        };
-
-        # `cd` replacement
-        zoxide.enable = true;
-
-        # `grep` replacement
-        ripgrep.enable = true;
-
-        # auto switch env
-        direnv = {
-          enable = true;
-          nix-direnv.enable = true;
-        };
-
-        # text editor
-        micro.enable = true;
-
-        # `man` alternative
-        tealdeer = {
-          enable = true;
-          settings.updates.auto_update = true;
-        };
-
-        # fuzzy finder
-        fzf.enable = true;
-
-        # terminal workspace
-        zellij.enable = true;
+  config = mkIf cfg.enable (mkHomeConfig {
+    home = {
+      packages = with pkgs; [
+        ov # pager
+        lnav # log viewer
+      ];
+      shellAliases = {
+        c = "clear";
+        e = "exit";
       };
     };
-  };
+    programs = {
+      nushell = {
+        enable = true;
+        envFile.source = ./default_env.nu;
+        configFile.source = ./default_config.nu;
+        extraConfig = mkMerge [
+          (mkBefore (readFile ./config.nu))
+          (mkAfter (readFile ./external_completer.nu))
+        ];
+        environmentVariables = envVars // envVarsNushellOverride;
+      };
+
+      fish.enable = true; # use as completer
+
+      bash = {
+        enable = true;
+        sessionVariables = envVars;
+        initExtra = mkAfter ''
+          # Use nushell in place of bash
+          # keep this line at the bottom of ~/.bashrc
+          command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
+        '';
+      };
+
+      # completer
+      carapace.enable = true;
+
+      # prompt
+      starship = {
+        enable = true;
+        settings = {
+          shell.disabled = false;
+          nix_shell.heuristic = true;
+        };
+      };
+
+      # `cat` and `man` replacements
+      bat = {
+        enable = true;
+        extraPackages = with pkgs.bat-extras; [
+          batman
+          batgrep
+        ];
+        config = {
+          wrap = "never";
+        };
+      };
+
+      # `ls` replacement
+      eza = {
+        enable = true;
+        enableBashIntegration = true;
+        enableNushellIntegration = true;
+        extraOptions = [
+          "-g"
+          "--group-directories-first"
+        ];
+      };
+
+      # `cd` replacement
+      zoxide.enable = true;
+
+      # `grep` replacement
+      ripgrep.enable = true;
+
+      # auto switch env
+      direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
+
+      # text editor
+      micro.enable = true;
+
+      # `man` alternative
+      tealdeer = {
+        enable = true;
+        settings.updates.auto_update = true;
+      };
+
+      # fuzzy finder
+      fzf.enable = true;
+
+      # terminal workspace
+      zellij.enable = true;
+    };
+  });
 }

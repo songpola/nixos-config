@@ -18,6 +18,7 @@
   ...
 }: let
   inherit (lib) mkIf mkEnableOption;
+  inherit (lib.${namespace}) mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -30,22 +31,23 @@ in {
         default = config.${namespace}.hardware.nvidia.enable;
       };
   };
-  config = mkIf cfg.enable {
-    # Don't install Docker on WSL
-    virtualisation.docker.enable = mkIf (!config.wsl.enable) true;
-    # Use Docker Desktop instead
-    wsl.docker-desktop.enable = true;
+  config = mkIf cfg.enable (
+    {
+      # Don't install Docker on WSL
+      virtualisation.docker.enable = mkIf (!config.wsl.enable) true;
+      # Use Docker Desktop instead
+      wsl.docker-desktop.enable = true;
 
-    users.users.${namespace}.extraGroups = ["docker"];
+      users.users.${namespace}.extraGroups = ["docker"];
 
-    virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
+      virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
 
-    hardware.nvidia-container-toolkit.enable = mkIf cfg.enableNvidiaGPU true;
-
-    snowfallorg.users.${namespace}.home.config = {
+      hardware.nvidia-container-toolkit.enable = mkIf cfg.enableNvidiaGPU true;
+    }
+    // mkHomeConfig {
       home.packages = with pkgs; [
         lazydocker
       ];
-    };
-  };
+    }
+  );
 }

@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf optionals mkMerge;
-  inherit (lib.${namespace}) mkDefaultEnableOption;
+  inherit (lib.${namespace}) mkDefaultEnableOption mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -30,48 +30,42 @@ in {
   };
   config = mkIf cfg.enable (
     mkMerge [
-      (mkIf cfg.utils {
-        # Home Manager configs
-        snowfallorg.users.${namespace}.home.config = {
-          programs = {
-            jq.enable = true;
-          };
-          home.packages = with pkgs; [
-            doggo # DNS client
-            httpie # HTTP client
-            wget # file downloader
-            croc # file transfer
-            ouch # archive extractor
-            sops # secrets management
-            xkcdpass # password generator
-          ];
+      (mkIf cfg.utils (mkHomeConfig {
+        programs = {
+          jq.enable = true;
         };
-      })
-      (mkIf cfg.sysadmin {
-        # Home Manager configs
-        snowfallorg.users.${namespace}.home.config = {
-          programs = {
-            btop = {
-              enable = true;
-              # Enable CUDA support for btop if NVIDIA GPU is enabled
-              package = mkIf (config.${namespace}.hardware.nvidia.enable) pkgs.btopCuda;
-            };
+        home.packages = with pkgs; [
+          doggo # DNS client
+          httpie # HTTP client
+          wget # file downloader
+          croc # file transfer
+          ouch # archive extractor
+          sops # secrets management
+          xkcdpass # password generator
+        ];
+      }))
+      (mkIf cfg.sysadmin (mkHomeConfig {
+        programs = {
+          btop = {
+            enable = true;
+            # Enable CUDA support for btop if NVIDIA GPU is enabled
+            package = mkIf (config.${namespace}.hardware.nvidia.enable) pkgs.btopCuda;
           };
-          home.packages = with pkgs; [
-            duf # `df` replacement
-            dust # `du` replacement
-            rustscan # port scanner
-            lsof # list open files
-            isd # interactive systemd
-          ];
         };
-      })
-      (mkIf cfg.development {
-        # pixi (python)
-        ${namespace}.pixi.enable = true;
-
-        # Home Manager configs
-        snowfallorg.users.${namespace}.home.config = {
+        home.packages = with pkgs; [
+          duf # `df` replacement
+          dust # `du` replacement
+          rustscan # port scanner
+          lsof # list open files
+          isd # interactive systemd
+        ];
+      }))
+      (mkIf cfg.development (
+        {
+          # pixi (python)
+          ${namespace}.pixi.enable = true;
+        }
+        // mkHomeConfig {
           home.packages = with pkgs; (optionals cfg.development [
             just # task runner
             watchexec # file watcher
@@ -90,8 +84,8 @@ in {
             nodejs
             pnpm
           ]);
-        };
-      })
+        }
+      ))
     ]
   );
 }

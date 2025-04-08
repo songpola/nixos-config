@@ -3,7 +3,7 @@
   # as well as the libraries available from your flake's inputs.
   lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
-  # pkgs,
+  pkgs,
   # You also have access to your flake's inputs.
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkOption;
-  inherit (lib.${namespace}) public;
+  inherit (lib.${namespace}) public mkHomeConfig;
   cfg = config.${namespace};
 in {
   options.${namespace} = {
@@ -35,42 +35,46 @@ in {
       };
     };
   };
-  config = {
-    system.stateVersion = cfg.stateVersions.system;
+  config =
+    {
+      system.stateVersion = cfg.stateVersions.system;
 
-    snowfallorg.users.${namespace} = {
-      admin = true;
-      home.config = {
-        home.stateVersion = cfg.stateVersions.home;
-        programs.nh.enable = true;
+      snowfallorg.users.${namespace}.admin = true;
+
+      users.users.${namespace}.openssh.authorizedKeys.keys = [public.ssh];
+
+      time.timeZone = "Asia/Bangkok";
+
+      security.sudo.wheelNeedsPassword = false;
+
+      programs.nix-ld.enable = true;
+
+      nix = {
+        # flake-utils-plus
+        generateNixPathFromInputs = true;
+        generateRegistryFromInputs = true;
+        linkInputs = true;
+
+        settings = {
+          # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
+          trusted-users = ["@wheel"];
+
+          substituters = [
+            "https://nix-community.cachix.org"
+          ];
+          trusted-public-keys = [
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          ];
+        };
       };
-    };
-
-    users.users.${namespace}.openssh.authorizedKeys.keys = [public.ssh];
-
-    time.timeZone = "Asia/Bangkok";
-
-    security.sudo.wheelNeedsPassword = false;
-
-    programs.nix-ld.enable = true;
-
-    nix = {
-      # flake-utils-plus
-      generateNixPathFromInputs = true;
-      generateRegistryFromInputs = true;
-      linkInputs = true;
-
-      settings = {
-        # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
-        trusted-users = ["@wheel"];
-
-        substituters = [
-          "https://nix-community.cachix.org"
-        ];
-        trusted-public-keys = [
-          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    }
+    // mkHomeConfig {
+      home = {
+        stateVersion = cfg.stateVersions.home;
+        packages = with pkgs; [
+          uutils-coreutils-noprefix # coreutils replacement
         ];
       };
+      programs.nh.enable = true;
     };
-  };
 }

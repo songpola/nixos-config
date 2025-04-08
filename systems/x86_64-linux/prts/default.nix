@@ -43,9 +43,11 @@
     };
 
     hardware = {
-      nvidia.enable = true;
-      # 1050Ti (Pascal) doesn't support open-source kernel module
-      nvidia.useProprietaryKernelModule = true;
+      nvidia = {
+        enable = true;
+        # 1050Ti (Pascal) doesn't support open-source kernel module
+        useProprietaryKernelModule = true;
+      };
     };
 
     secrets = {

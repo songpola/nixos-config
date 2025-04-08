@@ -18,17 +18,17 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf mkAfter readFile;
+  inherit (lib.${namespace}) mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
     enable = mkEnableOption "pixi";
   };
-  config = mkIf cfg.enable {
-    # Home Manager configs
-    snowfallorg.users.${namespace}.home.config = {
-      home.packages = [pkgs.pixi];
-      programs.nushell.extraConfig = mkAfter (readFile ./completion.nu); # autocompletion
-    };
-  };
+  config = mkIf cfg.enable (mkHomeConfig {
+    home.packages = [pkgs.pixi];
+
+    # completion
+    programs.nushell.extraConfig = mkAfter (readFile ./completion.nu);
+  });
 }

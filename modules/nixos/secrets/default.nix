@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkIf mkEnableOption;
-  inherit (pkgs) writeText;
+  inherit (lib.${namespace}) mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -27,16 +27,18 @@ in {
     enableSops = mkEnableOption "SOPS (sops-nix)";
     enableOpnix = mkEnableOption "OPNix (1Password Secrets for NixOS)";
   };
-  config = mkIf cfg.enable {
-    # Need to be enabled for the Home Manager module to work
-    services.onepassword-secrets = {
-      enable = true;
-      users = [namespace];
-      configFile = writeText "secrets.json" (builtins.toJSON {
-        secrets = []; # no system secrets
-      });
-    };
-    snowfallorg.users.${namespace}.home.config = {
+  config = mkIf cfg.enable (
+    {
+      # Need to be enabled for the Home Manager module to work
+      services.onepassword-secrets = {
+        enable = true;
+        users = [namespace];
+        configFile = pkgs.writeText "secrets.json" (builtins.toJSON {
+          secrets = []; # no system secrets
+        });
+      };
+    }
+    // (mkHomeConfig {
       sops = mkIf cfg.enableSops {
         defaultSopsFile = ./sops-nix.yaml;
         # For deployment target,
@@ -54,6 +56,6 @@ in {
           }
         ];
       };
-    };
-  };
+    })
+  );
 }

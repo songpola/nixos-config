@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf mkMerge;
-  inherit (lib.${namespace}) public mkDefaultEnableOption;
+  inherit (lib.${namespace}) public mkDefaultEnableOption mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -26,28 +26,25 @@ in {
     enable = mkDefaultEnableOption "Git default config";
     use1PasswordWSL = mkEnableOption "the 1Password SSH agent with WSL integration";
   };
-  config = mkIf cfg.enable {
-    # Home Manager configs
-    snowfallorg.users.${namespace}.home.config = {
-      programs.git = {
-        enable = true;
-        userEmail = "1527535+songpola@users.noreply.github.com";
-        userName = "Songpol Anannetikul";
-        extraConfig = mkMerge [
-          {
-            init.defaultBranch = "main";
-          }
-          (mkIf cfg.use1PasswordWSL {
-            # Use the 1Password SSH agent with WSL integration
-            core.sshCommand = "ssh.exe";
-            # Sign Git commits with SSH
-            commit.gpgsign = true;
-            gpg.format = "ssh";
-            gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-            user.signingkey = public.ssh;
-          })
-        ];
-      };
+  config = mkIf cfg.enable (mkHomeConfig {
+    programs.git = {
+      enable = true;
+      userEmail = "1527535+songpola@users.noreply.github.com";
+      userName = "Songpol Anannetikul";
+      extraConfig = mkMerge [
+        {
+          init.defaultBranch = "main";
+        }
+        (mkIf cfg.use1PasswordWSL {
+          # Use the 1Password SSH agent with WSL integration
+          core.sshCommand = "ssh.exe";
+          # Sign Git commits with SSH
+          commit.gpgsign = true;
+          gpg.format = "ssh";
+          gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
+          user.signingkey = public.ssh;
+        })
+      ];
     };
-  };
+  });
 }
