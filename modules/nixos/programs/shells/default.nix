@@ -122,7 +122,12 @@ in {
       };
 
       # text editor
-      micro.enable = true;
+      micro = {
+        enable = true;
+        settings = {
+          clipboard = "terminal";
+        };
+      };
 
       # `man` alternative
       tealdeer = {
