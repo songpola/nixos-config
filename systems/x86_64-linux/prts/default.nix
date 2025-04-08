@@ -18,63 +18,61 @@
   ...
 }: let
   inherit (lib.${namespace}) mkHomeConfig;
-in
-  {
-    ${namespace} = {
-      stateVersions = {
-        system = "24.11";
-        home = "24.11";
-      };
-
-      profiles.server.enable = true;
-
-      bootloader.grubEfi.enable = true;
-
-      zfs = {
-        enable = true;
-        hostId = "eb8b6756";
-      };
-
-      zramSwap.useDiskoPartition = true;
-
-      network = {
-        enable = true;
-        bridge = {
-          enable = true;
-          interface = "eno1";
-        };
-      };
-
-      hardware = {
-        nvidia = {
-          enable = true;
-          # 1050Ti (Pascal) doesn't support open-source kernel module
-          useProprietaryKernelModule = true;
-        };
-      };
-
-      secrets = {
-        enable = true;
-        enableSops = true;
-      };
-
-      docker = {
-        enable = true;
-        useZfsStorageDriver = true;
-      };
-
-      libvirtd.enable = true;
+in {
+  ${namespace} = {
+    stateVersions = {
+      system = "24.11";
+      home = "24.11";
     };
 
-    imports = [./disko.nix];
+    profiles.server.enable = true;
 
-    facter.reportPath = ./facter.json;
+    bootloader.grubEfi.enable = true;
 
-    services.tailscale.extraSetFlags = [
-      "--advertise-routes=10.0.0.0/16"
-      "--advertise-exit-node"
-    ];
-  }
-  // mkHomeConfig {
-    services.syncthing.enable = true;
-  }
+    zfs = {
+      enable = true;
+      hostId = "eb8b6756";
+    };
+
+    zramSwap.useDiskoPartition = true;
+
+    network = {
+      enable = true;
+      bridge = {
+        enable = true;
+        interface = "eno1";
+      };
+    };
+
+    hardware = {
+      nvidia = {
+        enable = true;
+        # 1050Ti (Pascal) doesn't support open-source kernel module
+        useProprietaryKernelModule = true;
+      };
+    };
+
+    secrets = {
+      enable = true;
+      enableSops = true;
+    };
+
+    docker = {
+      enable = true;
+      useZfsStorageDriver = true;
+    };
+
+    libvirtd.enable = true;
+
+    syncthing.enable = true;
+  };
+
+  imports = [./disko.nix];
+
+  facter.reportPath = ./facter.json;
+
+  services.tailscale.extraSetFlags = [
+    "--advertise-routes=10.0.0.0/16"
+    "--advertise-exit-node"
+  ];
+}
