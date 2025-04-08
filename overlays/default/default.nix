@@ -12,8 +12,7 @@
   # inputs,
   ...
 }: final: prev: {
-  inherit (channels.unstable) tailscale isd lazydocker;
-  inherit (channels.unstable-small) carapace;
+  inherit (channels.unstable) tailscale isd lazydocker carapace;
 
   btopCuda = prev.btop.override {
     cudaSupport = true;

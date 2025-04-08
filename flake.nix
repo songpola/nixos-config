@@ -5,7 +5,7 @@
     # https://nixos.org/manual/nixpkgs/stable/
     nixpkgs.url = "nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
     unstable.url = "nixpkgs/nixos-unstable"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable
-    unstable-small.url = "nixpkgs/nixos-unstable-small"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable-small
+    # unstable-small.url = "nixpkgs/nixos-unstable-small"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable-small
 
     # https://snowfall.org/reference/lib/
     snowfall-lib = {

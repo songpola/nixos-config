@@ -14,6 +14,10 @@ alias l := lock
 lock:
     nix flake lock
 
+alias u := update
+update:
+    nix flake update
+
 alias c := check
 check:
     nix flake check
