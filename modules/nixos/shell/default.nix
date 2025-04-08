@@ -71,11 +71,11 @@ in {
         bash = {
           enable = true;
           sessionVariables = envVars;
-          # initExtra = mkAfter ''
-          #   # Use nushell in place of bash
-          #   # keep this line at the bottom of ~/.bashrc
-          #   command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
-          # '';
+          initExtra = mkAfter ''
+            # Use nushell in place of bash
+            # keep this line at the bottom of ~/.bashrc
+            command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
+          '';
         };
 
         # completer
