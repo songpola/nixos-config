@@ -136,6 +136,9 @@ in {
 
         # fuzzy finder
         fzf.enable = true;
+
+        # terminal workspace
+        zellij.enable = true;
       };
     };
   };
