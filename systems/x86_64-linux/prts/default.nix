@@ -1,7 +1,7 @@
 {
   # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # as well as the libraries available from your flake's inputs.
-  # lib,
+  lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
   # pkgs,
   # You also have access to your flake's inputs.
@@ -16,59 +16,65 @@
   # All other arguments come from the system system.
   # config,
   ...
-}: {
-  ${namespace} = {
-    stateVersions = {
-      system = "24.11";
-      home = "24.11";
-    };
-
-    profiles.server.enable = true;
-
-    bootloader.grubEfi.enable = true;
-
-    zfs = {
-      enable = true;
-      hostId = "eb8b6756";
-    };
-
-    zramSwap.useDiskoPartition = true;
-
-    network = {
-      enable = true;
-      bridge = {
-        enable = true;
-        interface = "eno1";
+}: let
+  inherit (lib.${namespace}) mkHomeConfig;
+in
+  {
+    ${namespace} = {
+      stateVersions = {
+        system = "24.11";
+        home = "24.11";
       };
-    };
 
-    hardware = {
-      nvidia = {
+      profiles.server.enable = true;
+
+      bootloader.grubEfi.enable = true;
+
+      zfs = {
         enable = true;
-        # 1050Ti (Pascal) doesn't support open-source kernel module
-        useProprietaryKernelModule = true;
+        hostId = "eb8b6756";
       };
+
+      zramSwap.useDiskoPartition = true;
+
+      network = {
+        enable = true;
+        bridge = {
+          enable = true;
+          interface = "eno1";
+        };
+      };
+
+      hardware = {
+        nvidia = {
+          enable = true;
+          # 1050Ti (Pascal) doesn't support open-source kernel module
+          useProprietaryKernelModule = true;
+        };
+      };
+
+      secrets = {
+        enable = true;
+        enableSops = true;
+      };
+
+      docker = {
+        enable = true;
+        useZfsStorageDriver = true;
+      };
+
+      libvirtd.enable = true;
     };
 
-    secrets = {
-      enable = true;
-      enableSops = true;
-    };
+    imports = [./disko.nix];
 
-    docker = {
-      enable = true;
-      useZfsStorageDriver = true;
-    };
+    facter.reportPath = ./facter.json;
 
-    libvirtd.enable = true;
-  };
-
-  imports = [./disko.nix];
-
-  facter.reportPath = ./facter.json;
-
-  services.tailscale.extraSetFlags = [
-    "--advertise-routes=10.0.0.0/16"
-    "--advertise-exit-node"
-  ];
-}
+    services.tailscale.extraSetFlags = [
+      "--advertise-routes=10.0.0.0/16"
+      "--advertise-exit-node"
+    ];
+  }
+  // mkHomeConfig {
+    services.syncthing.enable = true;
+  }
