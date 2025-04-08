@@ -57,10 +57,7 @@ in {
 
         settings = {
           # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
-          trusted-users = [
-            "@wheel"
-            namespace
-          ];
+          trusted-users = ["@wheel"];
 
           substituters = [
             "https://nix-community.cachix.org"
@@ -70,6 +67,12 @@ in {
           ];
         };
       };
+
+      # https://github.com/DeterminateSystems/determinate/pull/57
+      #
+      # Push the user's nix.conf into /etc/nix/nix.custom.conf,
+      # leaving determinate-nixd to manage /etc/nix/nix.conf
+      environment.etc."nix/nix.conf".target = "nix/nix.custom.conf";
     }
     // mkHomeConfig {
       home = {
