@@ -51,11 +51,13 @@ in {
 
       nix = {
         # flake-utils-plus
-        generateNixPathFromInputs = true;
-        generateRegistryFromInputs = true;
-        linkInputs = true;
+        # generateNixPathFromInputs = true;
+        # generateRegistryFromInputs = true;
+        # linkInputs = true;
 
         settings = {
+          experimental-features = ["nix-command" "flakes"];
+
           # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
           trusted-users = ["@wheel"];
 
