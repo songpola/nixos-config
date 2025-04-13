@@ -16,14 +16,14 @@
     # https://nix-community.github.io/home-manager/
     home-manager = {
       # https://github.com/nix-community/home-manager
-      url = "home-manager/release-24.11";
-      inputs.nixpkgs.follows = "unstable";
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     disko = {
       # https://github.com/nix-community/disko
-      url = "disko";
-      inputs.nixpkgs.follows = "unstable";
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
@@ -36,17 +36,17 @@
 
     opnix = {
       url = "github:brizzbuzz/opnix";
-      inputs.nixpkgs.follows = "unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     deploy-rs = {
       url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
