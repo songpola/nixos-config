@@ -75,7 +75,11 @@ in {
       };
 
       # completer
-      carapace.enable = true;
+      carapace = {
+        enable = true;
+        # just need the fish for some command completions
+        enableFishIntegration = false;
+      };
 
       # prompt
       starship = {
