@@ -72,7 +72,7 @@ in {
             caddy # use as formatter
             # dev environment
             devbox
-            coder
+            # coder
             # nix
             nil
             nixd
