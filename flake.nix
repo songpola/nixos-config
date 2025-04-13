@@ -1,6 +1,6 @@
 {
   inputs = {
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     # https://nixos.org/manual/nixpkgs/stable/
     nixpkgs.url = "nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
@@ -59,7 +59,7 @@
         channels-config.allowUnfree = true;
         systems.modules.nixos =
           map (input: input.nixosModules.default) [
-            determinate
+            # determinate
             disko
             nixos-wsl
             opnix
