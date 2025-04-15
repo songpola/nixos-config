@@ -69,10 +69,10 @@ in {
           home.packages = with pkgs; (optionals cfg.development [
             just # task runner
             watchexec # file watcher
-            caddy # use as formatter
+
             # dev environment
             devbox
-            # coder
+
             # nix
             nil
             nixd
@@ -80,6 +80,7 @@ in {
             deploy-rs
             nix-diff
             nvd
+
             # node
             nodejs
             pnpm
