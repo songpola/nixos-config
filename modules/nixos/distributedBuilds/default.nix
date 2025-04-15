@@ -8,36 +8,32 @@
   # inputs,
   # Additional metadata is provided by Snowfall Lib.
   namespace, # The namespace used for your flake, defaulting to "internal" if not set.
-  # system, # The system architecture for this host (eg. `x86_64-linux`).
+  system, # The system architecture for this host (eg. `x86_64-linux`).
   # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
   # format, # A normalized name for the system target (eg. `iso`).
   # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
   # systems, # An attribute map of your defined hosts.
-  # All other arguments come from the system system.
-  # config,
+  # All other arguments come from the module system.
+  config,
   ...
-}: {
-  ${namespace} = {
-    stateVersions = {
-      system = "24.05";
-      home = "24.11";
-    };
-
-    profiles.wsl.enable = true;
-
-    secrets = {
-      enable = true;
-      enableOpnix = true;
-    };
-
-    docker.enable = true;
-
-    git.use1PasswordWSL = true;
-
-    tools.development = true;
-
-    distributedBuilds.enable = true;
+}: let
+  inherit (lib) mkEnableOption mkIf;
+  inherit (lib.${namespace}.machines) prts;
+  this = builtins.baseNameOf ./.;
+  cfg = config.${namespace}.${this};
+in {
+  options.${namespace}.${this} = {
+    enable = mkEnableOption "distributed builds (use PRTS as build machine)";
   };
-
-  programs.virt-manager.enable = true;
+  config = mkIf cfg.enable {
+    nix = {
+      distributedBuilds = true;
+      settings = {
+        builders-use-substitutes = true;
+      };
+      buildMachines = [
+        (prts.mkBuildMachineConfig system)
+      ];
+    };
+  };
 }
