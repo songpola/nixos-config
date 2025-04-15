@@ -11,7 +11,6 @@
 }: let
   inherit (lib) mkEnableOption;
 in {
-  getHomePath = config: config.snowfallorg.users.${namespace}.home.path;
   mkDefaultEnableOption = x: mkEnableOption x // {default = true;};
   mkHomeConfig = homeConfig: {
     snowfallorg.users.${namespace}.home.config = homeConfig;

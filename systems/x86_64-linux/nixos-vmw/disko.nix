@@ -5,9 +5,9 @@
   ...
 }: let
   inherit (lib) recursiveUpdate;
-  inherit (lib.${namespace}) getHomePath;
-  inherit (lib.${namespace}.disko) mkPartlabel;
-  homePath = getHomePath config;
+  mkPartlabel = d: p: "/dev/disk/by-partlabel/disk-${d}-${p}";
+  homePath = config.snowfallorg.users.${namespace}.home.path;
+
   settings = {
     disk = {
       main.device = "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_1";

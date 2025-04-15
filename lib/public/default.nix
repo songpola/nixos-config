@@ -8,8 +8,10 @@
   # namespace,
   # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
-}: {
-  public = {
+}: let
+  this = builtins.baseNameOf ./.;
+in {
+  ${this} = {
     ssh = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz songpola";
     harmonia = "prts-1:SDYZAeLQIUUHEasfmPNUFtnFgW+q2LiwX0+dOvPerbk=";
   };
