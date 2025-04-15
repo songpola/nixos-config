@@ -5,6 +5,6 @@ const systems = fs.readdirSync(path.resolve(__dirname, "systems/x86_64-linux"))
 
 module.exports = {
   prompt: {
-    scopes: [...systems, "just", "shell", "modules"],
+    scopes: [...systems, "modules"],
   },
 }
