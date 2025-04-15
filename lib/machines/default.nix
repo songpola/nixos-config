@@ -29,6 +29,8 @@ in {
         protocol = "ssh-ng";
         maxJobs = 12; # 12 cpu cores
         speedFactor = 2;
+        # Get the publicHostKey from: base64 -w0 /etc/ssh/ssh_host_ed25519_key.pub
+        publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUJEMXIvanJrSmJDWEs3cDZSTmQ0K2Z5Q2N4WUNsN3RkUHdJR2FXTGhqenEgcm9vdEBwcnRzCg==";
       };
 
       mkDeployNodeConfig = self: {
