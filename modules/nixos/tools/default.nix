@@ -58,6 +58,8 @@ in {
           rustscan # port scanner
           lsof # list open files
           isd # interactive systemd
+          pciutils # PCI device listing
+          nvitop # GPU monitoring
         ];
       }))
       (mkIf cfg.development (
