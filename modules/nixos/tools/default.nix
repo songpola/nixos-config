@@ -63,6 +63,7 @@ in {
               lsof # list open files
               isd # interactive systemd
               pciutils # PCI info
+              lshw # hardware info
             ]
             ++ (optionals nvidiaEnable [
               nvitop # GPU monitoring
