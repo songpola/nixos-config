@@ -28,67 +28,73 @@ in {
     sysadmin = mkDefaultEnableOption "sysadmin tools";
     development = mkEnableOption "development tools";
   };
-  config = mkIf cfg.enable (
-    mkMerge [
-      (mkIf cfg.utils (mkHomeConfig {
-        programs = {
-          jq.enable = true;
-        };
-        home.packages = with pkgs; [
-          doggo # DNS client
-          httpie # HTTP client
-          wget # file downloader
-          croc # file transfer
-          ouch # archive extractor
-          sops # secrets management
-          xkcdpass # password generator
-        ];
-      }))
-      (mkIf cfg.sysadmin (mkHomeConfig {
-        programs = {
-          btop = {
-            enable = true;
-            # Enable CUDA support for btop if NVIDIA GPU is enabled
-            package = mkIf (config.${namespace}.hardware.nvidia.enable) pkgs.btopCuda;
+  config = let
+    nvidiaEnable = config.${namespace}.hardware.nvidia.enable;
+  in
+    mkIf cfg.enable (
+      mkMerge [
+        (mkIf cfg.utils (mkHomeConfig {
+          programs = {
+            jq.enable = true;
           };
-        };
-        home.packages = with pkgs; [
-          duf # `df` replacement
-          dust # `du` replacement
-          rustscan # port scanner
-          lsof # list open files
-          isd # interactive systemd
-          pciutils # PCI device listing
-          nvitop # GPU monitoring
-        ];
-      }))
-      (mkIf cfg.development (
-        {
-          # pixi (python)
-          ${namespace}.pixi.enable = true;
-        }
-        // mkHomeConfig {
-          home.packages = with pkgs; (optionals cfg.development [
-            just # task runner
-            watchexec # file watcher
+          home.packages = with pkgs; [
+            doggo # DNS client
+            httpie # HTTP client
+            wget # file downloader
+            croc # file transfer
+            ouch # archive extractor
+            sops # secrets management
+            xkcdpass # password generator
+          ];
+        }))
+        (mkIf cfg.sysadmin (mkHomeConfig {
+          programs = {
+            btop = {
+              enable = true;
+              # Enable CUDA support for btop if NVIDIA GPU is enabled
+              package = mkIf nvidiaEnable pkgs.btopCuda;
+            };
+          };
+          home.packages = with pkgs;
+            [
+              duf # `df` replacement
+              dust # `du` replacement
+              rustscan # port scanner
+              lsof # list open files
+              isd # interactive systemd
+              pciutils # PCI info
+            ]
+            ++ (optionals nvidiaEnable [
+              nvitop # GPU monitoring
+            ]);
+        }))
+        (mkIf cfg.development (
+          {
+            # pixi (python)
+            ${namespace}.pixi.enable = true;
+          }
+          // mkHomeConfig {
+            home.packages = with pkgs; (optionals cfg.development [
+              just # task runner
+              watchexec # file watcher
 
-            # dev environment
-            devbox
+              # dev environment
+              devbox
 
-            # nix
-            nil
-            nixd
-            alejandra
-            deploy-rs
-            nix-diff
-            nvd
+              # nix
+              nil
+              nixd
+              alejandra
+              deploy-rs
+              nix-diff
+              nvd
 
-            # node
-            nodejs
-            pnpm
-          ]);
-        }
-      ))
-    ]
-  );
+              # node
+              nodejs
+              pnpm
+            ]);
+          }
+        ))
+      ]
+    );
 }
