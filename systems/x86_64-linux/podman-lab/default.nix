@@ -48,12 +48,21 @@ in {
       };
     };
   };
-
-  microvm.interfaces = [
-    {
-      type = "tap";
-      id = "vm-${host}";
-      mac = generateMacAddress host;
-    }
-  ];
+  microvm = {
+    interfaces = [
+      {
+        type = "tap";
+        id = "vm-${host}";
+        mac = generateMacAddress host;
+      }
+    ];
+    shares = [
+      {
+        proto = "virtiofs";
+        tag = "nix-store-ro";
+        source = "/nix/store";
+        mountPoint = "/nix/.ro-store";
+      }
+    ];
+  };
 }
