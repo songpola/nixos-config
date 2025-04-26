@@ -15,74 +15,45 @@
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the system system.
   # config,
-  flakeSelf,
+  host,
   ...
-}: {
+}: let
+  inherit (builtins) hashString substring concatStringsSep;
+
+  generateMacAddress = s: let
+    hash = hashString "sha256" s;
+    c = off: substring off 2 hash;
+  in
+    concatStringsSep ":" [
+      "${substring 0 1 hash}2"
+      (c 2)
+      (c 4)
+      (c 6)
+      (c 8)
+      (c 10)
+    ];
+in {
   ${namespace} = {
     stateVersions = {
       system = "24.11";
       home = "24.11";
     };
 
-    profiles.server.enable = true;
-
     bootloader.grubEfi.enable = true;
 
-    zfs = {
-      enable = true;
-      hostId = "eb8b6756";
-    };
-
-    zramSwap.useDiskoPartition = true;
-
-    network = {
-      enable = true;
-      bridge = {
+    profiles = {
+      guest = {
         enable = true;
-        interfaces = [
-          "eno1"
-          "vm-*" # for microvm
-        ];
+        qemu = true;
       };
     };
-
-    hardware = {
-      nvidia = {
-        enable = true;
-        # 1050Ti (Pascal) doesn't support open-source kernel module
-        useProprietaryKernelModule = true;
-      };
-    };
-
-    secrets = {
-      enable = true;
-      enableSops = true;
-    };
-
-    docker = {
-      enable = true;
-      useZfsStorageDriver = true;
-    };
-
-    libvirtd.enable = true;
-
-    syncthing.enable = true;
   };
 
-  imports = [./disko.nix];
-
-  facter.reportPath = ./facter.json;
-
-  services.tailscale.extraSetFlags = [
-    "--advertise-routes=10.0.0.0/16"
-    "--advertise-exit-node"
+  microvm.interfaces = [
+    {
+      type = "tap";
+      id = "vm-${host}";
+      mac = generateMacAddress host;
+    }
   ];
-
-  microvm.vms = {
-    podman-lab = {
-      # config = flakeSelf.nixosConfigurations.podman-lab.config;
-      flake = flakeSelf;
-      # updateFlake = lib.snowfall.fs.get-file "flake.nix";
-    };
-  };
 }

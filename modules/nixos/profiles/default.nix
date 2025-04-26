@@ -23,28 +23,34 @@
 in {
   options.${namespace}.${this} = {
     guest = {
-      enable = mkEnableOption "profile for VM guest";
-      vmware = mkOption {
-        type = lib.types.bool;
-        default = false;
-        example = true;
-        description = "Use VMware guest profile";
-      };
+      enable = mkEnableOption "VM guest profile";
+      vmware = mkEnableOption "VMware-specific guest profile";
+      qemu = mkEnableOption "QEMU-specific guest profile";
     };
     wsl.enable = mkEnableOption "profile for WSL";
     server.enable = mkEnableOption "profile for servers";
   };
   config = mkMerge [
     (
-      mkIf cfg.guest.enable {
-        services.openssh.enable = true;
+      mkIf cfg.guest.enable (mkMerge [
+        {
+          services.openssh.enable = true;
 
-        users.users.${namespace}.initialHashedPassword = "";
-        services.getty.autologinUser = namespace;
+          users.users.${namespace}.initialHashedPassword = "";
+          services.getty.autologinUser = namespace;
 
-        services.xserver.videoDrivers = mkIf cfg.guest.vmware ["vmware"];
-        virtualisation.vmware.guest.enable = cfg.guest.vmware;
-      }
+          services.xserver.videoDrivers = mkIf cfg.guest.vmware ["vmware"];
+          virtualisation.vmware.guest.enable = mkIf cfg.guest.vmware true;
+        }
+        (mkIf cfg.guest.vmware {
+          services.xserver.videoDrivers = ["vmware"];
+          virtualisation.vmware.guest.enable = true;
+        })
+        (mkIf cfg.guest.qemu {
+          services.qemuGuest.enable = true;
+          services.spice-vdagentd.enable = true;
+        })
+      ])
     )
     (
       mkIf cfg.wsl.enable {

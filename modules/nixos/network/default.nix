@@ -17,17 +17,17 @@
   config,
   ...
 }: let
-  inherit (lib) mkOption mkEnableOption mkIf mkMerge;
+  inherit (lib) mkOption mkEnableOption mkIf mkMerge types;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
   options.${namespace}.${this} = {
     enable = mkEnableOption "network module";
     bridge = {
-      enable = mkEnableOption "bridge network";
-      interface = mkOption {
-        type = lib.types.str;
-        description = "The interface to be used for the bridge.";
+      enable = mkEnableOption "br0 bridge network";
+      interfaces = mkOption {
+        type = types.listOf types.str;
+        description = "The interfaces to be connected to the bridge.";
       };
     };
   };
@@ -36,7 +36,7 @@ in {
       networking.nftables.enable = true;
     }
     (mkIf cfg.bridge.enable {
-      # these default to true by nixos-facter-modules
+      # These are defaulted to true by nixos-facter-modules
       networking = {
         useDHCP = false;
         useNetworkd = false;
@@ -44,33 +44,47 @@ in {
       systemd.network = {
         enable = true;
         netdevs = {
-          "10-br0" = {
+          "25-br0" = {
             netdevConfig = {
               Name = "br0";
               Kind = "bridge";
-              MACAddress = "none";
+              MACAddress = "b4:2e:99:91:b1:10"; # eno1
             };
           };
         };
         networks = {
-          "20-br0" = {
-            matchConfig.Name = "br0";
+          "25-br0" = {
+            matchConfig = {
+              Name = "br0";
+            };
             networkConfig = {
               DHCP = "yes";
               UseDomains = "yes";
             };
-            linkConfig.RequiredForOnline = "routable";
+            linkConfig = {
+              RequiredForOnline = "routable";
+            };
           };
-          "30-${cfg.bridge.interface}" = {
-            matchConfig.Name = cfg.bridge.interface;
-            networkConfig.Bridge = "br0";
-            linkConfig.RequiredForOnline = "enslaved";
+          "25-br0-interfaces" = {
+            matchConfig = {
+              Name = cfg.bridge.interfaces;
+            };
+            networkConfig = {
+              Bridge = "br0";
+            };
+            linkConfig = {
+              RequiredForOnline = "enslaved";
+            };
           };
         };
         links = {
-          "40-br0" = {
-            matchConfig.OriginalName = "br0";
-            linkConfig.MACAddressPolicy = "none";
+          "25-br0" = {
+            matchConfig = {
+              OriginalName = "br0";
+            };
+            linkConfig = {
+              MACAddressPolicy = "none";
+            };
           };
         };
       };

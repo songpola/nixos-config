@@ -19,8 +19,8 @@ update:
     nix flake update
 
 alias c := check
-check:
-    nix flake check
+check *FLAGS="":
+    nix flake check {{ FLAGS }}
 
 alias s := switch
 switch host="." *FLAGS="":

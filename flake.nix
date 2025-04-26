@@ -2,6 +2,13 @@
   inputs = {
     # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
+    flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
+    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils-plus = {
+      url = "github:gytis-ivaskevicius/flake-utils-plus";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     # https://nixos.org/manual/nixpkgs/stable/
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable
@@ -10,7 +17,11 @@
     # https://snowfall.org/reference/lib/
     snowfall-lib = {
       url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils-plus.follows = "flake-utils-plus";
+        flake-compat.follows = "flake-compat";
+      };
     };
 
     # https://nix-community.github.io/home-manager/
@@ -31,12 +42,18 @@
     # https://nix-community.github.io/NixOS-WSL/
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+      };
     };
 
     opnix = {
       url = "github:brizzbuzz/opnix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
 
     sops-nix = {
@@ -46,7 +63,19 @@
 
     deploy-rs = {
       url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        utils.follows = "flake-utils";
+        flake-compat.follows = "flake-compat";
+      };
+    };
+
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
   };
 
@@ -68,6 +97,21 @@
           ++ [
             nixos-facter-modules.nixosModules.facter
           ];
+        systems.hosts = {
+          prts = {
+            modules = [
+              microvm.nixosModules.host
+            ];
+            specialArgs = {
+              flakeSelf = self;
+            };
+          };
+          podman-lab = {
+            modules = [
+              microvm.nixosModules.microvm
+            ];
+          };
+        };
         homes.modules = [
           opnix.homeManagerModules.default
           sops-nix.homeManagerModules.sops
