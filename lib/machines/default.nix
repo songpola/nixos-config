@@ -14,12 +14,12 @@ in {
   ${this} = {
     prts = rec {
       hostname = "prts.tail7623c.ts.net";
-      system = "x86_64-linux";
+      # system = "x86_64-linux";
 
-      mkBuildMachineConfig = system: {
+      mkBuildMachineConfig = {
         hostName = hostname;
         sshUser = namespace;
-        inherit system;
+        system = "-"; # omitted, will defaults to the local platform type.
         supportedFeatures = [
           "nixos-test"
           "benchmark"
