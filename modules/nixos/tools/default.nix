@@ -45,6 +45,7 @@ in {
             ouch # archive extractor
             sops # secrets management
             xkcdpass # password generator
+            aria2 # download utility
           ];
         }))
         (mkIf cfg.sysadmin (mkHomeConfig {
