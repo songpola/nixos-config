@@ -39,111 +39,124 @@ in {
   options.${namespace}.${this} = {
     enable = mkDefaultEnableOption "shells module";
   };
-  config = mkIf cfg.enable (mkHomeConfig {
-    home = {
-      packages = with pkgs; [
+  config = mkIf cfg.enable (mkHomeConfig (mkMerge [
+    {
+      home = {
+        packages = with pkgs; [
+          lnav # log viewer
+        ];
+        shellAliases = {
+          c = "clear";
+          e = "exit";
+        };
+      };
+      programs = {
+        nushell = {
+          enable = true;
+          envFile.source = ./default_env.nu;
+          configFile.source = ./default_config.nu;
+          extraConfig = mkMerge [
+            (mkBefore (readFile ./config.nu))
+            (mkAfter (readFile ./external_completer.nu))
+          ];
+          environmentVariables = envVars // envVarsNushellOverride;
+        };
+
+        fish.enable = true; # use as completer
+
+        bash = {
+          enable = true;
+          sessionVariables = envVars;
+          initExtra = mkAfter ''
+            # Use nushell in place of bash
+            # keep this line at the bottom of ~/.bashrc
+            command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
+          '';
+        };
+
+        # completer
+        carapace = {
+          enable = true;
+          # just need the fish for some command completions
+          enableFishIntegration = false;
+        };
+
+        # prompt
+        starship = {
+          enable = true;
+          settings = {
+            shell.disabled = false;
+            nix_shell.heuristic = true;
+          };
+        };
+
+        # `cat` and `man` replacements
+        bat = {
+          enable = true;
+          extraPackages = with pkgs.bat-extras; [
+            batman
+            batgrep
+          ];
+          config = {
+            wrap = "never";
+          };
+        };
+
+        # `ls` replacement
+        eza = {
+          enable = true;
+          enableBashIntegration = true;
+          enableNushellIntegration = true;
+          extraOptions = [
+            "-g"
+            "--group-directories-first"
+          ];
+        };
+
+        # `cd` replacement
+        zoxide.enable = true;
+
+        # `grep` replacement
+        ripgrep.enable = true;
+
+        # auto switch env
+        direnv = {
+          enable = true;
+          nix-direnv.enable = true;
+        };
+
+        # text editor
+        micro = {
+          enable = true;
+          settings = {
+            clipboard = "terminal";
+          };
+        };
+
+        # `man` alternative
+        tealdeer = {
+          enable = true;
+          settings.updates.auto_update = true;
+        };
+
+        # fuzzy finder
+        fzf.enable = true;
+
+        # terminal workspace
+        zellij.enable = true;
+      };
+    }
+    {
+      home.packages = with pkgs; [
         ov # pager
-        lnav # log viewer
       ];
-      shellAliases = {
-        c = "clear";
-        e = "exit";
-      };
-    };
-    programs = {
-      nushell = {
-        enable = true;
-        envFile.source = ./default_env.nu;
-        configFile.source = ./default_config.nu;
-        extraConfig = mkMerge [
-          (mkBefore (readFile ./config.nu))
-          (mkAfter (readFile ./external_completer.nu))
-        ];
-        environmentVariables = envVars // envVarsNushellOverride;
-      };
 
-      fish.enable = true; # use as completer
-
-      bash = {
-        enable = true;
-        sessionVariables = envVars;
-        initExtra = mkAfter ''
-          # Use nushell in place of bash
-          # keep this line at the bottom of ~/.bashrc
-          command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
-        '';
-      };
-
-      # completer
-      carapace = {
-        enable = true;
-        # just need the fish for some command completions
-        enableFishIntegration = false;
-      };
-
-      # prompt
-      starship = {
-        enable = true;
-        settings = {
-          shell.disabled = false;
-          nix_shell.heuristic = true;
+      xdg.configFile."ov/config.yaml".source = let
+        jsonFormat = pkgs.formats.yaml {};
+      in
+        jsonFormat.generate "ov-config" {
+          ClipboardMethod = "OSC52";
         };
-      };
-
-      # `cat` and `man` replacements
-      bat = {
-        enable = true;
-        extraPackages = with pkgs.bat-extras; [
-          batman
-          batgrep
-        ];
-        config = {
-          wrap = "never";
-        };
-      };
-
-      # `ls` replacement
-      eza = {
-        enable = true;
-        enableBashIntegration = true;
-        enableNushellIntegration = true;
-        extraOptions = [
-          "-g"
-          "--group-directories-first"
-        ];
-      };
-
-      # `cd` replacement
-      zoxide.enable = true;
-
-      # `grep` replacement
-      ripgrep.enable = true;
-
-      # auto switch env
-      direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
-
-      # text editor
-      micro = {
-        enable = true;
-        settings = {
-          clipboard = "terminal";
-        };
-      };
-
-      # `man` alternative
-      tealdeer = {
-        enable = true;
-        settings.updates.auto_update = true;
-      };
-
-      # fuzzy finder
-      fzf.enable = true;
-
-      # terminal workspace
-      zellij.enable = true;
-    };
-  });
+    }
+  ]));
 }

@@ -12,7 +12,16 @@
   # inputs,
   ...
 }: final: prev: {
-  inherit (channels.unstable) tailscale isd lazydocker carapace;
+  inherit
+    (channels.unstable)
+    tailscale
+    isd
+    lazydocker
+    carapace
+    podman # >= 5.3
+    passt # >= 2024_08_14
+    ov # >= 0.40.1
+    ;
 
   btopCuda = prev.btop.override {
     cudaSupport = true;
