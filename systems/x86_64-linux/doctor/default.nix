@@ -23,14 +23,17 @@
       home = "24.11";
     };
 
-    profiles.wsl.enable = true;
+    profiles.wsl = true;
 
     secrets = {
       enable = true;
       enableOpnix = true;
     };
 
-    docker.enable = true;
+    containers = {
+      enable = true;
+      docker.enable = true;
+    };
 
     git.use1PasswordWSL = true;
 

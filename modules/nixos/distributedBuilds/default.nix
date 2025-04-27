@@ -18,7 +18,6 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.${namespace}.machines) prts;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -32,7 +31,22 @@ in {
         builders-use-substitutes = true;
       };
       buildMachines = [
-        prts.mkBuildMachineConfig
+        {
+          hostName = "prts.tail7623c.ts.net";
+          sshUser = namespace;
+          system = "-"; # omitted, will defaults to the local platform type.
+          supportedFeatures = [
+            "nixos-test"
+            "benchmark"
+            "big-parallel"
+            "kvm"
+          ];
+          protocol = "ssh-ng";
+          maxJobs = 12; # 12 cpu cores
+          speedFactor = 2;
+          # Get the publicHostKey from: base64 -w0 /etc/ssh/ssh_host_ed25519_key.pub
+          publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUJEMXIvanJrSmJDWEs3cDZSTmQ0K2Z5Q2N4WUNsN3RkUHdJR2FXTGhqenEgcm9vdEBwcnRzCg==";
+        }
       ];
     };
   };

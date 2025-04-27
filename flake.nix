@@ -97,28 +97,35 @@
           ++ [
             nixos-facter-modules.nixosModules.facter
           ];
-        systems.hosts = {
-          prts = {
-            modules = [
-              microvm.nixosModules.host
-            ];
-            specialArgs = {
-              flakeSelf = self;
-            };
-          };
-          podman-lab = {
-            modules = [
-              microvm.nixosModules.microvm
-            ];
-          };
-        };
+        # systems.hosts = {
+        #   prts = {
+        #     modules = [
+        #       microvm.nixosModules.host
+        #     ];
+        #     specialArgs = {
+        #       flakeSelf = self;
+        #     };
+        #   };
+        #   podman-lab = {
+        #     modules = [
+        #       microvm.nixosModules.microvm
+        #     ];
+        #   };
+        # };
         homes.modules = [
           opnix.homeManagerModules.default
           sops-nix.homeManagerModules.sops
         ];
       })
       // {
-        deploy.nodes = self.lib.machines.prts.mkDeployNodeConfig self;
+        deploy.nodes = self.lib.mkDeployNodes self {
+          prts = {
+            hostname = "prts.tail7623c.ts.net";
+            remoteBuild = true;
+          };
+          # podman-lab.hostname = "podman-lab.tail7623c.ts.net";
+          podman-lab.hostname = "10.0.1.2";
+        };
 
         checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
       };

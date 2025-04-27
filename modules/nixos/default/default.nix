@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkOption;
-  inherit (lib.${namespace}) public mkHomeConfig;
+  inherit (lib.${namespace}) sshPublicKey mkHomeConfig;
   cfg = config.${namespace};
 in {
   options.${namespace} = {
@@ -41,7 +41,7 @@ in {
 
       snowfallorg.users.${namespace}.admin = true;
 
-      users.users.${namespace}.openssh.authorizedKeys.keys = [public.ssh];
+      users.users.${namespace}.openssh.authorizedKeys.keys = [sshPublicKey];
 
       time.timeZone = "Asia/Bangkok";
 

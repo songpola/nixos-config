@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf mkMerge;
-  inherit (lib.${namespace}) public mkDefaultEnableOption mkHomeConfig;
+  inherit (lib.${namespace}) sshPublicKey mkDefaultEnableOption mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -42,7 +42,7 @@ in {
           commit.gpgsign = true;
           gpg.format = "ssh";
           gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-          user.signingkey = public.ssh;
+          user.signingkey = sshPublicKey;
         })
       ];
     };

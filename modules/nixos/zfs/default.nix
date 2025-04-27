@@ -25,6 +25,10 @@ in {
     enable = mkEnableOption "ZFS module";
     hostId = mkOption {
       type = lib.types.str;
+      # Can be generated with:
+      # head -c 8 /etc/machine-id
+      # or:
+      # head -c 4 /dev/urandom | od -A n -t x4
       example = "9ba97379";
       description = "The host ID for ZFS.";
     };

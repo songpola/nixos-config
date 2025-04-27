@@ -15,7 +15,6 @@
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the system system.
   # config,
-  flakeSelf,
   ...
 }: {
   ${namespace} = {
@@ -24,7 +23,7 @@
       home = "24.11";
     };
 
-    profiles.server.enable = true;
+    profiles.server = true;
 
     bootloader.grubEfi.enable = true;
 
@@ -59,9 +58,12 @@
       enableSops = true;
     };
 
-    docker = {
+    containers = {
       enable = true;
-      useZfsStorageDriver = true;
+      docker = {
+        enable = true;
+        useZfsStorageDriver = true;
+      };
     };
 
     libvirtd.enable = true;
@@ -77,12 +79,4 @@
     "--advertise-routes=10.0.0.0/16"
     "--advertise-exit-node"
   ];
-
-  microvm.vms = {
-    podman-lab = {
-      # config = flakeSelf.nixosConfigurations.podman-lab.config;
-      flake = flakeSelf;
-      # updateFlake = lib.snowfall.fs.get-file "flake.nix";
-    };
-  };
 }

@@ -15,24 +15,8 @@
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the system system.
   # config,
-  host,
   ...
-}: let
-  inherit (builtins) hashString substring concatStringsSep;
-
-  generateMacAddress = s: let
-    hash = hashString "sha256" s;
-    c = off: substring off 2 hash;
-  in
-    concatStringsSep ":" [
-      "${substring 0 1 hash}2"
-      (c 2)
-      (c 4)
-      (c 6)
-      (c 8)
-      (c 10)
-    ];
-in {
+}: {
   ${namespace} = {
     stateVersions = {
       system = "24.11";
@@ -41,28 +25,28 @@ in {
 
     bootloader.grubEfi.enable = true;
 
+    zramSwap.useDiskoPartition = true;
+
     profiles = {
       guest = {
         enable = true;
         qemu = true;
       };
+      server = true;
+    };
+
+    zfs = {
+      enable = true;
+      hostId = "3f411d18";
+    };
+
+    containers = {
+      enable = true;
+      podman.enable = true;
     };
   };
-  microvm = {
-    interfaces = [
-      {
-        type = "tap";
-        id = "vm-${host}";
-        mac = generateMacAddress host;
-      }
-    ];
-    shares = [
-      {
-        proto = "virtiofs";
-        tag = "nix-store-ro";
-        source = "/nix/store";
-        mountPoint = "/nix/.ro-store";
-      }
-    ];
-  };
+
+  imports = [./disko.nix];
+
+  facter.reportPath = ./facter.json;
 }

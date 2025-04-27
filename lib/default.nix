@@ -9,10 +9,22 @@
   # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: let
-  inherit (lib) mkEnableOption;
+  inherit (lib) mkEnableOption mapAttrs deploy-rs;
 in {
+  sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz songpola";
   mkDefaultEnableOption = x: mkEnableOption x // {default = true;};
   mkHomeConfig = homeConfig: {
     snowfallorg.users.${namespace}.home.config = homeConfig;
   };
+  mkDeployNodes = self:
+    mapAttrs (
+      node: cfg:
+        {
+          user = "root";
+          profiles.system.path =
+            deploy-rs.x86_64-linux.activate.nixos
+            self.nixosConfigurations.${node};
+        }
+        // cfg
+    );
 }

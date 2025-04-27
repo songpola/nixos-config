@@ -1,17 +1,14 @@
 {lib, ...}: let
   inherit (lib) recursiveUpdate;
-  mkPartlabel = d: p: "/dev/disk/by-partlabel/disk-${d}-${p}";
 
   settings = {
     disk = {
-      main.device = "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_1";
-      ssd.device = "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_2";
-      hdd.device = "/dev/disk/by-id/nvme-VMware_Virtual_NVMe_Disk_VMware_NVME_0000_3";
+      main.device = "/dev/vda";
+      tank.device = "/dev/vdb";
     };
     zpool.tank = {
       rootFsOptions = {
         atime = "off";
-        special_small_blocks = "64k";
       };
     };
   };
@@ -34,7 +31,7 @@ in {
               };
             };
             root = {
-              end = "-8G"; # (100%)-8G
+              end = "-4G"; # (100%)-8G
               content = {
                 type = "btrfs";
                 subvolumes = {
@@ -57,29 +54,7 @@ in {
           };
         };
       };
-      ssd = {
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            zspecial = {
-              end = "-16G"; # (100%)-8G
-              content = {
-                type = "zfs";
-                pool = "tank";
-              };
-            };
-            zlog = {
-              size = "100%"; # 100%-(16G)
-              content = {
-                type = "zfs";
-                pool = "tank";
-              };
-            };
-          };
-        };
-      };
-      hdd = {
+      tank = {
         type = "disk";
         content = {
           type = "gpt";
@@ -102,17 +77,7 @@ in {
           type = "topology";
           vdev = [
             {
-              members = ["hdd"];
-            }
-          ];
-          log = [
-            {
-              members = [(mkPartlabel "ssd" "zlog")];
-            }
-          ];
-          special = [
-            {
-              members = [(mkPartlabel "ssd" "zspecial")];
+              members = ["tank"];
             }
           ];
         };

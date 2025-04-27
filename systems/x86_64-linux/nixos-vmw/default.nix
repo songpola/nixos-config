@@ -28,7 +28,7 @@
         enable = true;
         vmware = true;
       };
-      server.enable = true;
+      server = true;
     };
 
     bootloader.grubEfi.enable = true;
@@ -40,7 +40,10 @@
 
     zramSwap.useDiskoPartition = true;
 
-    docker.enable = true;
+    containers = {
+      enable = true;
+      docker.enable = true;
+    };
 
     libvirtd.enable = true;
   };

@@ -71,10 +71,10 @@ install hostname host="" *FLAGS="":
                 "systems/x86_64-linux/{{ hostname }}/facter.json"
             ]
         })
-        (if {{ buildOnRemote }} { [ --build-on remote ] })
+        (if {{ buildOnRemote }} { [ --build-on remote ] } else { [ --no-substitute-on-destination ]})
         (if ("SSHPASS" in $env) and ($env.SSHPASS != "") { --env-password })
     ] | flatten | compact
-    nix run nixos-anywhere -- ...$flags {{ FLAGS }}
+    nix run "nixos-anywhere/1.9.0" -- ...$flags {{ FLAGS }}
 
 [script]
 disko diskConfig run="false" mode="destroy,format,mount":

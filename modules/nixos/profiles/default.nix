@@ -17,7 +17,7 @@
   config,
   ...
 }: let
-  inherit (lib) mkOption mkIf mkEnableOption mkMerge;
+  inherit (lib) mkIf mkEnableOption mkMerge;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -27,8 +27,8 @@ in {
       vmware = mkEnableOption "VMware-specific guest profile";
       qemu = mkEnableOption "QEMU-specific guest profile";
     };
-    wsl.enable = mkEnableOption "profile for WSL";
-    server.enable = mkEnableOption "profile for servers";
+    wsl = mkEnableOption "profile for WSL";
+    server = mkEnableOption "profile for servers";
   };
   config = mkMerge [
     (
@@ -38,9 +38,6 @@ in {
 
           users.users.${namespace}.initialHashedPassword = "";
           services.getty.autologinUser = namespace;
-
-          services.xserver.videoDrivers = mkIf cfg.guest.vmware ["vmware"];
-          virtualisation.vmware.guest.enable = mkIf cfg.guest.vmware true;
         }
         (mkIf cfg.guest.vmware {
           services.xserver.videoDrivers = ["vmware"];
@@ -53,7 +50,7 @@ in {
       ])
     )
     (
-      mkIf cfg.wsl.enable {
+      mkIf cfg.wsl {
         wsl = {
           enable = true;
           defaultUser = namespace;
@@ -62,7 +59,7 @@ in {
       }
     )
     (
-      mkIf cfg.server.enable {
+      mkIf cfg.server {
         services = {
           openssh.enable = true;
 
