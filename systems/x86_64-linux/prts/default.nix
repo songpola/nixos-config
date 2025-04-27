@@ -61,7 +61,7 @@
     containers = {
       enable = true;
       useZfsStorageDriver = true;
-      docker = true;
+      podman.enable = true;
     };
 
     libvirtd.enable = true;

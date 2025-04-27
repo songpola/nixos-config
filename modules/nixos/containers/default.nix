@@ -77,9 +77,7 @@ in {
     })
     (mkIf cfg.lazydocker (
       mkHomeConfig {
-        home.packages = with pkgs; [
-          lazydocker
-        ];
+        home.packages = [pkgs.lazydocker];
       }
     ))
   ]);
