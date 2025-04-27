@@ -45,7 +45,10 @@ in {
 
       time.timeZone = "Asia/Bangkok";
 
-      security.sudo.wheelNeedsPassword = false;
+      security = {
+        sudo.wheelNeedsPassword = false;
+        polkit.enable = true;
+      };
 
       programs.nix-ld.enable = true;
 
