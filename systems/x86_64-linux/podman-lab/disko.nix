@@ -9,6 +9,7 @@
     zpool.tank = {
       rootFsOptions = {
         atime = "off";
+        xattr = "sa";
       };
     };
   };

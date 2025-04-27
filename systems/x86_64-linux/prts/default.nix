@@ -60,10 +60,8 @@
 
     containers = {
       enable = true;
-      docker = {
-        enable = true;
-        useZfsStorageDriver = true;
-      };
+      useZfsStorageDriver = true;
+      docker = true;
     };
 
     libvirtd.enable = true;

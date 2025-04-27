@@ -42,7 +42,7 @@
 
     containers = {
       enable = true;
-      docker.enable = true;
+      docker = true;
     };
 
     libvirtd.enable = true;

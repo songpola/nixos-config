@@ -32,7 +32,7 @@
 
     containers = {
       enable = true;
-      docker.enable = true;
+      docker = true;
     };
 
     git.use1PasswordWSL = true;

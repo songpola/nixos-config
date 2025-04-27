@@ -24,24 +24,29 @@
 in {
   options.${namespace}.${this} = {
     enable = mkEnableOption "Container support";
+
     enableNvidiaGPU =
       mkEnableOption "NVIDIA GPU support for containers"
       // {
         default = config.${namespace}.hardware.nvidia.enable;
       };
-    docker = {
-      enable = mkEnableOption "Docker support";
-      useZfsStorageDriver = mkEnableOption "ZFS as the storage driver for Docker";
-    };
+
+    useZfsStorageDriver = mkEnableOption "ZFS as the storage driver for containers";
+
+    docker = mkEnableOption "Docker support";
+
     podman = {
       enable = mkEnableOption "Podman support";
       dockerCompat = mkDefaultEnableOption "Podman as Docker drop-in replacement";
-      # useZfsStorageDriver = mkEnableOption "ZFS as the storage driver for Podman";
     };
+
     lazydocker = mkDefaultEnableOption "Lazydocker tool";
   };
   config = mkIf cfg.enable (mkMerge [
-    (mkIf cfg.docker.enable {
+    (mkIf cfg.enableNvidiaGPU {
+      hardware.nvidia-container-toolkit.enable = true;
+    })
+    (mkIf cfg.docker {
       # Don't install Docker on WSL
       virtualisation.docker.enable = mkIf (!config.wsl.enable) true;
       # Use Docker Desktop instead
@@ -49,21 +54,26 @@ in {
 
       users.users.${namespace}.extraGroups = ["docker"];
 
-      virtualisation.docker.storageDriver = mkIf cfg.docker.useZfsStorageDriver "zfs";
-
-      hardware.nvidia-container-toolkit.enable = mkIf cfg.enableNvidiaGPU true;
+      virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
     })
     (mkIf cfg.podman.enable {
-      # Don't install Podman on WSL
-      virtualisation.podman.enable = mkIf (!config.wsl.enable) true;
       # TODO: Add WSL support
-      # wsl.docker-desktop.enable = true;
+      virtualisation.podman.enable = true;
+
+      environment.systemPackages = [
+        pkgs.passt # rootless networking tool (pasta)
+      ];
 
       # users.users.${namespace}.extraGroups = ["podman"];
 
-      # virtualisation.podman.storageDriver = mkIf cfg.podman.useZfsStorageDriver "zfs";
-
-      # hardware.nvidia-container-toolkit.enable = mkIf cfg.podman.enableNvidiaGPU true;
+      virtualisation.containers.storage.settings = mkIf cfg.useZfsStorageDriver {
+        storage = {
+          driver = "zfs";
+        };
+        storage.options.zfs = {
+          fsname = "tank/podman";
+        };
+      };
     })
     (mkIf cfg.lazydocker (
       mkHomeConfig {

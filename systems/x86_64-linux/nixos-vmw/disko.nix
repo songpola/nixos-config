@@ -11,6 +11,7 @@
     zpool.tank = {
       rootFsOptions = {
         atime = "off";
+        xattr = "sa";
         special_small_blocks = "64k";
       };
     };

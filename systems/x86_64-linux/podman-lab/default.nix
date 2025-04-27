@@ -42,6 +42,7 @@
 
     containers = {
       enable = true;
+      useZfsStorageDriver = true;
       podman.enable = true;
     };
   };

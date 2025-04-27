@@ -69,14 +69,6 @@
         flake-compat.follows = "flake-compat";
       };
     };
-
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
   };
 
   outputs = inputs:
@@ -97,21 +89,6 @@
           ++ [
             nixos-facter-modules.nixosModules.facter
           ];
-        # systems.hosts = {
-        #   prts = {
-        #     modules = [
-        #       microvm.nixosModules.host
-        #     ];
-        #     specialArgs = {
-        #       flakeSelf = self;
-        #     };
-        #   };
-        #   podman-lab = {
-        #     modules = [
-        #       microvm.nixosModules.microvm
-        #     ];
-        #   };
-        # };
         homes.modules = [
           opnix.homeManagerModules.default
           sops-nix.homeManagerModules.sops

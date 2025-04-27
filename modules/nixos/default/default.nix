@@ -86,6 +86,7 @@ in {
           uutils-coreutils-noprefix # coreutils replacement
         ];
       };
+      xdg.enable = true;
       programs.nh.enable = true;
     };
 }
