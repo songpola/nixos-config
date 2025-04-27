@@ -123,8 +123,7 @@
             hostname = "prts.tail7623c.ts.net";
             remoteBuild = true;
           };
-          # podman-lab.hostname = "podman-lab.tail7623c.ts.net";
-          podman-lab.hostname = "10.0.1.2";
+          podman-lab.hostname = "podman-lab.tail7623c.ts.net";
         };
 
         checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
