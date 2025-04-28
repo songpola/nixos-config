@@ -40,7 +40,19 @@ in {
       dockerCompat = mkDefaultEnableOption "Podman as Docker drop-in replacement";
     };
 
-    lazydocker = mkDefaultEnableOption "Lazydocker tool";
+    tools = {
+      enable = mkDefaultEnableOption "tools for managing containers";
+      lazydocker =
+        mkEnableOption "Lazydocker"
+        // {
+          default = cfg.docker;
+        };
+      podman-tui =
+        mkEnableOption "Podman Terminal UI"
+        // {
+          default = cfg.podman.enable;
+        };
+    };
   };
   config = mkIf cfg.enable (mkMerge [
     (mkIf cfg.enableNvidiaGPU {
@@ -60,11 +72,10 @@ in {
       # TODO: Add WSL support
       virtualisation.podman.enable = true;
 
-      environment.systemPackages = [
-        pkgs.passt # rootless networking tool (pasta)
-      ];
-
       # users.users.${namespace}.extraGroups = ["podman"];
+
+      # In order for the socket to work when the user is not logged in
+      users.users.${namespace}.linger = true;
 
       virtualisation.containers.storage.settings = mkIf cfg.useZfsStorageDriver {
         storage = {
@@ -75,10 +86,11 @@ in {
         };
       };
     })
-    (mkIf cfg.lazydocker (
-      mkHomeConfig {
-        home.packages = [pkgs.lazydocker];
-      }
-    ))
+    (mkIf cfg.tools.enable (mkHomeConfig {
+      home.packages = with pkgs; [
+        (mkIf cfg.tools.lazydocker lazydocker)
+        (mkIf cfg.tools.podman-tui podman-tui)
+      ];
+    }))
   ]);
 }
