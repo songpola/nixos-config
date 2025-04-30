@@ -17,7 +17,7 @@
   config,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption mkMerge;
+  inherit (lib) mkIf mkEnableOption mkMerge optionals;
   inherit (lib.${namespace}) mkHomeConfig mkDefaultEnableOption;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
@@ -41,7 +41,11 @@ in {
     };
 
     tools = {
-      enable = mkDefaultEnableOption "tools for managing containers";
+      enable =
+        mkEnableOption "tools for managing containers"
+        // {
+          default = !config.wsl.enable;
+        };
       lazydocker =
         mkEnableOption "Lazydocker"
         // {
@@ -69,13 +73,14 @@ in {
       virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
     })
     (mkIf cfg.podman.enable {
-      # TODO: Add WSL support
+      # Note: When on WSL, configure the Podman client to communicate with the remote Podman machine defined by Podman Desktop.
+      # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
       virtualisation.podman.enable = true;
 
       # users.users.${namespace}.extraGroups = ["podman"];
 
       # In order for the socket to work when the user is not logged in
-      users.users.${namespace}.linger = true;
+      users.users.${namespace}.linger = mkIf (!config.wsl.enable) true;
 
       virtualisation.containers.storage.settings = mkIf cfg.useZfsStorageDriver {
         storage = {
@@ -87,10 +92,13 @@ in {
       };
     })
     (mkIf cfg.tools.enable (mkHomeConfig {
-      home.packages = with pkgs; [
-        (mkIf cfg.tools.lazydocker lazydocker)
-        (mkIf cfg.tools.podman-tui podman-tui)
-      ];
+      home.packages = with pkgs;
+        optionals cfg.tools.lazydocker [
+          lazydocker
+        ]
+        ++ optionals cfg.tools.podman-tui [
+          podman-tui
+        ];
     }))
   ]);
 }

@@ -32,7 +32,7 @@
 
     containers = {
       enable = true;
-      docker = true;
+      podman.enable = true;
     };
 
     git.use1PasswordWSL = true;
