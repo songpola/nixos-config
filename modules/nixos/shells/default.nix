@@ -24,16 +24,12 @@
 
   envVars = {
     CARAPACE_BRIDGES = "fish";
-    VISUAL = "code --wait";
     EDITOR = "micro";
     PAGER = "ov";
     BAT_PAGER = "ov -F -H3";
     MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
     SYSTEMD_PAGER = "lnav";
     SYSTEMD_PAGERSECURE = "false"; # no need to set LESSSECURE=1 for ov pager
-  };
-  envVarsNushellOverride = {
-    VISUAL = ["code" "--wait"];
   };
 in {
   options.${namespace}.${this} = {
@@ -53,13 +49,11 @@ in {
       programs = {
         nushell = {
           enable = true;
-          envFile.source = ./default_env.nu;
-          configFile.source = ./default_config.nu;
           extraConfig = mkMerge [
             (mkBefore (readFile ./config.nu))
             (mkAfter (readFile ./external_completer.nu))
           ];
-          environmentVariables = envVars // envVarsNushellOverride;
+          environmentVariables = envVars;
         };
 
         fish.enable = true; # use as completer
