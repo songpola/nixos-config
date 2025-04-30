@@ -37,7 +37,7 @@ in {
 
     podman = {
       enable = mkEnableOption "Podman support";
-      dockerCompat = mkDefaultEnableOption "Podman as Docker drop-in replacement";
+      # dockerCompat = mkDefaultEnableOption "Podman as Docker drop-in replacement";
     };
 
     tools = {
@@ -75,7 +75,10 @@ in {
     (mkIf cfg.podman.enable {
       # Note: When on WSL, configure the Podman client to communicate with the remote Podman machine defined by Podman Desktop.
       # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
-      virtualisation.podman.enable = true;
+      virtualisation.podman = {
+        enable = true;
+        dockerCompat = true;
+      };
 
       users = {
         # users.${namespace}.extraGroups = ["podman"];
