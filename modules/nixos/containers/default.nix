@@ -18,7 +18,7 @@
   ...
 }: let
   inherit (lib) mkIf mkEnableOption mkMerge optionals;
-  inherit (lib.${namespace}) mkHomeConfig mkDefaultEnableOption;
+  inherit (lib.${namespace}) mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
 in {
@@ -73,47 +73,54 @@ in {
       virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
     })
     (mkIf cfg.podman.enable {
-      # Note: When on WSL, configure the Podman client to communicate with the remote Podman machine defined by Podman Desktop.
-      # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
-      virtualisation.podman = {
-        enable = true;
-        dockerCompat = true;
-      };
-
-      users = {
-        # users.${namespace}.extraGroups = ["podman"];
-
-        # In order for the socket to work when the user is not logged in
-        users.${namespace}.linger = mkIf (!config.wsl.enable) true;
-
-        # The communication channel between your WSL distribution and the Podman Machine is a special file (a socket).
-        # The Podman Machine creates this file with specific permissions.
-        # To communicate with the Podman Machine from your WSL distribution your user must have write permissions for the socket.
-        #
-        # On the Podman Machine, which runs on a Fedora distribution:
-        # Rootful Podman: GID 10 name is wheel.
-        # Rootless Podman: GID 1000 name is user.
-        groups = mkIf (config.wsl.enable) {
-          podman-machine-wheel = {
-            gid = 10;
-            members = [namespace];
+        virtualisation = {
+          # Note: When on WSL, configure the Podman client to communicate with the remote Podman machine defined by Podman Desktop.
+          # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
+          podman = {
+            enable = true;
+            dockerCompat = true;
           };
-          podman-machine-user = {
-            gid = 1000;
-            members = [namespace];
+
+          containers.storage.settings = mkIf cfg.useZfsStorageDriver {
+            storage = {
+              driver = "zfs";
+            };
+            storage.options.zfs = {
+              fsname = "tank/podman";
+            };
           };
         };
-      };
 
-      virtualisation.containers.storage.settings = mkIf cfg.useZfsStorageDriver {
-        storage = {
-          driver = "zfs";
+        users = {
+          # users.${namespace}.extraGroups = ["podman"];
+
+          # In order for the socket to work when the user is not logged in
+          users.${namespace}.linger = mkIf (!config.wsl.enable) true;
+
+          # The communication channel between your WSL distribution and the Podman Machine is a special file (a socket).
+          # The Podman Machine creates this file with specific permissions.
+          # To communicate with the Podman Machine from your WSL distribution your user must have write permissions for the socket.
+          #
+          # On the Podman Machine, which runs on a Fedora distribution:
+          # Rootful Podman: GID 10 name is wheel.
+          # Rootless Podman: GID 1000 name is user.
+          groups = mkIf (config.wsl.enable) {
+            podman-machine-wheel = {
+              gid = 10;
+              members = [namespace];
+            };
+            podman-machine-user = {
+              gid = 1000;
+              members = [namespace];
+            };
+          };
         };
-        storage.options.zfs = {
-          fsname = "tank/podman";
-        };
-      };
-    })
+      }
+      // mkHomeConfig {
+        home.packages = with pkgs; [
+          podman-compose
+        ];
+      })
     (mkIf cfg.tools.enable (mkHomeConfig {
       home.packages = with pkgs;
         (optionals cfg.tools.lazydocker [lazydocker])
