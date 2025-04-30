@@ -64,16 +64,12 @@ in {
           initExtra = mkAfter ''
             # Use nushell in place of bash
             # keep this line at the bottom of ~/.bashrc
-            command -v nu &> /dev/null && SHELL=$(command -v nu) exec nu
+            command -v nu &> /dev/null && exec nu
           '';
         };
 
         # completer
-        carapace = {
-          enable = true;
-          # just need the fish for some command completions
-          enableFishIntegration = false;
-        };
+        carapace.enable = true;
 
         # prompt
         starship = {

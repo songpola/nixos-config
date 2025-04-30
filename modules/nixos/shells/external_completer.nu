@@ -1,6 +1,20 @@
-let zoxide_completer = {|spans: list<string>|
-    $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD}
-    | if ($in | is-not-empty) { $in } else { null }
+# zoxide completer fix for Nushell 0.103.0+
+# https://www.nushell.sh/blog/2025-03-18-nushell_0_103_0.html#external-completers-are-no-longer-used-for-internal-commands-toc
+def "nu-complete zoxide path" [context: string] {
+    let parts = $context | split row " " | skip 1
+    {
+        options: {
+        sort: false
+        completion_algorithm: prefix
+        positional: false
+        case_sensitive: false
+        }
+        completions: (zoxide query --list --exclude $env.PWD -- ...$parts | lines)
+    }
+}
+
+def --env --wrapped z [...rest: string@"nu-complete zoxide path"] {
+    __zoxide_z ...$rest
 }
 
 # NOTE: As of carapace v1.3.0,
@@ -34,8 +48,6 @@ let expand_alias = {|spans: list<string>|
 let external_completer = {|spans: list<string>|
     let spans = do $expand_alias $spans
     match $spans.0 {
-        # use zoxide completions for zoxide commands
-        __zoxide_z | __zoxide_zi => $zoxide_completer
         _ => $carapace_completer
     } | do $in $spans
 }

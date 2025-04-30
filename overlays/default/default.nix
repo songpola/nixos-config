@@ -22,6 +22,7 @@
     podman # >= 5.3
     passt # >= 2024_08_14
     ov # >= 0.40.1
+    starship
     ;
 
   btopCuda = prev.btop.override {
