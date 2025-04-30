@@ -77,10 +77,30 @@ in {
       # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
       virtualisation.podman.enable = true;
 
-      # users.users.${namespace}.extraGroups = ["podman"];
+      users = {
+        # users.${namespace}.extraGroups = ["podman"];
 
-      # In order for the socket to work when the user is not logged in
-      users.users.${namespace}.linger = mkIf (!config.wsl.enable) true;
+        # In order for the socket to work when the user is not logged in
+        users.${namespace}.linger = mkIf (!config.wsl.enable) true;
+
+        # The communication channel between your WSL distribution and the Podman Machine is a special file (a socket).
+        # The Podman Machine creates this file with specific permissions.
+        # To communicate with the Podman Machine from your WSL distribution your user must have write permissions for the socket.
+        #
+        # On the Podman Machine, which runs on a Fedora distribution:
+        # Rootful Podman: GID 10 name is wheel.
+        # Rootless Podman: GID 1000 name is user.
+        groups = mkIf (config.wsl.enable) {
+          podman-machine-wheel = {
+            gid = 10;
+            members = [namespace];
+          };
+          podman-machine-user = {
+            gid = 1000;
+            members = [namespace];
+          };
+        };
+      };
 
       virtualisation.containers.storage.settings = mkIf cfg.useZfsStorageDriver {
         storage = {
@@ -93,12 +113,8 @@ in {
     })
     (mkIf cfg.tools.enable (mkHomeConfig {
       home.packages = with pkgs;
-        optionals cfg.tools.lazydocker [
-          lazydocker
-        ]
-        ++ optionals cfg.tools.podman-tui [
-          podman-tui
-        ];
+        (optionals cfg.tools.lazydocker [lazydocker])
+        ++ (optionals cfg.tools.podman-tui [podman-tui]);
     }))
   ]);
 }
