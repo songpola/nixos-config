@@ -15,8 +15,8 @@ lock:
     nix flake lock
 
 alias u := update
-update:
-    nix flake update
+update *FLAGS="":
+    nix flake update {{ FLAGS }}
 
 alias c := check
 check *FLAGS="":
