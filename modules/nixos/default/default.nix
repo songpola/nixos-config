@@ -53,10 +53,7 @@ in {
       programs.nix-ld.enable = true;
 
       nix = {
-        # flake-utils-plus
-        # generateNixPathFromInputs = true;
-        # generateRegistryFromInputs = true;
-        # linkInputs = true;
+        channel.enable = false;
 
         settings = {
           experimental-features = ["nix-command" "flakes"];
@@ -80,12 +77,7 @@ in {
       # environment.etc."nix/nix.conf".target = "nix/nix.custom.conf";
     }
     // mkHomeConfig {
-      home = {
-        stateVersion = cfg.stateVersions.home;
-        packages = with pkgs; [
-          uutils-coreutils-noprefix # coreutils replacement
-        ];
-      };
+      home.stateVersion = cfg.stateVersions.home;
       xdg.enable = true;
       programs.nh.enable = true;
     };
