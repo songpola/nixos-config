@@ -34,10 +34,8 @@ in {
     mkIf cfg.enable (
       mkMerge [
         (mkIf cfg.utils (mkHomeConfig {
-          programs = {
-            jq.enable = true;
-          };
           home.packages = with pkgs; [
+            uutils-coreutils-noprefix # coreutils replacement
             doggo # DNS client
             httpie # HTTP client
             wget # file downloader
@@ -46,6 +44,7 @@ in {
             sops # secrets management
             xkcdpass # password generator
             aria2 # download utility
+            jq # JSON processor
           ];
         }))
         (mkIf cfg.sysadmin (mkHomeConfig {
@@ -56,32 +55,27 @@ in {
               package = mkIf nvidiaEnable pkgs.btopCuda;
             };
           };
-          home.packages = with pkgs;
-            [
-              duf # `df` replacement
-              dust # `du` replacement
-              rustscan # port scanner
-              lsof # list open files
-              isd # interactive systemd
-              pciutils # PCI info
-              lshw # hardware info
-            ]
-            ++ (optionals nvidiaEnable [
-              nvitop # GPU monitoring
-            ]);
+          home.packages = with pkgs; [
+            duf # `df` replacement
+            dust # `du` replacement
+            rustscan # port scanner
+            lsof # list open files
+            isd # interactive systemd
+            pciutils # PCI info
+            lshw # hardware info
+            (mkIf nvidiaEnable nvitop) # GPU monitoring
+          ];
         }))
         (mkIf cfg.development (
           {
-            # pixi (python)
+            # python
             ${namespace}.pixi.enable = true;
           }
           // mkHomeConfig {
             home.packages = with pkgs; (optionals cfg.development [
               just # task runner
               watchexec # file watcher
-
-              # dev environment
-              devbox
+              devbox # dev environment
 
               # nix
               nil
