@@ -8,10 +8,18 @@ $env.SHELL = ^which nu
 $env.PNPM_HOME = $env.HOME | path join .local share pnpm
 
 path add $env.PNPM_HOME
-path add ($env.HOME | path join .pixi bin )
+path add ($env.HOME | path join .pixi bin)
 
-if ($env.VISUAL? | is-not-empty) {
-    $env.VISUAL = $env.VISUAL | split row (char space)
+
+# If using vscode, use code as default editor for nushell
+if ($env.TERM_PROGRAM? == "vscode") {
+    $env.config.buffer_editor = ["code", "--wait"]
+}
+
+# Use ssh-agent.socket if available
+let ssh_agent_socket = $env.XDG_RUNTIME_DIR | path join ssh-agent.socket
+if ($ssh_agent_socket | path exists) {
+    $env.SSH_AUTH_SOCK = $ssh_agent_socket
 }
 
 alias l = ls

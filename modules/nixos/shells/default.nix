@@ -28,7 +28,7 @@
     PAGER = "ov";
     BAT_PAGER = "ov -F -H3";
     MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
-    SYSTEMD_PAGER = "lnav";
+    SYSTEMD_PAGER = "ov";
     SYSTEMD_PAGERSECURE = "false"; # no need to set LESSSECURE=1 for ov pager
   };
 in {
@@ -38,6 +38,7 @@ in {
   config = mkIf cfg.enable (mkHomeConfig (mkMerge [
     {
       home = {
+        sessionVariables = envVars;
         packages = with pkgs; [
           lnav # log viewer
         ];
@@ -53,7 +54,6 @@ in {
             (mkBefore (readFile ./config.nu))
             (mkAfter (readFile ./external_completer.nu))
           ];
-          environmentVariables = envVars;
         };
 
         fish.enable = true; # use as completer
