@@ -69,6 +69,14 @@
         flake-compat.follows = "flake-compat";
       };
     };
+
+    quadlet-nix = {
+      # TODO: waiting for PR to be merged
+      # https://github.com/SEIAROTg/quadlet-nix/pull/26
+      # https://github.com/SEIAROTg/quadlet-nix/pull/27
+      url = "github:songpola/quadlet-nix/fix-network-name";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -88,10 +96,12 @@
           ]
           ++ [
             nixos-facter-modules.nixosModules.facter
+            quadlet-nix.nixosModules.quadlet
           ];
         homes.modules = [
           opnix.homeManagerModules.default
           sops-nix.homeManagerModules.sops
+          quadlet-nix.homeManagerModules.quadlet
         ];
       })
       // {

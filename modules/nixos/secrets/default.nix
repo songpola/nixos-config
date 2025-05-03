@@ -17,7 +17,7 @@
   config,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib) mkIf mkEnableOption mkMerge;
   inherit (lib.${namespace}) mkHomeConfig;
   this = builtins.baseNameOf ./.;
   cfg = config.${namespace}.${this};
@@ -27,35 +27,37 @@ in {
     enableSops = mkEnableOption "SOPS (sops-nix)";
     enableOpnix = mkEnableOption "OPNix (1Password Secrets for NixOS)";
   };
-  config = mkIf cfg.enable (
-    {
-      # Need to be enabled for the Home Manager module to work
-      services.onepassword-secrets = {
-        enable = true;
-        users = [namespace];
-        configFile = pkgs.writeText "secrets.json" (builtins.toJSON {
-          secrets = []; # no system secrets
-        });
-      };
-    }
-    // (mkHomeConfig {
-      sops = mkIf cfg.enableSops {
+  config = mkIf cfg.enable (mkMerge [
+    (mkIf cfg.enableSops ({
+      sops = {
         defaultSopsFile = ./sops-nix.yaml;
         # For deployment target,
         # this will automatically import SSH keys as age keys.
         age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       };
-      programs.onepassword-secrets = mkIf cfg.enableOpnix {
-        enable = true;
-        secrets = [
-          {
-            # For client to edit sops secrets,
-            # this will get age keys from 1Password.
-            path = ".config/sops/age/keys.txt";
-            reference = "op://nixos-config/sops-nix-age-key/credential";
-          }
-        ];
-      };
-    })
-  );
+    }))
+    (mkIf cfg.enableOpnix ({
+        # Need to be enabled for the Home Manager module to work
+        services.onepassword-secrets = {
+          enable = true;
+          users = [namespace];
+          configFile = pkgs.writeText "opnix-config.json" (builtins.toJSON {
+            secrets = []; # no system secrets
+          });
+        };
+      }
+      // mkHomeConfig {
+        programs.onepassword-secrets = mkIf cfg.enableOpnix {
+          enable = true;
+          secrets = [
+            {
+              # For client to edit sops secrets,
+              # this will get age keys from 1Password.
+              path = ".config/sops/age/keys.txt";
+              reference = "op://nixos-config/sops-nix-age-key/credential";
+            }
+          ];
+        };
+      }))
+  ]);
 }

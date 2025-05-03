@@ -16,6 +16,7 @@ in {
   mkHomeConfig = homeConfig: {
     snowfallorg.users.${namespace}.home.config = homeConfig;
   };
+  getHomeConfig = config: config.snowfallorg.users.${namespace}.home.config;
   mkDeployNodes = self:
     mapAttrs (
       node: cfg:

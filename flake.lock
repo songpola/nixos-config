@@ -196,6 +196,27 @@
         "type": "github"
       }
     },
+    "quadlet-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1746127100,
+        "narHash": "sha256-OWVAx2dHm952GeE4SFyrc3JW+CBmOl2BG0g3jpDqJcs=",
+        "owner": "songpola",
+        "repo": "quadlet-nix",
+        "rev": "dedebd90b22a67c838646d15c63d9ff4646d1b8d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "songpola",
+        "ref": "fix-network-name",
+        "repo": "quadlet-nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
@@ -208,6 +229,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "opnix": "opnix",
+        "quadlet-nix": "quadlet-nix",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
         "unstable": "unstable"

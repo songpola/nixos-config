@@ -14,3 +14,6 @@ creation_rules:
       - age:
           - *doctor
           - *prts
+stores:
+  yaml:
+    indent: 2

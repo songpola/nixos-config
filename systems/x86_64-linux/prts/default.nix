@@ -69,7 +69,10 @@
     syncthing.enable = true;
   };
 
-  imports = [./disko.nix];
+  imports = [
+    ./disko.nix
+    ./quadlet-nix
+  ];
 
   facter.reportPath = ./facter.json;
 
