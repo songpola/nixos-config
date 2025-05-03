@@ -84,6 +84,7 @@ in {
               deploy-rs
               nix-diff
               nvd
+              nix-output-monitor
 
               # node
               nodejs
