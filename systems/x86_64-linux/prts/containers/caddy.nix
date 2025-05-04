@@ -23,9 +23,6 @@
   cfg = homeCfg.virtualisation.quadlet;
 in
   {
-    boot.kernel.sysctl = {
-      "net.ipv4.ip_unprivileged_port_start" = 0; # Allow binding to ports < 1024
-    };
     sops = {
       secrets."containers/caddy" = {
         owner = namespace;
@@ -34,7 +31,6 @@ in
   }
   // mkHomeConfig {
     systemd.user = {
-      startServices = true; # TODO: will defaults to true in 25.05
       sockets = {
         caddy = {
           Socket = {
@@ -55,9 +51,8 @@ in
       };
     };
     virtualisation.quadlet = {
-      autoEscape = true;
       networks = {
-        caddy = {};
+        caddy-net = {};
       };
       volumes = {
         caddy-data = {};
@@ -74,26 +69,20 @@ in
               CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility
             };
             environmentFiles = [
-              (
-                config.sops.secrets."containers/caddy".path
-              )
+              config.sops.secrets."containers/caddy".path
             ];
-            labels = lib.dropEnd 1 ( # remove the last newline (empty line)
-              lib.splitString "\n" (
-                utils.systemdUtils.lib.attrsToSection {
-                  "caddy.email" = "ice.songpola@pm.me";
-                  "caddy.acme_dns" = "cloudflare {env.CLOUDFLARE_API_TOKEN}";
-                  # caddy_1 = "syncthing.songpola.dev";
-                  # "caddy_1.reverse_proxy" = "host.docker.internal:8384";
-                }
-              )
-            );
+            labels = lib.dropEnd 1 (lib.splitString "\n" ''
+              caddy.email=ice.songpola@pm.me
+              caddy.acme_dns=cloudflare {env.CLOUDFLARE_API_TOKEN}
+              caddy_1=syncthing.songpola.dev
+              caddy_1.reverse_proxy=host.containers.internal:8384
+            '');
             volumes = [
               "%t/podman/podman.sock:/var/run/docker.sock"
               "${cfg.volumes.caddy-data.ref}:/data"
             ];
-            networks = [cfg.networks.caddy.ref];
-            notify = true;
+            networks = [cfg.networks.caddy-net.ref];
+            notify = true; # caddy supports sd_notify
           };
         };
       };

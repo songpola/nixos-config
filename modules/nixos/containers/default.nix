@@ -91,9 +91,11 @@ in {
           };
         };
 
-        users = {
-          # users.${namespace}.extraGroups = ["podman"];
+        boot.kernel.sysctl = {
+          "net.ipv4.ip_unprivileged_port_start" = 0; # Allow binding to ports < 1024
+        };
 
+        users = {
           # In order for the socket to work when the user is not logged in
           users.${namespace}.linger = mkIf (!config.wsl.enable) true;
 
@@ -117,9 +119,10 @@ in {
         };
       }
       // mkHomeConfig {
-        home.packages = with pkgs; [
-          podman-compose
-        ];
+        # TODO: will defaults to true in home-manager 25.05
+        systemd.user.startServices = true;
+
+        virtualisation.quadlet.autoEscape = true;
       })
     (mkIf cfg.tools.enable (mkHomeConfig {
       home.packages = with pkgs;

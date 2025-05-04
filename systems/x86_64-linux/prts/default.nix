@@ -71,7 +71,7 @@
 
   imports = [
     ./disko.nix
-    ./quadlet-nix
+    ./containers
   ];
 
   facter.reportPath = ./facter.json;
