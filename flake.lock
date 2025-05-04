@@ -203,16 +203,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1746342028,
+        "lastModified": 1746357944,
         "narHash": "sha256-FlCTlugjfZQGFe+49oegyAWN1ZLJs+qadqBGUk5jHbY=",
         "owner": "songpola",
         "repo": "quadlet-nix",
-        "rev": "c4aa72c7ae0427c987f30a152c76fa4a14b55c39",
+        "rev": "559051bf55b26463ebcd34320fa5bafaadf8268f",
         "type": "github"
       },
       "original": {
         "owner": "songpola",
-        "ref": "merged",
         "repo": "quadlet-nix",
         "type": "github"
       }
