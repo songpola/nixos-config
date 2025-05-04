@@ -74,7 +74,7 @@
       # TODO: waiting for PR to be merged
       # https://github.com/SEIAROTg/quadlet-nix/pull/26
       # https://github.com/SEIAROTg/quadlet-nix/pull/27
-      url = "github:songpola/quadlet-nix/fix-network-name";
+      url = "github:songpola/quadlet-nix/merged";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

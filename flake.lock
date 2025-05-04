@@ -203,16 +203,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1746127100,
-        "narHash": "sha256-OWVAx2dHm952GeE4SFyrc3JW+CBmOl2BG0g3jpDqJcs=",
+        "lastModified": 1746342028,
+        "narHash": "sha256-FlCTlugjfZQGFe+49oegyAWN1ZLJs+qadqBGUk5jHbY=",
         "owner": "songpola",
         "repo": "quadlet-nix",
-        "rev": "dedebd90b22a67c838646d15c63d9ff4646d1b8d",
+        "rev": "c4aa72c7ae0427c987f30a152c76fa4a14b55c39",
         "type": "github"
       },
       "original": {
         "owner": "songpola",
-        "ref": "fix-network-name",
+        "ref": "merged",
         "repo": "quadlet-nix",
         "type": "github"
       }
