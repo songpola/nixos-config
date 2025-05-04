@@ -69,7 +69,8 @@ in {
             useRoutingFeatures = "server";
             extraSetFlags = [
               "--operator=${namespace}"
-              "--ssh"
+              # Tailscale SSH is not compatible with Podman yet
+              (mkIf config.${namespace}.containers.podman.enable "--ssh")
             ];
           };
         };
