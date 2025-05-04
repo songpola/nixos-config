@@ -74,7 +74,7 @@
           ExecStart = "${pkgs.nushell}/bin/nu ${utils.escapeSystemdExecArgs [
             "--stdin"
             "-c"
-            "${npiperelayExe} -ei -s //./pipe/openssh-ssh-agent"
+            "${npiperelayExe} -v -p -ei -s //./pipe/openssh-ssh-agent"
           ]}";
           StandardInput = "socket";
           StandardOutput = "socket";
