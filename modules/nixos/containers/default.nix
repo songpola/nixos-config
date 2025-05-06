@@ -72,7 +72,7 @@ in {
 
       virtualisation.docker.storageDriver = mkIf cfg.useZfsStorageDriver "zfs";
     })
-    (mkIf cfg.podman.enable {
+    (mkIf cfg.podman.enable ({
         virtualisation = {
           # Note: When on WSL, configure the Podman client to communicate with the remote Podman machine defined by Podman Desktop.
           # See: https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
@@ -93,6 +93,10 @@ in {
 
         boot.kernel.sysctl = {
           "net.ipv4.ip_unprivileged_port_start" = 0; # Allow binding to ports < 1024
+
+          # UDP Buffer Sizes: https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+          "net.core.rmem_max" = 7500000; # Increase the maximum receive buffer size
+          "net.core.wmem_max" = 7500000; # Increase the maximum send buffer size
         };
 
         users = {
@@ -123,7 +127,7 @@ in {
         systemd.user.startServices = true;
 
         virtualisation.quadlet.autoEscape = true;
-      })
+      }))
     (mkIf cfg.tools.enable (mkHomeConfig {
       home.packages = with pkgs;
         (optionals cfg.tools.lazydocker [lazydocker])
