@@ -17,33 +17,23 @@
   config,
   ...
 }: let
-  inherit (lib.${namespace}) mkHomeConfig getHomeConfig mkLabels;
-  homeCfg = getHomeConfig config;
-  cfg = homeCfg.virtualisation.quadlet;
+  inherit (lib.${namespace}) mkHomeConfig mkLabels mkContainerWithCaddyNet;
 in
-  mkHomeConfig {
-    virtualisation.quadlet = {
-      containers = {
-        dozzle = {
-          containerConfig = {
-            image = "docker.io/amir20/dozzle:v8.12.10";
-            environments = {
-              TZ = "Asia/Bangkok";
-              DOZZLE_ENABLE_ACTIONS = "true";
-            };
-            volumes = [
-              "%t/podman/podman.sock:/var/run/docker.sock"
-            ];
-            networks = [
-              cfg.networks.caddy-net.ref
-            ];
-            labels = mkLabels ''
-              caddy=dozzle.songpola.dev
-              caddy.reverse_proxy={{upstreams 8080}}
-              caddy.reverse_proxy.flush_interval=-1
-            '';
-          };
+  mkHomeConfig (
+    mkContainerWithCaddyNet config {
+      name = "dozzle";
+      image = "docker.io/amir20/dozzle:v8.12.10";
+      mountPodmanSocket = true;
+    } {
+      containerConfig = {
+        environments = {
+          DOZZLE_ENABLE_ACTIONS = "true";
         };
+        labels = mkLabels ''
+          caddy=dozzle.songpola.dev
+          caddy.reverse_proxy={{upstreams 8080}}
+          caddy.reverse_proxy.flush_interval=-1
+        '';
       };
-    };
-  }
+    }
+  )

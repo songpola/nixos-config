@@ -18,11 +18,9 @@
   ...
 }: let
   inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkHomeConfig getHomeConfig mkContainer;
+  inherit (lib.${namespace}) mkHomeConfig getHomeConfig getHomeConfigQuadlet mkContainerWithCaddyNet;
   homeCfg = getHomeConfig config;
-  cfg = homeCfg.virtualisation.quadlet;
-
-  mkContainer' = mkContainer cfg;
+  quadletCfg = getHomeConfigQuadlet config;
 in
   {
     sops.secrets."containers/caddy".owner = namespace;
@@ -39,12 +37,10 @@ in
   }
   // mkHomeConfig (mkMerge [
     (
-      mkContainer' {
+      mkContainerWithCaddyNet config {
         name = "caddy";
         image = "docker.io/homeall/caddy-reverse-proxy-cloudflare:2025.04.29";
-        useCaddyNet = true;
         mountPodmanSocket = true;
-        autoStartOnBoot = false;
         socketActivated = true;
       } {
         containerConfig = {
@@ -55,11 +51,9 @@ in
             CADDY_HTTP_FD = "4";
             CADDY_HTTPS_FD = "5";
           };
-          environmentFiles = [
-            config.sops.secrets."containers/caddy".path
-          ];
+          environmentFiles = [config.sops.secrets."containers/caddy".path];
           volumes = [
-            "${cfg.volumes.caddy-data.ref}:/data"
+            "${quadletCfg.volumes.caddy-data.ref}:/data"
             "%h/${homeCfg.xdg.configFile."caddy/Caddyfile".target}:/config/Caddyfile"
           ];
           notify = true; # caddy supports sd_notify
@@ -69,9 +63,7 @@ in
     {
       virtualisation.quadlet = {
         networks = {
-          caddy-net = {
-            networkConfig.options = "mtu=65520";
-          };
+          caddy-net.networkConfig.options = "mtu=65520";
         };
         volumes = {
           caddy-data = {};
@@ -80,25 +72,21 @@ in
 
       xdg.configFile."caddy/Caddyfile".source = ./Caddyfile;
 
-      systemd.user = {
-        sockets = {
-          caddy = {
-            Socket = {
-              BindIPv6Only = "both";
-              # These are the actual order of the socket units
-              ListenDatagram = [
-                "[::]:443" # fdgram/3 - HTTP3
-              ];
-              ListenStream = [
-                "[::]:80" # fd/4 - HTTP
-                "[::]:443" # fd/5 - HTTPS
-              ];
-              SocketMode = 0600;
-            };
-            Install = {
-              WantedBy = ["sockets.target"];
-            };
+      systemd.user.sockets = {
+        caddy = {
+          Socket = {
+            BindIPv6Only = "both";
+            # These are the actual order of the socket units
+            ListenDatagram = [
+              "[::]:443" # fdgram/3 - HTTP3
+            ];
+            ListenStream = [
+              "[::]:80" # fd/4 - HTTP
+              "[::]:443" # fd/5 - HTTPS
+            ];
+            SocketMode = 0600;
           };
+          Install.WantedBy = ["sockets.target"];
         };
       };
     }

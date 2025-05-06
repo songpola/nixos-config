@@ -19,7 +19,8 @@ in rec {
     snowfallorg.users.${namespace}.home.config = homeConfig;
   };
 
-  getHomeConfig = config: config.snowfallorg.users.${namespace}.home.config;
+  getHomeConfig = nixosConfig: nixosConfig.snowfallorg.users.${namespace}.home.config;
+  getHomeConfigQuadlet = nixosConfig: (getHomeConfig nixosConfig).virtualisation.quadlet;
 
   mkDeployNodes = self:
     mapAttrs (
@@ -35,24 +36,16 @@ in rec {
 
   mkLabels = labels: remove "" (splitString "\n" labels);
 
-  # i.e. Sepecify `y` only if `x` is false
-  mkElse = x: y: mkIf (!x) y;
-
-  # i.e. Don't sepecify `x` unless `x` is false
-  mkUnless = x: mkIf (!x) x;
-
-  mkContainer = cfg: {
+  mkContainer = {
     name,
     image,
-    useCaddyNet ? false,
-    mountPodmanSocket ? false,
-    autoStartOnBoot ? true,
+    noAutoStart ? false,
     socketActivated ? false,
-  }: config: {
+    mountPodmanSocket ? false,
+  }: cfg: {
     virtualisation.quadlet.containers.${name} =
       recursiveUpdate {
-        # Default to auto start on boot; unless specified otherwise
-        autoStart = mkUnless autoStartOnBoot;
+        autoStart = mkIf (noAutoStart || socketActivated) false;
 
         # No need to restart once finished for socket activated services
         serviceConfig.Restart = mkIf socketActivated "no";
@@ -62,13 +55,21 @@ in rec {
 
           environments.TZ = "Asia/Bangkok";
 
-          networks = mkIf useCaddyNet [cfg.networks.caddy-net.ref];
-
           volumes = [
             (mkIf mountPodmanSocket "%t/podman/podman.sock:/var/run/docker.sock")
           ];
         };
       }
-      config;
+      cfg;
   };
+
+  mkContainerWithCaddyNet = nixosConfig: settings: cfg: let
+    quadletCfg = getHomeConfigQuadlet nixosConfig;
+  in
+    mkContainer settings (
+      recursiveUpdate {
+        containerConfig.networks = [quadletCfg.networks.caddy-net.ref];
+      }
+      cfg
+    );
 }

@@ -17,36 +17,28 @@
   config,
   ...
 }: let
-  inherit (lib.${namespace}) mkHomeConfig getHomeConfig mkLabels;
-  homeCfg = getHomeConfig config;
-  cfg = homeCfg.virtualisation.quadlet;
+  inherit (lib.${namespace}) mkHomeConfig mkLabels mkContainerWithCaddyNet;
 in
-  mkHomeConfig {
-    virtualisation.quadlet = {
-      containers = {
-        stirling-pdf = {
-          containerConfig = {
-            image = "docker.io/stirlingtools/stirling-pdf:0.45.6";
-            environments = {
-              TZ = "Asia/Bangkok";
-              LANGS = "en_US"; # install fonts
-            };
-            volumes = [
-              "/tank/songpola/stirling-pdf/logs:/logs"
-              "/tank/songpola/stirling-pdf/extraConfigs:/configs"
-              "/tank/songpola/stirling-pdf/pipeline:/pipeline"
-              "/tank/songpola/stirling-pdf/customFiles:/customFiles"
-              "/tank/songpola/stirling-pdf/trainingData:/usr/share/tessdata"
-            ];
-            networks = [
-              cfg.networks.caddy-net.ref
-            ];
-            labels = mkLabels ''
-              caddy=stirling-pdf.songpola.dev
-              caddy.reverse_proxy={{upstreams 8080}}
-            '';
-          };
+  mkHomeConfig (
+    mkContainerWithCaddyNet config {
+      name = "stirling-pdf";
+      image = "docker.io/stirlingtools/stirling-pdf:0.45.6";
+    } {
+      containerConfig = {
+        environments = {
+          LANGS = "en_US";
         };
+        volumes = [
+          "/tank/songpola/stirling-pdf/logs:/logs"
+          "/tank/songpola/stirling-pdf/extraConfigs:/configs"
+          "/tank/songpola/stirling-pdf/pipeline:/pipeline"
+          "/tank/songpola/stirling-pdf/customFiles:/customFiles"
+          "/tank/songpola/stirling-pdf/trainingData:/usr/share/tessdata"
+        ];
+        labels = mkLabels ''
+          caddy=stirling-pdf.songpola.dev
+          caddy.reverse_proxy={{upstreams 8080}}
+        '';
       };
-    };
-  }
+    }
+  )

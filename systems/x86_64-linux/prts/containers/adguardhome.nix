@@ -17,7 +17,7 @@
   config,
   ...
 }: let
-  inherit (lib.${namespace}) mkHomeConfig mkLabels;
+  inherit (lib.${namespace}) mkHomeConfig mkLabels mkContainer;
 in
   {
     services.resolved = {
@@ -26,6 +26,7 @@ in
         DNSStubListener=no
       '';
     };
+
     networking = {
       nameservers = ["127.0.0.1"]; # Use AdGuard Home as DNS server
       firewall = {
@@ -40,32 +41,27 @@ in
       };
     };
   }
-  // mkHomeConfig {
-    virtualisation.quadlet = {
-      containers = {
-        adguardhome = {
-          containerConfig = {
-            image = "docker.io/adguard/adguardhome:v0.107.61";
-            publishPorts = [
-              "53:53" # DNS
-              "53:53/udp" # DNS
-              "853:853" # DoT
-              "853:853/udp" # DoQ
-              "8080:80" # Web UI
-            ];
-            environments = {
-              TZ = "Asia/Bangkok";
-            };
-            volumes = [
-              "/tank/songpola/adguardhome/conf:/opt/adguardhome/conf" # app configuration
-              "/tank/songpola/adguardhome/work:/opt/adguardhome/work" # app working directory
-            ];
-            labels = mkLabels ''
-              caddy=adguardhome.songpola.dev
-              caddy.reverse_proxy=host.containers.internal:8080
-            '';
-          };
-        };
+  // mkHomeConfig (
+    mkContainer {
+      name = "adguardhome";
+      image = "docker.io/adguard/adguardhome:v0.107.61";
+    } {
+      containerConfig = {
+        publishPorts = [
+          "53:53" # DNS
+          "53:53/udp" # DNS
+          "853:853" # DoT
+          "853:853/udp" # DoQ
+          "8080:80" # Web UI
+        ];
+        volumes = [
+          "/tank/songpola/adguardhome/conf:/opt/adguardhome/conf" # app configuration
+          "/tank/songpola/adguardhome/work:/opt/adguardhome/work" # app working directory
+        ];
+        labels = mkLabels ''
+          caddy=adguardhome.songpola.dev
+          caddy.reverse_proxy=host.containers.internal:8080
+        '';
       };
-    };
-  }
+    }
+  )
