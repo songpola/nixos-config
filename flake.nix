@@ -71,9 +71,7 @@
     };
 
     quadlet-nix = {
-      # TODO: waiting for PR to be merged
-      # https://github.com/SEIAROTg/quadlet-nix/pull/26
-      url = "github:songpola/quadlet-nix";
+      url = "github:SEIAROTg/quadlet-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
