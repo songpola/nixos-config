@@ -15,7 +15,6 @@
   # systems, # An attribute map of your defined hosts.
   # All other arguments come from the system system.
   config,
-  utils,
   ...
 }: let
   inherit (lib.${namespace}) mkHomeConfig getHomeConfig;
