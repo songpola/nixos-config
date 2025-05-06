@@ -17,9 +17,7 @@
   config,
   ...
 }: let
-  inherit (lib.${namespace}) mkHomeConfig getHomeConfig mkLabels;
-  homeCfg = getHomeConfig config;
-  cfg = homeCfg.virtualisation.quadlet;
+  inherit (lib.${namespace}) mkHomeConfig mkLabels;
 in
   {
     services.resolved = {
