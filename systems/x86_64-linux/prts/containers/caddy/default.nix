@@ -17,94 +17,89 @@
   config,
   ...
 }: let
-  inherit (lib.${namespace}) mkHomeConfig getHomeConfig;
+  inherit (lib) mkMerge;
+  inherit (lib.${namespace}) mkHomeConfig getHomeConfig mkContainer;
   homeCfg = getHomeConfig config;
   cfg = homeCfg.virtualisation.quadlet;
+
+  mkContainer' = mkContainer cfg;
 in
   {
-    sops = {
-      secrets."containers/caddy" = {
-        owner = namespace;
-      };
-    };
-    networking = {
-      firewall = {
-        allowedTCPPorts = [
-          80 # HTTP
-          443 # HTTPS
-        ];
-        allowedUDPPorts = [
-          443 # HTTP3
-        ];
-      };
+    sops.secrets."containers/caddy".owner = namespace;
+
+    networking.firewall = {
+      allowedTCPPorts = [
+        80 # HTTP
+        443 # HTTPS
+      ];
+      allowedUDPPorts = [
+        443 # HTTP3
+      ];
     };
   }
-  // mkHomeConfig {
-    xdg.configFile = {
-      "caddy/Caddyfile".source = ./Caddyfile;
-    };
-    systemd.user = {
-      sockets = {
-        caddy = {
-          Socket = {
-            BindIPv6Only = "both";
-            # These are the actual order of the socket units
-            ListenDatagram = [
-              "[::]:443" # fdgram/3 - HTTP3
-            ];
-            ListenStream = [
-              "[::]:80" # fd/4 - HTTP
-              "[::]:443" # fd/5 - HTTPS
-            ];
-            SocketMode = 0600;
+  // mkHomeConfig (mkMerge [
+    (
+      mkContainer' {
+        name = "caddy";
+        image = "docker.io/homeall/caddy-reverse-proxy-cloudflare:2025.04.29";
+        useCaddyNet = true;
+        mountPodmanSocket = true;
+        autoStartOnBoot = false;
+        socketActivated = true;
+      } {
+        containerConfig = {
+          environments = {
+            CADDY_DOCKER_CADDYFILE_PATH = "/config/Caddyfile";
+            CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility
+            CADDY_HTTP3_FD = "3";
+            CADDY_HTTP_FD = "4";
+            CADDY_HTTPS_FD = "5";
           };
-          Install = {
-            WantedBy = ["sockets.target"];
+          environmentFiles = [
+            config.sops.secrets."containers/caddy".path
+          ];
+          volumes = [
+            "${cfg.volumes.caddy-data.ref}:/data"
+            "%h/${homeCfg.xdg.configFile."caddy/Caddyfile".target}:/config/Caddyfile"
+          ];
+          notify = true; # caddy supports sd_notify
+        };
+      }
+    )
+    {
+      virtualisation.quadlet = {
+        networks = {
+          caddy-net = {
+            networkConfig.options = "mtu=65520";
           };
         };
-      };
-    };
-    virtualisation.quadlet = {
-      networks = {
-        caddy-net = {
-          networkConfig = {
-            options = "mtu=65520";
-          };
+        volumes = {
+          caddy-data = {};
         };
       };
-      volumes = {
-        caddy-data = {};
-      };
-      containers = {
-        caddy = {
-          autoStart = false; # don't auto start on boot
-          serviceConfig = {
-            Restart = "no"; # override default; no need to restart once finished
-          };
-          containerConfig = {
-            image = "docker.io/homeall/caddy-reverse-proxy-cloudflare:2025.04.29";
-            environments = {
-              TZ = "Asia/Bangkok";
-              CADDY_DOCKER_CADDYFILE_PATH = "/config/Caddyfile";
-              CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility
-              CADDY_HTTP3_FD = "3";
-              CADDY_HTTP_FD = "4";
-              CADDY_HTTPS_FD = "5";
+
+      xdg.configFile."caddy/Caddyfile".source = ./Caddyfile;
+
+      systemd.user = {
+        sockets = {
+          caddy = {
+            Socket = {
+              BindIPv6Only = "both";
+              # These are the actual order of the socket units
+              ListenDatagram = [
+                "[::]:443" # fdgram/3 - HTTP3
+              ];
+              ListenStream = [
+                "[::]:80" # fd/4 - HTTP
+                "[::]:443" # fd/5 - HTTPS
+              ];
+              SocketMode = 0600;
             };
-            environmentFiles = [
-              config.sops.secrets."containers/caddy".path
-            ];
-            networks = [
-              cfg.networks.caddy-net.ref
-            ];
-            volumes = [
-              "%t/podman/podman.sock:/var/run/docker.sock"
-              "${cfg.volumes.caddy-data.ref}:/data"
-              "%h/${homeCfg.xdg.configFile."caddy/Caddyfile".target}:/config/Caddyfile"
-            ];
-            notify = true; # caddy supports sd_notify
+            Install = {
+              WantedBy = ["sockets.target"];
+            };
           };
         };
       };
-    };
-  }
+    }
+  ])
