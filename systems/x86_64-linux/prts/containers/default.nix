@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ./caddy.nix
+    ./caddy
     ./adguardhome.nix
   ];
 }
