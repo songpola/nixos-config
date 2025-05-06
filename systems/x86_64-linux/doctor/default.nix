@@ -47,6 +47,19 @@
   programs.virt-manager.enable = true;
 }
 // lib.${namespace}.mkHomeConfig {
+  programs.ssh = {
+    enable = true;
+    controlMaster = "auto";
+    controlPersist = "10m";
+    matchBlocks = {
+      "prts" = {
+        hostname = "prts.tail7623c.ts.net";
+        user = namespace;
+        forwardAgent = true;
+      };
+    };
+  };
+
   systemd.user = {
     sockets = {
       ssh-agent-wsl = {
