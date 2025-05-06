@@ -70,7 +70,7 @@ in {
             extraSetFlags = [
               "--operator=${namespace}"
               # Tailscale SSH is not compatible with Podman yet
-              (mkIf config.${namespace}.containers.podman.enable "--ssh")
+              (mkIf (!config.${namespace}.containers.podman.enable) "--ssh")
             ];
           };
         };
