@@ -9,7 +9,7 @@
   # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
   # snowfall-inputs,
 }: let
-  inherit (lib) mkEnableOption mapAttrs deploy-rs;
+  inherit (lib) mkEnableOption mapAttrs deploy-rs remove splitString;
 in {
   sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz songpola";
   mkDefaultEnableOption = x: mkEnableOption x // {default = true;};
@@ -28,4 +28,5 @@ in {
         }
         // cfg
     );
+  mkLabels = labels: remove "" (splitString "\n" labels);
 }
