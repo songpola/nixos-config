@@ -7,5 +7,5 @@ const modules = readdirSync(resolve("modules/nixos")).map(
 )
 
 export const prompt = {
-  scopes: [...systems, "modules", ...modules],
+  scopes: [...systems, "prts/containers", "modules", ...modules],
 }
