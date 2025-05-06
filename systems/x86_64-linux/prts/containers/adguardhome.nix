@@ -53,6 +53,9 @@ in
               "853:853/udp" # DoQ
               "8080:80" # Web UI
             ];
+            environments = {
+              TZ = "Asia/Bangkok";
+            };
             volumes = [
               "/tank/songpola/adguardhome/conf:/opt/adguardhome/conf" # app configuration
               "/tank/songpola/adguardhome/work:/opt/adguardhome/work" # app working directory

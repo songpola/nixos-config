@@ -28,6 +28,7 @@ in
           containerConfig = {
             image = "docker.io/amir20/dozzle:v8.12.10";
             environments = {
+              TZ = "Asia/Bangkok";
               DOZZLE_ENABLE_ACTIONS = "true";
             };
             volumes = [
