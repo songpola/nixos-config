@@ -22,7 +22,7 @@ in
   mkHomeConfig (
     mkContainerWithCaddyNet config {
       name = "dozzle";
-      image = "docker.io/amir20/dozzle:v8.12.10";
+      image = "docker.io/amir20/dozzle:v8.12.14";
       mountPodmanSocket = true;
     } {
       containerConfig = {
