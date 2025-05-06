@@ -28,11 +28,9 @@ in {
   config = mkIf cfg.enable ({
       networking.firewall = {
         allowedTCPPorts = [
-          8384 # GUI
           22000 # TCP based sync protocol traffic
         ];
         allowedUDPPorts = [
-          # 21027 # for discovery broadcasts on IPv4 and multicasts on IPv6
           22000 # QUIC based sync protocol traffic
         ];
       };
