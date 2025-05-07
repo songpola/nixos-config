@@ -64,6 +64,7 @@ in {
             pciutils # PCI info
             lshw # hardware info
             (mkIf nvidiaEnable nvitop) # GPU monitoring
+            gping # ping with graph
           ];
         }))
         (mkIf cfg.development (
