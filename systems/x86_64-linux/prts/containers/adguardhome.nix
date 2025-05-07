@@ -50,9 +50,7 @@ in
         publishPorts = [
           "53:53" # DNS
           "53:53/udp" # DNS
-          "853:853" # DoT
-          "853:853/udp" # DoQ
-          "8080:80" # Web UI
+          "5380:80" # Web UI
         ];
         volumes = [
           "/tank/songpola/adguardhome/conf:/opt/adguardhome/conf" # app configuration
@@ -60,7 +58,7 @@ in
         ];
         labels = mkLabels ''
           caddy=adguardhome.songpola.dev
-          caddy.reverse_proxy=host.containers.internal:8080
+          caddy.reverse_proxy=host.containers.internal:5380
         '';
       };
     }
