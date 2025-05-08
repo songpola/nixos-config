@@ -23,6 +23,7 @@
     passt # >= 2024_08_14
     ov # >= 0.40.1
     starship
+    alejandra # >= 4.0.0
     ;
 
   btopCuda = prev.btop.override {
