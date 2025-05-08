@@ -9,7 +9,7 @@
   # The namespace used for your Flake, defaulting to "internal" if not set.
   # namespace,
   # Inputs from your flake.
-  # inputs,
+  inputs,
   ...
 }: final: prev: {
   inherit
@@ -25,6 +25,8 @@
     starship
     alejandra # >= 4.0.0
     ;
+
+  nil = inputs.nil.packages.${prev.system}.default;
 
   btopCuda = prev.btop.override {
     cudaSupport = true;

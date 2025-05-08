@@ -74,6 +74,14 @@
       url = "github:SEIAROTg/quadlet-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nil = {
+      url = "github:oxalica/nil";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
   };
 
   outputs = inputs:
