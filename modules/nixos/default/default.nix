@@ -56,7 +56,7 @@ in {
         channel.enable = false;
 
         settings = {
-          experimental-features = ["nix-command" "flakes"];
+          experimental-features = ["nix-command" "flakes" "pipe-operators"];
 
           # To prevent the `error: cannot ... because it lacks a signature by a trusted key`
           trusted-users = ["@wheel"];
