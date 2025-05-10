@@ -24,6 +24,7 @@
     ov # >= 0.40.1
     starship
     alejandra # >= 4.0.0
+    zoxide # >= 0.9.7
     ;
 
   nil = inputs.nil.packages.${prev.system}.default;
