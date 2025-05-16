@@ -91,6 +91,7 @@ in {
               nodejs
               pnpm
             ]);
+            services.lorri.enable = true;
           }
         ))
       ]
