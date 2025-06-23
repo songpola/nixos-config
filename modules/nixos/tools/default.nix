@@ -45,6 +45,8 @@ in {
             xkcdpass # password generator
             aria2 # download utility
             jq # JSON processor
+            # xdg-utils # XDG utilities
+            handlr # better xdg-utils
           ];
         }))
         (mkIf cfg.sysadmin (mkHomeConfig {
@@ -89,7 +91,9 @@ in {
 
               # node
               nodejs
-              pnpm
+              corepack
+              bun
+              gh
             ]);
             services.lorri.enable = true;
           }

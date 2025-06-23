@@ -26,7 +26,7 @@ in {
   };
   config = mkIf cfg.enable {
     nix = {
-      distributedBuilds = true;
+      distributedBuilds = false;
       settings = {
         builders-use-substitutes = true;
       };

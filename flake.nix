@@ -10,7 +10,8 @@
     };
 
     # https://nixos.org/manual/nixpkgs/stable/
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
+    nixpkgs.follows = "unstable";
+    # stable.url = "github:NixOS/nixpkgs/nixos-24.11"; # https://github.com/NixOS/nixpkgs/tree/nixos-24.11
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable
     # unstable-small.url = "nixpkgs/nixos-unstable-small"; # https://github.com/NixOS/nixpkgs/tree/nixos-unstable-small
 
@@ -27,7 +28,7 @@
     # https://nix-community.github.io/home-manager/
     home-manager = {
       # https://github.com/nix-community/home-manager
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -70,17 +71,11 @@
       };
     };
 
-    quadlet-nix = {
-      url = "github:SEIAROTg/quadlet-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
 
     nil = {
       url = "github:oxalica/nil";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
