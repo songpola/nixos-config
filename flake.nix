@@ -36,7 +36,7 @@
             ./modules/dev/node.nix
             ./modules/dev/vscode-remote.nix
 
-            ./modules/alt/userborn.nix
+            # ./modules/alt/userborn.nix
 
             ./modules/home-manager.nix
           ];
