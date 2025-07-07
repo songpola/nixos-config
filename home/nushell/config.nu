@@ -18,6 +18,7 @@ alias e = exit
 alias l = ls
 alias gcm = bunx -b czg emoji gpg
 alias ga = git add .
+alias gp = git push
 alias j = just
 alias bm = batman
 alias sw = nh os switch .
