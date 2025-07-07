@@ -1,5 +1,5 @@
 {
-  # Note: Maybe incompatible with NixOS-WSL or Home Manager?
+  # NOTE: Not working with NixOS-WSL when changing wsl.defaultUser
 
   # Manage users and groups with userborn
   # https://nixos.org/manual/nixos/stable/#sec-userborn
