@@ -21,4 +21,10 @@
 
   # Carapace completer
   programs.carapace.enable = true;
+
+  # Direnv
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
 }
