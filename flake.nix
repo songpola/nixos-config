@@ -28,7 +28,7 @@
 
             ./base/wsl.nix
 
-            ./modules/enable-flakes.nix
+            ./modules/nix-settings.nix
 
             ./modules/minimal.nix
 

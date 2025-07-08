@@ -1,7 +1,8 @@
 {
-  # Enable Flakes
+  # Setup Nix settings
   nix.settings.experimental-features = [
-    "nix-command"
     "flakes"
+    "nix-command"
+    "pipe-operators"
   ];
 }
