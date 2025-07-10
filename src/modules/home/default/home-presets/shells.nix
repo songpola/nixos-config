@@ -1,8 +1,13 @@
 {
+  lib,
+  config,
+  ...
+}:
+lib.songpola.mkHomePresetModule config [ "shells" ] {
   # Setup Nushell
   programs.nushell = {
     enable = true;
-    configFile.source = ./nushell/config.nu;
+    configFile.source = ./config/nushell/config.nu;
   };
 
   # Use Nushell as the default shell

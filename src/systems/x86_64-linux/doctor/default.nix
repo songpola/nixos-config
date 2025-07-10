@@ -1,6 +1,10 @@
 { namespace, ... }:
 {
   ${namespace} = {
+    stateVersions = {
+      system = "24.11";
+      home = "25.05";
+    };
     base = "wsl";
     presets = {
       stdenv = true;
@@ -9,15 +13,10 @@
         vscode-remote = true;
         node = true;
       };
-      home = {
-        git = true;
-      };
     };
-  };
-
-  system.stateVersion = "24.11";
-
-  snowfallorg.users.${namespace}.home.config = {
-    home.stateVersion = "25.05";
+    homePresets = {
+      git = true;
+      shells = true;
+    };
   };
 }

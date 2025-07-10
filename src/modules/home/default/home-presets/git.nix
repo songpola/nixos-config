@@ -1,14 +1,16 @@
 {
   lib,
   config,
-  namespace,
+  osConfig,
   ...
 }:
 let
+  namespace = "songpola";
+
   inherit (lib) mkMerge mkIf;
   inherit (lib.${namespace}) hasBaseEnabled;
 in
-lib.${namespace}.mkPresetModule config [ "home" "git" ] (mkMerge [
+lib.${namespace}.mkHomePresetModule config [ "git" ] (mkMerge [
   {
     programs.git = {
       enable = true;
@@ -19,7 +21,7 @@ lib.${namespace}.mkPresetModule config [ "home" "git" ] (mkMerge [
       };
     };
   }
-  (mkIf (config |> hasBaseEnabled "wsl") {
+  (mkIf (osConfig |> hasBaseEnabled "wsl") {
     programs.git = {
       extraConfig = {
         # Use the 1Password SSH agent with WSL integration
