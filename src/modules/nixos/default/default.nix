@@ -11,9 +11,6 @@ in
       base = mkOption {
         type = types.str;
       };
-      presets = mkOption {
-        type = types.listOf types.str;
-      };
     };
   };
 }

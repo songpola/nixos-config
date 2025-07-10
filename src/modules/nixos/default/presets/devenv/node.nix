@@ -1,0 +1,15 @@
+{
+  lib,
+  config,
+  namespace,
+  pkgs,
+  ...
+}:
+lib.${namespace}.mkPresetModule config [ "devenv" "node" ] {
+  # Node.js Development Environment
+  environment.systemPackages = with pkgs; [
+    nodejs
+    corepack
+    bun
+  ];
+}

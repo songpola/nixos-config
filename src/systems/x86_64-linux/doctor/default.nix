@@ -2,13 +2,17 @@
 {
   ${namespace} = {
     base = "wsl";
-    presets = [
-      "nix-settings"
-      "env.std"
-      "env.dev.nix"
-      "env.dev.vscode-remote"
-      "env.dev.node"
-    ];
+    presets = {
+      stdenv = true;
+      devenv = {
+        nix = true;
+        vscode-remote = true;
+        node = true;
+      };
+      home = {
+        git = true;
+      };
+    };
   };
 
   system.stateVersion = "24.11";
