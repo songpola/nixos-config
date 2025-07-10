@@ -34,4 +34,6 @@ rec {
     options.${namespace}.homePresets = setAttrByPath presetPath mkEnableOption;
     config = mkIf (config |> hasHomePresetEnabled presetPath) presetConfig;
   };
+
+  getConfigPath = path: (get-file "config") + path;
 }
