@@ -8,7 +8,7 @@ let
   namespace = "songpola";
 
   inherit (lib) mkMerge mkIf;
-  inherit (lib.${namespace}) hasBaseEnabled;
+  inherit (lib.${namespace}) hasBaseEnabled sshPublicKey;
 in
 lib.${namespace}.mkHomePresetModule config [ "git" ] (mkMerge [
   {
@@ -30,7 +30,7 @@ lib.${namespace}.mkHomePresetModule config [ "git" ] (mkMerge [
         commit.gpgsign = true;
         gpg.format = "ssh";
         gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-        user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
+        user.signingkey = sshPublicKey;
       };
     };
   })

@@ -13,7 +13,8 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] {
     "pipe-operators"
   ];
 
-  # Essential packages
+  # Set timezone to Bangkok
+  time.timeZone = "Asia/Bangkok";
 
   # Git
   programs.git.enable = true;

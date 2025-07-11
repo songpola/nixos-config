@@ -1,4 +1,4 @@
-{ namespace, ... }:
+{ namespace, utils, ... }:
 {
   ${namespace} = {
     stateVersions = {
@@ -17,6 +17,23 @@
     homePresets = {
       git = true;
       shells = true;
+      ssh = true;
+    };
+  };
+
+  home-manager.extraSpecialArgs = {
+    inherit utils; # required by homePresets.ssh
+  };
+
+  snowfallorg.users.${namespace}.home.config = {
+    programs.ssh = {
+      matchBlocks = {
+        prts = {
+          hostname = "prts.tail7623c.ts.net";
+          user = namespace;
+          # forwardAgent = true;
+        };
+      };
     };
   };
 }

@@ -10,6 +10,11 @@
 
     snowfall-lib.url = "github:snowfallorg/lib";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
   };
 
   outputs =
@@ -21,9 +26,14 @@
       # Will be used as the default user for all systems
       snowfall.namespace = "songpola";
 
+      # Allow unfree packages in all systems
+      channels-config.allowUnfree = true;
+
       # Add modules to all NixOS systems
       systems.modules.nixos = with inputs; [
         nixos-wsl.nixosModules.default
+        disko.nixosModules.default
+        nixos-facter-modules.nixosModules.facter
       ];
     };
 }

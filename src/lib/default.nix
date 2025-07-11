@@ -10,6 +10,8 @@ let
   inherit (lib.snowfall.fs) get-file;
 in
 rec {
+  sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
+
   hasPresetEnabled = presetPath: config: getAttrFromPath presetPath config.${namespace}.presets;
   hasHomePresetEnabled =
     presetPath: osConfig: getAttrFromPath presetPath osConfig.${namespace}.homePresets;
