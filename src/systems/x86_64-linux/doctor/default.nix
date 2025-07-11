@@ -30,7 +30,7 @@ mkMerge [
         prts = {
           hostname = "prts.tail7623c.ts.net";
           user = namespace;
-          # forwardAgent = true;
+          forwardAgent = true;
         };
       };
     };
