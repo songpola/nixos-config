@@ -1,16 +1,17 @@
 {
   lib,
   config,
+  namespace,
   ...
 }:
 let
-  inherit (lib.songpola) getConfigPath;
+  inherit (lib.${namespace}) mkHomeConfigModule getConfigPath;
 
   getDotfilesPath = path: getConfigPath "/dotfiles/${path}";
 in
-lib.songpola.mkHomePresetModule config [ "dotfiles" ] {
+lib.${namespace}.mkPresetModule config [ "dotfiles" ] (mkHomeConfigModule {
   home.file = {
     ".nirc".source = getDotfilesPath ".nirc";
     ".czrc".source = getDotfilesPath ".czrc";
   };
-}
+})

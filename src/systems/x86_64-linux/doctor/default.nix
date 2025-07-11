@@ -1,31 +1,30 @@
-{ namespace, utils, ... }:
-{
-  ${namespace} = {
-    stateVersions = {
-      system = "24.11";
-      home = "25.05";
-    };
-    base = "wsl";
-    presets = {
-      stdenv = true;
-      devenv = {
-        nix = true;
-        vscode-remote = true;
-        node = true;
+{ lib, namespace, ... }:
+let
+  inherit (lib) mkMerge;
+  inherit (lib.${namespace}) mkHomeConfigModule;
+in
+mkMerge [
+  {
+    ${namespace} = {
+      stateVersions = {
+        system = "24.11";
+        home = "25.05";
+      };
+      base = "wsl";
+      presets = {
+        stdenv = true;
+        devenv = {
+          nix = true;
+          vscode-remote = true;
+          node = true;
+        };
+        git = true;
+        shells = true;
+        ssh = true;
       };
     };
-    homePresets = {
-      git = true;
-      shells = true;
-      ssh = true;
-    };
-  };
-
-  home-manager.extraSpecialArgs = {
-    inherit utils; # required by homePresets.ssh
-  };
-
-  snowfallorg.users.${namespace}.home.config = {
+  }
+  (mkHomeConfigModule {
     programs.ssh = {
       matchBlocks = {
         prts = {
@@ -35,5 +34,5 @@
         };
       };
     };
-  };
-}
+  })
+]

@@ -5,32 +5,48 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "stdenv" ] {
-  # Nix settings
-  nix.settings.experimental-features = [
-    "flakes"
-    "nix-command"
-    "pipe-operators"
-  ];
+let
+  inherit (lib) mkMerge;
+  inherit (lib.${namespace}) mkHomeConfigModule;
+in
+lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
+  {
+    # Enable Git preset
+    ${namespace}.presets.git = true;
 
-  # Set timezone to Bangkok
-  time.timeZone = "Asia/Bangkok";
+    # Disable Nix channels
+    nix.channel.enable = false;
 
-  # Git
-  programs.git.enable = true;
+    # Nix settings
+    nix.settings.experimental-features = [
+      "flakes"
+      "nix-command"
+      "pipe-operators"
+    ];
 
-  # Use micro as default (and fallback) text editor
-  environment = {
-    systemPackages = [ pkgs.micro ];
-    variables = {
-      EDITOR = "micro";
+    # Set timezone to Bangkok
+    time.timeZone = "Asia/Bangkok";
+
+    # Use micro as default (and fallback) text editor
+    environment = {
+      systemPackages = [ pkgs.micro ];
+      variables = {
+        EDITOR = "micro";
+      };
     };
-  };
 
-  # nh: "Yet another Nix CLI helper."
-  # https://github.com/nix-community/nh
-  programs.nh = {
-    enable = true;
-    clean.enable = true; # auto clean (default: weekly)
-  };
-}
+    # nh: "Yet another Nix CLI helper."
+    # https://github.com/nix-community/nh
+    programs.nh = {
+      enable = true;
+      clean.enable = true; # auto clean (default: weekly)
+    };
+
+    # Enable polkit for managing system permissions
+    security.polkit.enable = true;
+  }
+  (mkHomeConfigModule {
+    # Enable management of XDG base directories
+    xdg.enable = true;
+  })
+])

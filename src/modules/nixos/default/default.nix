@@ -29,12 +29,6 @@ in
 
       # Options for each preset will be declared in their respective modules
       # presets = ...
-
-      # Shortcuts for setting home presets
-      homePresets = mkOption {
-        type = types.attrsOf types.bool;
-        default = { };
-      };
     };
   };
 
@@ -43,9 +37,6 @@ in
 
     snowfallorg.users.${namespace}.home.config = {
       home.stateVersion = config.${namespace}.stateVersions.home;
-
-      # Delegate from system config to home config
-      ${namespace}.homePresets = config.${namespace}.homePresets;
     };
   };
 }

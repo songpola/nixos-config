@@ -18,8 +18,6 @@
       stdenv = true;
       tailscale = true;
       zfs = true;
-    };
-    homePresets = {
       git = true;
       shells = true;
     };
@@ -41,4 +39,7 @@
     "--advertise-routes=10.0.0.0/16"
     "--advertise-exit-node"
   ];
+
+  # I don't want to type my password every time I use sudo on this system
+  security.sudo.wheelNeedsPassword = false;
 }

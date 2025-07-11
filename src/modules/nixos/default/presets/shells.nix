@@ -1,12 +1,13 @@
 {
   lib,
   config,
+  namespace,
   ...
 }:
 let
-  inherit (lib.songpola) getConfigPath;
+  inherit (lib.${namespace}) mkHomeConfigModule getConfigPath;
 in
-lib.songpola.mkHomePresetModule config [ "shells" ] {
+lib.${namespace}.mkPresetModule config [ "shells" ] (mkHomeConfigModule {
   # Setup Nushell
   programs.nushell = {
     enable = true;
@@ -35,4 +36,4 @@ lib.songpola.mkHomePresetModule config [ "shells" ] {
     enable = true;
     nix-direnv.enable = true;
   };
-}
+})

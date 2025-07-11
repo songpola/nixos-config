@@ -10,5 +10,5 @@ lib.${namespace}.mkBaseModule config "server" {
 
   # Remote access
   services.openssh.enable = true;
-  users.users.${namespace}.openssh.authorizedKeys.keys = [ lib.sshPublicKey ];
+  users.users.${namespace}.openssh.authorizedKeys.keys = [ lib.${namespace}.sshPublicKey ];
 }
