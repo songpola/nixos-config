@@ -15,15 +15,20 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
       shells = true;
 
       tools = {
+        nh = true;
+
         micro = true;
-        git = true;
         ov = true;
-        ssh = true;
+
+        git = true;
         direnv = true;
-        vscode-remote = true;
+
         zoxide = true;
-        # fzf = true; # enabled by zoxide
+        # fzf = true; # already enabled by zoxide
         eza = true;
+
+        ssh = true;
+        vscode-remote = true;
       };
     };
 
@@ -39,18 +44,6 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
 
     # Set timezone to Bangkok
     time.timeZone = "Asia/Bangkok";
-
-    # Use micro as default (and fallback) text editor
-    environment.variables = {
-      EDITOR = "micro";
-    };
-
-    # nh: "Yet another Nix CLI helper."
-    # https://github.com/nix-community/nh
-    programs.nh = {
-      enable = true;
-      clean.enable = true; # auto clean (default: weekly)
-    };
 
     # Enable polkit for managing system permissions
     security.polkit.enable = true;

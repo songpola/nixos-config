@@ -17,9 +17,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "zoxide" ] (mkMerge [
     # zoxide uses fzf for completions / interactive selection
     ${namespace}.presets.tools.fzf = true;
   }
-  (mkHomeConfigModule (mkMerge [
-    {
-      programs.zoxide.enable = true;
-    }
-  ]))
+  (mkHomeConfigModule {
+    programs.zoxide.enable = true;
+  })
 ])

@@ -6,9 +6,7 @@
 }:
 let
   inherit (lib) mkMerge;
-  inherit (lib.${namespace})
-    mkHomeConfigModule
-    ;
+  inherit (lib.${namespace}) mkHomeConfigModule;
 in
 lib.${namespace}.mkPresetModule config [ "tools" "direnv" ] (mkMerge [
   {
@@ -16,12 +14,10 @@ lib.${namespace}.mkPresetModule config [ "tools" "direnv" ] (mkMerge [
     # nix-direnv is enabled by default
     programs.direnv.enable = true;
   }
-  (mkHomeConfigModule (mkMerge [
-    {
-      programs.direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
-    }
-  ]))
+  (mkHomeConfigModule {
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+  })
 ])

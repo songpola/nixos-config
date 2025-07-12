@@ -11,19 +11,23 @@ let
 in
 lib.${namespace}.mkPresetModule config [ "tools" "micro" ] (mkMerge [
   {
-    # Use micro as default (and fallback) text editor
+    # micro - A modern and intuitive terminal-based text editor
+    # https://github.com/zyedidia/micro
     environment.systemPackages = [ pkgs.micro ];
+
+    # Set as default editor
+    environment.variables = {
+      EDITOR = "micro";
+    };
   }
-  (mkHomeConfigModule (mkMerge [
-    {
-      programs.micro = {
-        enable = true;
-        settings = {
-          # Fix clipboard not working in SSH sessions:
-          # Use OSC 52 (terminal clipboard)
-          clipboard = "terminal";
-        };
+  (mkHomeConfigModule {
+    programs.micro = {
+      enable = true;
+      settings = {
+        # Fix clipboard not working in SSH sessions:
+        # Use OSC 52 (terminal clipboard)
+        clipboard = "terminal";
       };
-    }
-  ]))
+    };
+  })
 ])

@@ -15,9 +15,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "fzf" ] (mkMerge [
     # https://github.com/junegunn/fzf
     environment.systemPackages = [ pkgs.fzf ];
   }
-  (mkHomeConfigModule (mkMerge [
-    {
-      programs.fzf.enable = true;
-    }
-  ]))
+  (mkHomeConfigModule {
+    programs.fzf.enable = true;
+  })
 ])
