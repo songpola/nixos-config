@@ -18,6 +18,9 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
       tools = {
         git = true;
         ov = true;
+        ssh = true;
+        direnv = true;
+        vscode-remote = true;
       };
     };
 

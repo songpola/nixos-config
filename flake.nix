@@ -35,5 +35,13 @@
         disko.nixosModules.default
         nixos-facter-modules.nixosModules.facter
       ];
+
+      templates = {
+        devshell.description = "A template for per-project development environments using hercules-ci/flake-parts and numtide/devshell.";
+      };
+
+      alias = {
+        templates.default = "devshell";
+      };
     };
 }

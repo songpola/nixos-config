@@ -16,8 +16,12 @@
     base = "server";
     presets = {
       stdenv = true;
-      tailscale = true;
+
       zfs = true;
+
+      services = {
+        tailscale = true;
+      };
     };
   };
 

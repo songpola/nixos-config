@@ -16,12 +16,8 @@ mkMerge [
 
         devenv = {
           nix = true;
-          vscode-remote = true;
           node = true;
-          devbox = true;
         };
-
-        ssh = true;
 
         tools = {
           jujutsu = true;

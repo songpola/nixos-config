@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "tailscale" ] {
+lib.${namespace}.mkPresetModule config [ "services" "tailscale" ] {
   services.tailscale = {
     enable = true;
     openFirewall = true;

@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "devenv" "vscode-remote" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "vscode-remote" ] {
   # Setup VSCode Remote
   environment.systemPackages = [ pkgs.wget ];
   programs.nix-ld.enable = true;

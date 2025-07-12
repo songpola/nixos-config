@@ -10,7 +10,7 @@ let
   inherit (lib) mkMerge mkIf;
   inherit (lib.${namespace}) mkHomeConfigModule hasBaseEnabled hasPresetEnabled;
 in
-lib.${namespace}.mkPresetModule config [ "ssh" ] (
+lib.${namespace}.mkPresetModule config [ "tools" "ssh" ] (
   mkHomeConfigModule (mkMerge [
     {
       # Enable SSH connection multiplexing
