@@ -21,6 +21,8 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
         ssh = true;
         direnv = true;
         vscode-remote = true;
+        zoxide = true;
+        # fzf = true; # enabled by zoxide
       };
     };
 
