@@ -21,6 +21,7 @@ mkMerge [
         git = true;
         shells = true;
         ssh = true;
+        jujutsu = true;
       };
     };
   }

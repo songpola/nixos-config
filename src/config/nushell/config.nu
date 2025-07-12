@@ -6,7 +6,6 @@ $env.config.show_banner = false
 $env.BUN_INSTALL = [ $env.HOME .bun ] | path join
 path add ([ $env.BUN_INSTALL bin ] | path join)
 
-
 # If using vscode, use code as the default editor
 if ($env.TERM_PROGRAM? == "vscode") {
 	$env.config.buffer_editor = ["code", "--wait"]

@@ -10,6 +10,9 @@ let
   inherit (lib.snowfall.fs) get-file;
 in
 rec {
+  githubUserEmail = "1527535+songpola@users.noreply.github.com";
+  githubUserName = "Songpol Anannetikul";
+
   sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
 
   hasPresetEnabled = presetPath: config: getAttrFromPath presetPath config.${namespace}.presets;

@@ -6,7 +6,13 @@
 }:
 let
   inherit (lib) mkMerge mkIf;
-  inherit (lib.${namespace}) mkHomeConfigModule hasBaseEnabled sshPublicKey;
+  inherit (lib.${namespace})
+    mkHomeConfigModule
+    hasBaseEnabled
+    sshPublicKey
+    githubUserEmail
+    githubUserName
+    ;
 in
 lib.${namespace}.mkPresetModule config [ "git" ] (mkMerge [
   {
@@ -18,8 +24,8 @@ lib.${namespace}.mkPresetModule config [ "git" ] (mkMerge [
       # Mangage Git configs
       programs.git = {
         enable = true;
-        userEmail = "1527535+songpola@users.noreply.github.com";
-        userName = "Songpol Anannetikul";
+        userEmail = githubUserEmail;
+        userName = githubUserName;
         extraConfig = {
           init.defaultBranch = "main";
         };
