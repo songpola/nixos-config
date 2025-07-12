@@ -2,7 +2,6 @@
   lib,
   config,
   namespace,
-  pkgs,
   ...
 }:
 let
@@ -16,6 +15,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
       shells = true;
 
       tools = {
+        micro = true;
         git = true;
         ov = true;
         ssh = true;
@@ -41,11 +41,8 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
     time.timeZone = "Asia/Bangkok";
 
     # Use micro as default (and fallback) text editor
-    environment = {
-      systemPackages = [ pkgs.micro ];
-      variables = {
-        EDITOR = "micro";
-      };
+    environment.variables = {
+      EDITOR = "micro";
     };
 
     # nh: "Yet another Nix CLI helper."
