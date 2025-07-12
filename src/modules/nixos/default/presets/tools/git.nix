@@ -14,7 +14,7 @@ let
     githubUserName
     ;
 in
-lib.${namespace}.mkPresetModule config [ "git" ] (mkMerge [
+lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
   {
     # Enable Git system-wide
     programs.git.enable = true;

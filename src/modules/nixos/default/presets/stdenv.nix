@@ -11,8 +11,15 @@ let
 in
 lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
   {
-    # Enable Git preset
-    ${namespace}.presets.git = true;
+    # Enable standard environment presets
+    ${namespace}.presets = {
+      shells = true;
+
+      tools = {
+        git = true;
+        ov = true;
+      };
+    };
 
     # Disable Nix channels
     nix.channel.enable = false;

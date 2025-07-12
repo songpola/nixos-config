@@ -9,7 +9,7 @@ let
   inherit (lib) mkMerge;
   inherit (lib.${namespace}) mkHomeConfigModule githubUserEmail githubUserName;
 in
-lib.${namespace}.mkPresetModule config [ "jujutsu" ] (mkMerge [
+lib.${namespace}.mkPresetModule config [ "tools" "jujutsu" ] (mkMerge [
   {
     environment.systemPackages = [ pkgs.jujutsu ];
   }

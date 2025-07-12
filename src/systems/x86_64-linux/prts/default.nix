@@ -18,8 +18,6 @@
       stdenv = true;
       tailscale = true;
       zfs = true;
-      git = true;
-      shells = true;
     };
   };
 

@@ -13,15 +13,19 @@ mkMerge [
       base = "wsl";
       presets = {
         stdenv = true;
+
         devenv = {
           nix = true;
           vscode-remote = true;
           node = true;
+          devbox = true;
         };
-        git = true;
-        shells = true;
+
         ssh = true;
-        jujutsu = true;
+
+        tools = {
+          jujutsu = true;
+        };
       };
     };
   }

@@ -36,4 +36,7 @@ lib.${namespace}.mkPresetModule config [ "shells" ] (mkHomeConfigModule {
     enable = true;
     nix-direnv.enable = true;
   };
+
+  # Zoxide
+  programs.zoxide.enable = true;
 })
