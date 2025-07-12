@@ -23,6 +23,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
         vscode-remote = true;
         zoxide = true;
         # fzf = true; # enabled by zoxide
+        eza = true;
       };
     };
 
