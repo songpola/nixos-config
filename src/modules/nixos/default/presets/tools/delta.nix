@@ -6,8 +6,8 @@
   ...
 }:
 let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkHomeConfigModule;
+  inherit (lib) mkMerge mkIf;
+  inherit (lib.${namespace}) mkHomeConfigModule hasPresetEnabled;
 in
 lib.${namespace}.mkPresetModule config [ "tools" "delta" ] (mkMerge [
   {
@@ -16,17 +16,8 @@ lib.${namespace}.mkPresetModule config [ "tools" "delta" ] (mkMerge [
     environment.systemPackages = [ pkgs.delta ];
   }
   (mkHomeConfigModule {
-    programs.git = {
-      # Use delta as the default pager for git
-      delta = {
-        enable = true;
-
-        # options = {
-        #   navigate = true; # use n and N to move between diff sections
-        #   dark = true; # or light = true, or omit for auto-detection
-        # };
-      };
-    };
+    # Use delta as the default pager for git
+    programs.git.delta.enable = true;
 
     # Use delta as the default pager for jujutsu
     programs.jujutsu = {
@@ -44,4 +35,22 @@ lib.${namespace}.mkPresetModule config [ "tools" "delta" ] (mkMerge [
       };
     };
   })
+  # Use ov as the pager for delta if the preset is enabled
+  (mkIf
+    (
+      config
+      |> hasPresetEnabled [
+        "tools"
+        "ov"
+      ]
+    )
+    {
+      environment.variables = {
+        # -F, --quit-if-one-screen: Quit if one screen
+        # -X, --exit-write: Output on exit
+        # NOTE: No need to use `--raw` option; ov can handle the escape sequences
+        DELTA_PAGER = "ov -F -X";
+      };
+    }
+  )
 ])
