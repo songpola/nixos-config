@@ -21,6 +21,7 @@ mkMerge [
 
         tools = {
           jujutsu = true;
+          gh = true;
         };
       };
     };
