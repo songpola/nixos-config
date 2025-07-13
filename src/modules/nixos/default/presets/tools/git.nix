@@ -28,6 +28,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
         userName = githubUserName;
         extraConfig = {
           init.defaultBranch = "main";
+          merge.conflictstyle = "zdiff3";
         };
       };
     }
@@ -35,12 +36,15 @@ lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
       programs.git = {
         extraConfig = {
           # Use the 1Password SSH agent with WSL integration
-          core.sshCommand = "ssh.exe";
-          # Sign Git commits with SSH
-          commit.gpgsign = true;
-          gpg.format = "ssh";
-          gpg.ssh.program = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-          user.signingkey = sshPublicKey;
+          core.sshCommand = "/mnt/c/Windows/System32/OpenSSH/ssh.exe";
+        };
+
+        # Sign commits with SSH
+        signing = {
+          signByDefault = true;
+          format = "ssh";
+          signer = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
+          key = sshPublicKey;
         };
       };
     })

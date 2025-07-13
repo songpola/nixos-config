@@ -21,6 +21,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] (mkMerge [
         ov = true;
 
         git = true;
+        delta = true;
         direnv = true;
 
         zoxide = true;
