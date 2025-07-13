@@ -17,6 +17,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "delta" ] (mkMerge [
   }
   (mkHomeConfigModule {
     # Use delta as the default pager for git
+    # TODO: https://noborus.github.io/ov/delta/index.html
     programs.git.delta.enable = true;
 
     # Use delta as the default pager for jujutsu
