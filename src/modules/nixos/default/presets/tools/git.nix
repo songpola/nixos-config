@@ -12,6 +12,7 @@ let
     sshPublicKey
     githubUserEmail
     githubUserName
+    opSshSignWslPath
     ;
 in
 lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
@@ -43,7 +44,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
         signing = {
           signByDefault = true;
           format = "ssh";
-          signer = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
+          signer = opSshSignWslPath;
           key = sshPublicKey;
         };
       };
