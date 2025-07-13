@@ -29,6 +29,9 @@ lib.${namespace}.mkPresetModule config [ "tools" "jujutsu" ] (mkMerge [
             email = githubUserEmail;
             name = githubUserName;
           };
+
+          # Use Git's "diff3" style conflict markers
+          ui.conflict-marker-style = "git";
         };
       };
     }

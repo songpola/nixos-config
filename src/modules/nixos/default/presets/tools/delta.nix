@@ -48,9 +48,8 @@ lib.${namespace}.mkPresetModule config [ "tools" "delta" ] (mkMerge [
     {
       environment.variables = {
         # -F, --quit-if-one-screen: Quit if one screen
-        # -X, --exit-write: Output on exit
         # NOTE: No need to use `--raw` option; ov can handle the escape sequences
-        DELTA_PAGER = "ov -F -X";
+        DELTA_PAGER = "ov -F";
       };
     }
   )
