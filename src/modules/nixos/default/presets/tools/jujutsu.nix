@@ -6,9 +6,8 @@
   ...
 }:
 let
-  inherit (lib) mkMerge mkIf;
+  inherit (lib) mkIf;
   inherit (lib.${namespace})
-    mkHomeConfigModule
     githubUserEmail
     githubUserName
     hasBaseEnabled
@@ -16,11 +15,13 @@ let
     opSshSignWslPath
     ;
 in
-lib.${namespace}.mkPresetModule config [ "tools" "jujutsu" ] (mkMerge [
-  {
-    environment.systemPackages = [ pkgs.jujutsu ];
-  }
-  (mkHomeConfigModule (mkMerge [
+lib.${namespace}.mkPresetModule2 config [ "tools" "jujutsu" ] {
+  systemConfig = [
+    {
+      environment.systemPackages = [ pkgs.jujutsu ];
+    }
+  ];
+  homeConfig = [
     {
       programs.jujutsu = {
         enable = true;
@@ -48,5 +49,5 @@ lib.${namespace}.mkPresetModule config [ "tools" "jujutsu" ] (mkMerge [
         };
       };
     })
-  ]))
-])
+  ];
+}

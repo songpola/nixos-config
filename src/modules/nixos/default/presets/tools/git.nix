@@ -5,9 +5,8 @@
   ...
 }:
 let
-  inherit (lib) mkMerge mkIf;
+  inherit (lib) mkIf;
   inherit (lib.${namespace})
-    mkHomeConfigModule
     hasBaseEnabled
     sshPublicKey
     githubUserEmail
@@ -15,14 +14,14 @@ let
     opSshSignWslPath
     ;
 in
-lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
-  {
-    # Enable Git system-wide
-    programs.git.enable = true;
-  }
-  (mkHomeConfigModule (mkMerge [
+lib.${namespace}.mkPresetModule2 config [ "tools" "git" ] {
+  systemConfig = [
     {
-      # Mangage Git configs
+      programs.git.enable = true;
+    }
+  ];
+  homeConfig = [
+    {
       programs.git = {
         enable = true;
         userEmail = githubUserEmail;
@@ -49,5 +48,5 @@ lib.${namespace}.mkPresetModule config [ "tools" "git" ] (mkMerge [
         };
       };
     })
-  ]))
-])
+  ];
+}

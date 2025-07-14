@@ -5,13 +5,17 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkHomeConfigModule getConfigPath;
+  inherit (lib.${namespace}) getConfigPath;
 
   getDotfilesPath = path: getConfigPath "/dotfiles/${path}";
 in
-lib.${namespace}.mkPresetModule config [ "dotfiles" ] (mkHomeConfigModule {
-  home.file = {
-    ".nirc".source = getDotfilesPath ".nirc";
-    ".czrc".source = getDotfilesPath ".czrc";
-  };
-})
+lib.${namespace}.mkPresetModule2 config [ "dotfiles" ] {
+  homeConfig = [
+    {
+      home.file = {
+        ".nirc".source = getDotfilesPath ".nirc";
+        ".czrc".source = getDotfilesPath ".czrc";
+      };
+    }
+  ];
+}

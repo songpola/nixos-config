@@ -5,11 +5,15 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "devenv" "node" ] {
-  # Node.js Development Environment
-  environment.systemPackages = with pkgs; [
-    nodejs
-    corepack
-    bun
+lib.${namespace}.mkPresetModule2 config [ "devenv" "node" ] {
+  systemConfig = [
+    {
+      # Node.js Development Environment
+      environment.systemPackages = with pkgs; [
+        nodejs
+        corepack
+        bun
+      ];
+    }
   ];
 }

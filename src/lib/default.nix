@@ -6,6 +6,7 @@ let
     mkIf
     setAttrByPath
     getAttrFromPath
+    mkMerge
     ;
   inherit (lib.snowfall.fs) get-file;
 in
@@ -33,9 +34,38 @@ rec {
     config = mkIf (config |> hasPresetEnabled presetPath) presetConfig;
   };
 
+  mkPresetModule2 =
+    config: presetPath:
+    {
+      systemConfig ? [ ],
+      homeConfig ? [ ],
+      extraConfig ? [ ],
+    }:
+    {
+      options.${namespace}.presets = setAttrByPath presetPath mkEnableOption;
+      config = mkIf (config |> hasPresetEnabled presetPath) (mkMerge [
+        (mkMerge systemConfig)
+        (mkHomeConfigModule (mkMerge homeConfig))
+        (mkMerge extraConfig)
+      ]);
+    };
+
   mkHomeConfigModule = homeConfig: {
     snowfallorg.users.${namespace}.home.config = homeConfig;
   };
+
+  mkIfPresetEnabled =
+    config: presetPath:
+    {
+      systemConfig ? [ ],
+      homeConfig ? [ ],
+      extraConfig ? [ ],
+    }:
+    mkIf (config |> hasPresetEnabled presetPath) (mkMerge [
+      (mkMerge systemConfig)
+      (mkHomeConfigModule (mkMerge homeConfig))
+      (mkMerge extraConfig)
+    ]);
 
   getConfigPath = path: (get-file "config") + path;
 }

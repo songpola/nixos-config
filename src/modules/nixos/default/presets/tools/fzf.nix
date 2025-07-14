@@ -5,17 +5,17 @@
   pkgs,
   ...
 }:
-let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkHomeConfigModule;
-in
-lib.${namespace}.mkPresetModule config [ "tools" "fzf" ] (mkMerge [
-  {
-    # fzf - a command-line fuzzy finder
-    # https://github.com/junegunn/fzf
-    environment.systemPackages = [ pkgs.fzf ];
-  }
-  (mkHomeConfigModule {
-    programs.fzf.enable = true;
-  })
-])
+lib.${namespace}.mkPresetModule2 config [ "tools" "fzf" ] {
+  systemConfig = [
+    {
+      # fzf - a command-line fuzzy finder
+      # https://github.com/junegunn/fzf
+      environment.systemPackages = [ pkgs.fzf ];
+    }
+  ];
+  homeConfig = [
+    {
+      programs.fzf.enable = true;
+    }
+  ];
+}

@@ -4,20 +4,20 @@
   namespace,
   ...
 }:
-let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkHomeConfigModule;
-in
-lib.${namespace}.mkPresetModule config [ "tools" "zoxide" ] (mkMerge [
-  {
-    # zoxide - a smarter cd command
-    # https://github.com/ajeetdsouza/zoxide
-    programs.zoxide.enable = true;
+lib.${namespace}.mkPresetModule2 config [ "tools" "zoxide" ] {
+  systemConfig = [
+    {
+      # zoxide - a smarter cd command
+      # https://github.com/ajeetdsouza/zoxide
+      programs.zoxide.enable = true;
 
-    # zoxide uses fzf for completions / interactive selection
-    ${namespace}.presets.tools.fzf = true;
-  }
-  (mkHomeConfigModule {
-    programs.zoxide.enable = true;
-  })
-])
+      # zoxide uses fzf for completions / interactive selection
+      ${namespace}.presets.tools.fzf = true;
+    }
+  ];
+  homeConfig = [
+    {
+      programs.zoxide.enable = true;
+    }
+  ];
+}

@@ -4,24 +4,18 @@
   namespace,
   ...
 }:
-let
-  inherit (lib) mkMerge;
-  # inherit (lib.${namespace}) mkHomeConfigModule;
-in
-lib.${namespace}.mkPresetModule config [ "tools" "nh" ] (mkMerge [
-  {
-    # nh - Yet another Nix CLI helper
-    # https://github.com/nix-community/nh
-    programs.nh = {
-      enable = true;
-      clean.enable = true; # auto clean (all) (default: weekly)
-    };
-  }
-  # NOTE: Don't need this; already done by the system options above
-  # (mkHomeConfigModule {
-  #   programs.nh = {
-  #     enable = true;
-  #     clean.enable = true; # auto clean (user) (default: weekly)
-  #   };
-  # })
-])
+lib.${namespace}.mkPresetModule2 config [ "tools" "nh" ] {
+  systemConfig = [
+    {
+      # nh - Yet another Nix CLI helper
+      # https://github.com/nix-community/nh
+      #
+      # NOTE: No need to use the options from Home Manager,
+      # because all the profiles (system and user) will be cleaned by this options.
+      programs.nh = {
+        enable = true;
+        clean.enable = true; # auto clean (all) (default: weekly)
+      };
+    }
+  ];
+}

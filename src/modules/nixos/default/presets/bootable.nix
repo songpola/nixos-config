@@ -4,15 +4,19 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "bootable" ] {
-  boot.loader = {
-    grub = {
-      device = "nodev";
-      efiSupport = true;
-    };
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/efi";
-    };
-  };
+lib.${namespace}.mkPresetModule2 config [ "bootable" ] {
+  systemConfig = [
+    {
+      boot.loader = {
+        grub = {
+          device = "nodev";
+          efiSupport = true;
+        };
+        efi = {
+          canTouchEfiVariables = true;
+          efiSysMountPoint = "/efi";
+        };
+      };
+    }
+  ];
 }
