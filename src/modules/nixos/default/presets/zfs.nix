@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "zfs" ] {
+lib.${namespace}.mkPresetModule config [ "zfs" ] {
   systemConfig = [
     {
       boot = {

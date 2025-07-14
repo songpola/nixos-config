@@ -8,7 +8,7 @@
 let
   inherit (lib.${namespace}) getConfigPath;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "ov" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "ov" ] {
   systemConfig = [
     {
       # ov - feature rich terminal pager

@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "vscode-remote" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "vscode-remote" ] {
   systemConfig = [
     {
       # Setup VSCode Remote

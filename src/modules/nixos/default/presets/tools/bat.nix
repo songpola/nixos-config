@@ -7,7 +7,7 @@
 let
   inherit (lib.${namespace}) mkIfPresetEnabled;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "bat" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
   systemConfig = [
     # bat - a cat(1) clone with wings
     # https://github.com/sharkdp/bat

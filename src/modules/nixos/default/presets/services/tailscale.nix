@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "services" "tailscale" ] {
+lib.${namespace}.mkPresetModule config [ "services" "tailscale" ] {
   systemConfig = [
     {
       services.tailscale = {

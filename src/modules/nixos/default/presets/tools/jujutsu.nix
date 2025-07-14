@@ -15,7 +15,7 @@ let
     opSshSignWslPath
     ;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "jujutsu" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "jujutsu" ] {
   systemConfig = [
     {
       environment.systemPackages = [ pkgs.jujutsu ];

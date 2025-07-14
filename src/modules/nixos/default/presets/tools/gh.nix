@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "gh" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "gh" ] {
   systemConfig = [
     {
       # GitHub CLI

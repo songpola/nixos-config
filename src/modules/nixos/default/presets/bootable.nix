@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "bootable" ] {
+lib.${namespace}.mkPresetModule config [ "bootable" ] {
   systemConfig = [
     {
       boot.loader = {

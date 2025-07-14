@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "ssh" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "ssh" ] {
   systemConfig = [
     {
       # Enable ssh-agent-wsl preset (WSL only)

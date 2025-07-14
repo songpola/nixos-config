@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "devenv" "node" ] {
+lib.${namespace}.mkPresetModule config [ "devenv" "node" ] {
   systemConfig = [
     {
       # Node.js Development Environment

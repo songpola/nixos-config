@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "direnv" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "direnv" ] {
   systemConfig = [
     {
       # Enable Direnv system-wide

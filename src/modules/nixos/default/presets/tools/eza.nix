@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "eza" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "eza" ] {
   homeConfig = [
     {
       # eza - A modern replacement for ls

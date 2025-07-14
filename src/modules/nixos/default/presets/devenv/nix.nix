@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "devenv" "nix" ] {
+lib.${namespace}.mkPresetModule config [ "devenv" "nix" ] {
   systemConfig = [
     {
       # Packages for Nix IDE VSCode extension

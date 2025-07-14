@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "devbox" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "devbox" ] {
   systemConfig = [
     {
       environment.systemPackages = [ pkgs.devbox ];

@@ -9,7 +9,7 @@ let
 
   getDotfilesPath = path: getConfigPath "/dotfiles/${path}";
 in
-lib.${namespace}.mkPresetModule2 config [ "dotfiles" ] {
+lib.${namespace}.mkPresetModule config [ "dotfiles" ] {
   homeConfig = [
     {
       home.file = {

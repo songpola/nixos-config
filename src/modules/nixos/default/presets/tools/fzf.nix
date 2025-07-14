@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "fzf" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "fzf" ] {
   systemConfig = [
     {
       # fzf - a command-line fuzzy finder

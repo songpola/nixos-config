@@ -5,7 +5,7 @@
   pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "micro" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "micro" ] {
   systemConfig = [
     {
       # micro - A modern and intuitive terminal-based text editor

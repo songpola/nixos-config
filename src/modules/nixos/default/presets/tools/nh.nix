@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "nh" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "nh" ] {
   systemConfig = [
     {
       # nh - Yet another Nix CLI helper

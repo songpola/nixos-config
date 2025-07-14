@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "tools" "zoxide" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "zoxide" ] {
   systemConfig = [
     {
       # zoxide - a smarter cd command

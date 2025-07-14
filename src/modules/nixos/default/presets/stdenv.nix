@@ -4,7 +4,7 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule2 config [ "stdenv" ] {
+lib.${namespace}.mkPresetModule config [ "stdenv" ] {
   systemConfig = [
     {
       # Enable standard environment presets

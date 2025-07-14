@@ -29,12 +29,7 @@ rec {
     config = mkIf (config |> hasBaseEnabled name) baseConfig;
   };
 
-  mkPresetModule = config: presetPath: presetConfig: {
-    options.${namespace}.presets = setAttrByPath presetPath mkEnableOption;
-    config = mkIf (config |> hasPresetEnabled presetPath) presetConfig;
-  };
-
-  mkPresetModule2 =
+  mkPresetModule =
     config: presetPath:
     {
       systemConfig ? [ ],

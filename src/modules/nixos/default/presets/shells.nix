@@ -7,7 +7,7 @@
 let
   inherit (lib.${namespace}) getConfigPath;
 in
-lib.${namespace}.mkPresetModule2 config [ "shells" ] {
+lib.${namespace}.mkPresetModule config [ "shells" ] {
   homeConfig = [
     {
       programs.nushell = {

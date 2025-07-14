@@ -14,7 +14,7 @@ let
     opSshSignWslPath
     ;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "git" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "git" ] {
   systemConfig = [
     {
       programs.git.enable = true;

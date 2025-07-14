@@ -10,7 +10,7 @@ let
   inherit (lib) mkMerge mkIf;
   inherit (lib.${namespace}) hasBaseEnabled hasPresetEnabled;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "ssh-agent-wsl" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "ssh-agent-wsl" ] {
   homeConfig = [
     # ssh-agent-wsl: Delegate SSH agent to Windows via npiperelay (WSL only)
     (mkIf (config |> hasBaseEnabled "wsl") (mkMerge [

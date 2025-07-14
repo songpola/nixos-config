@@ -8,7 +8,7 @@
 let
   inherit (lib.${namespace}) mkIfPresetEnabled;
 in
-lib.${namespace}.mkPresetModule2 config [ "tools" "delta" ] {
+lib.${namespace}.mkPresetModule config [ "tools" "delta" ] {
   systemConfig = [
     {
       # delta - a syntax-highlighting pager for git, diff, grep, and blame output
