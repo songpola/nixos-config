@@ -2,6 +2,7 @@
   lib,
   config,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -12,12 +13,22 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
     # bat - a cat(1) clone with wings
     # https://github.com/sharkdp/bat
     {
-      programs.bat.enable = true;
+      programs.bat = {
+        enable = true;
+        extraPackages = with pkgs.bat-extras; [
+          batman
+        ];
+      };
     }
   ];
   homeConfig = [
     {
-      programs.bat.enable = true;
+      programs.bat = {
+        enable = true;
+        extraPackages = with pkgs.bat-extras; [
+          batman
+        ];
+      };
     }
   ];
   extraConfig = [
@@ -38,6 +49,9 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
               # NOTE: Delta pager *might* use this environment variable too
               #       if DELTA_PAGER is not set.
               BAT_PAGER = "ov -F -H3 -X";
+
+              # For batman command
+              MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
             };
           }
         ];
