@@ -23,6 +23,8 @@ mkMerge [
           jujutsu = true;
           gh = true;
         };
+
+        podman = true;
       };
     };
   }
