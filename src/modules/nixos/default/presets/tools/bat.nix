@@ -15,9 +15,9 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
     {
       programs.bat = {
         enable = true;
-        extraPackages = with pkgs.bat-extras; [
-          batman
-        ];
+        # NOTE: Need to use Home Manager options
+        # to avoid shells integration.
+        # extraPackages = with pkgs.bat-extras; [ batman ];
       };
     }
   ];
@@ -25,9 +25,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
     {
       programs.bat = {
         enable = true;
-        extraPackages = with pkgs.bat-extras; [
-          batman
-        ];
+        extraPackages = with pkgs.bat-extras; [ batman ];
       };
     }
   ];
@@ -51,7 +49,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
               BAT_PAGER = "ov -F -H3 -X";
 
               # For batman command
-              MANPAGER = "ov --section-delimiter '^[^\\s]' --section-header";
+              MANPAGER = "ov --section-delimiter '^[^\\s]'";
             };
           }
         ];
