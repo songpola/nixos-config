@@ -1,7 +1,12 @@
-{ lib, namespace, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkHomeConfigModule;
+  inherit (lib.${namespace}) mkHomeConfigModule mkRootlessQuadletModule;
 in
 mkMerge [
   {
@@ -39,4 +44,24 @@ mkMerge [
       };
     };
   })
+  (mkRootlessQuadletModule config (cfg: {
+    containers = {
+      trilium = {
+        quadletConfig.defaultDependencies = false; # WSL only
+        containerConfig = {
+          image = "docker.io/triliumnext/trilium:v0.96.0";
+          publishPorts = [ "8080:8080" ];
+          volumes = [
+            "${cfg.volumes.trilium-data.ref}:/home/node/trilium-data"
+            "/etc/localtime:/etc/localtime:ro"
+          ];
+        };
+      };
+    };
+    volumes = {
+      trilium-data = {
+        quadletConfig.defaultDependencies = false; # WSL only
+      };
+    };
+  }))
 ]

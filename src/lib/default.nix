@@ -62,5 +62,33 @@ rec {
       (mkMerge extraConfig)
     ]);
 
+  mkIfBaseEnabled =
+    config: name:
+    {
+      systemConfig ? [ ],
+      homeConfig ? [ ],
+      extraConfig ? [ ],
+    }:
+    mkIf (config |> hasBaseEnabled name) (mkMerge [
+      (mkMerge systemConfig)
+      (mkHomeConfigModule (mkMerge homeConfig))
+      (mkMerge extraConfig)
+    ]);
+
+  # [ WSL ONLY ]
+  # NOTE:   Always set `*.quadletConfig.defaultDependencies = false;`
+  # REASON: `network-online.target` is always inactive in WSL
+  # SEE:    https://github.com/containers/podman/issues/22197
+  #         https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
+  mkRootlessQuadletModule =
+    config: mkConfig:
+    let
+      homeCfg = config.snowfallorg.users.${namespace}.home.config;
+      cfg = homeCfg.virtualisation.quadlet;
+    in
+    mkHomeConfigModule {
+      virtualisation.quadlet = mkConfig cfg;
+    };
+
   getConfigPath = path: (get-file "config") + path;
 }

@@ -161,6 +161,21 @@
         "type": "github"
       }
     },
+    "quadlet-nix": {
+      "locked": {
+        "lastModified": 1752618481,
+        "narHash": "sha256-8132xTqalZxJZbznHDNoia1UqjNdL/hIQD4IXnI9F58=",
+        "owner": "SEIAROTg",
+        "repo": "quadlet-nix",
+        "rev": "0c1d64f360c1a3c3534f6b592ca3ed5d46cf8429",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SEIAROTg",
+        "repo": "quadlet-nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "disko": "disko",
@@ -168,6 +183,7 @@
         "nixos-facter-modules": "nixos-facter-modules",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
+        "quadlet-nix": "quadlet-nix",
         "snowfall-lib": "snowfall-lib"
       }
     },

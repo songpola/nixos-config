@@ -15,6 +15,8 @@
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
+
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 
   outputs =
@@ -34,6 +36,11 @@
         nixos-wsl.nixosModules.default
         disko.nixosModules.default
         nixos-facter-modules.nixosModules.facter
+      ];
+
+      # Add modules to all homes.
+      homes.modules = with inputs; [
+        quadlet-nix.homeManagerModules.quadlet
       ];
 
       templates = {
