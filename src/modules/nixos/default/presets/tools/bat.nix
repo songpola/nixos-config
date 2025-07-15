@@ -39,18 +39,24 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
       {
         systemConfig = [
           {
+            # -F, --quit-if-one-screen: Quit if one screen
+            # -H3, --header-lines=3: Display 3 fixed lines as header
+            # -X, --exit-write: Output on exit
+            #
+            # NOTE: Delta pager *might* use this environment variable too
+            #       if DELTA_PAGER is not set.
             environment.variables = {
-              # -F, --quit-if-one-screen: Quit if one screen
-              # -H3, --header-lines=3: Display 3 fixed lines as header
-              # -X, --exit-write: Output on exit
-              #
-              # NOTE: Delta pager *might* use this environment variable too
-              #       if DELTA_PAGER is not set.
               BAT_PAGER = "ov -F -H3 -X";
-
-              # For batman command
+            };
+          }
+          {
+            # For batman command
+            environment.variables = {
               MANPAGER = "ov --section-delimiter '^[^\\s]'";
             };
+
+            # Auto generate the immutable cache for man apropos
+            documentation.man.generateCaches = true;
           }
         ];
         homeConfig = [
