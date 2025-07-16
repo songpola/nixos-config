@@ -22,4 +22,4 @@ alias j = just
 alias bm = batman
 alias sw = nh os switch .
 alias swn = sw -n
-alias sw = nh os boot .
+alias bt = nh os boot .
