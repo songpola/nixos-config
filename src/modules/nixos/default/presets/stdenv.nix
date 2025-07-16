@@ -30,6 +30,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] {
 
           ssh = true;
           vscode-remote = true;
+          isd = true;
         };
       };
 
