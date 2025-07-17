@@ -29,6 +29,10 @@ mkMerge [
           gh = true;
         };
 
+        services = {
+          sshd = true;
+        };
+
         podman = true;
       };
     };
