@@ -27,7 +27,6 @@ mkMerge [
         tools = {
           jujutsu = true;
           gh = true;
-          podman-tui = true;
         };
 
         podman = true;

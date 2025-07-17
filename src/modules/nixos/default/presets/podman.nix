@@ -2,6 +2,7 @@
   lib,
   config,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -11,6 +12,8 @@ lib.${namespace}.mkPresetModule config [ "podman" ] {
   systemConfig = [
     {
       virtualisation.podman.enable = true;
+
+      environment.systemPackages = [ pkgs.podman-tui ];
     }
   ];
   extraConfig = [
