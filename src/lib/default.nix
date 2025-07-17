@@ -17,6 +17,10 @@ rec {
 
   sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
 
+  sshPublicKeys = {
+    podman-desktop-nixos-wsl = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJH6u5g1JTV97z44w5UKQNBu7UQsA18AMQ+piNOomuyI";
+  };
+
   hasPresetEnabled = presetPath: config: getAttrFromPath presetPath config.${namespace}.presets;
   hasBaseEnabled = name: config: config.${namespace}.base == name;
 
