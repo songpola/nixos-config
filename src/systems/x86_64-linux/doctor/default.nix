@@ -12,7 +12,7 @@ mkMerge [
   {
     ${namespace} = {
       stateVersions = {
-        system = "24.11";
+        system = "25.05";
         home = "25.05";
       };
       base = "wsl";
