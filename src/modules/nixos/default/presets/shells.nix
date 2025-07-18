@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) getConfigPath;
+  inherit (lib.${namespace}) getConfigPath nixosConfigPath;
 in
 lib.${namespace}.mkPresetModule config [ "shells" ] {
   systemConfig = [
@@ -25,6 +25,10 @@ lib.${namespace}.mkPresetModule config [ "shells" ] {
       programs.nushell = {
         enable = true;
         configFile.source = getConfigPath "/nushell/config.nu";
+
+        shellAliases = {
+          cfg = "cd ${nixosConfigPath}";
+        };
       };
 
       # Use Nushell as the default shell
@@ -32,9 +36,7 @@ lib.${namespace}.mkPresetModule config [ "shells" ] {
         enable = true;
         initExtra = ''
           # Use nushell in place of bash
-          if command -v nu >/dev/null 2>&1; then
-            SHELL=$(command -v nu) exec nu
-          fi
+          command -v nu >/dev/null 2>&1 && exec nu
         '';
       };
 

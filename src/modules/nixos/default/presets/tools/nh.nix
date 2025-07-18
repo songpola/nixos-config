@@ -15,6 +15,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "nh" ] {
       programs.nh = {
         enable = true;
         clean.enable = true; # auto clean (all) (default: weekly)
+        flake = lib.${namespace}.nixosConfigPath;
       };
     }
   ];
