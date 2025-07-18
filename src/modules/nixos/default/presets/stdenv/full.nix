@@ -14,8 +14,10 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
         shells = true;
 
         tools = {
-          delta = true;
           direnv = true;
+          delta = true;
+          just = true;
+
           ssh = true;
           isd = true;
         };
