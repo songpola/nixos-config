@@ -8,6 +8,18 @@ let
   inherit (lib.${namespace}) getConfigPath;
 in
 lib.${namespace}.mkPresetModule config [ "shells" ] {
+  systemConfig = [
+    {
+      ${namespace}.presets = {
+        tools = {
+          zoxide = true;
+          # fzf = true; # already enabled by zoxide
+          eza = true;
+          bat = true;
+        };
+      };
+    }
+  ];
   homeConfig = [
     {
       programs.nushell = {

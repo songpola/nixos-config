@@ -4,40 +4,28 @@
   namespace,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "stdenv" ] {
+# Minimal standard environment preset.
+#
+# This preset should always be the first one to be enabled.
+# This should be comfortable for enough for any further customization.
+lib.${namespace}.mkPresetModule config [ "stdenv" "mini" ] {
   systemConfig = [
     {
-      # Enable standard environment presets
       ${namespace}.presets = {
-        shells = true;
-
         tools = {
           nh = true;
-
           micro = true;
           ov = true;
-
           git = true;
-          delta = true;
-
-          direnv = true;
-
-          zoxide = true;
-          # fzf = true; # already enabled by zoxide
-
-          eza = true;
-          bat = true;
-
-          ssh = true;
+          jujutsu = true;
           vscode-remote = true;
-          isd = true;
         };
       };
 
       # Disable Nix channels
       nix.channel.enable = false;
 
-      # Nix settings
+      # Nix experimental features
       nix.settings.experimental-features = [
         "flakes"
         "nix-command"
@@ -49,12 +37,6 @@ lib.${namespace}.mkPresetModule config [ "stdenv" ] {
 
       # Enable polkit for managing system permissions
       security.polkit.enable = true;
-    }
-  ];
-  homeConfig = [
-    {
-      # Enable management of XDG base directories
-      xdg.enable = true;
     }
   ];
 }

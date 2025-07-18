@@ -15,7 +15,7 @@
     };
     base = "server";
     presets = {
-      stdenv = true;
+      stdenv.full = true;
 
       zfs = true;
 
