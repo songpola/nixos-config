@@ -12,6 +12,7 @@ lib.${namespace}.mkPresetModule config [ "shells" ] {
     {
       ${namespace}.presets = {
         tools = {
+          starship = true;
           zoxide = true;
           # fzf = true; # already enabled by zoxide
           eza = true;
@@ -34,14 +35,14 @@ lib.${namespace}.mkPresetModule config [ "shells" ] {
       # Use Nushell as the default shell
       programs.bash = {
         enable = true;
-        initExtra = ''
-          # Use nushell in place of bash
-          command -v nu >/dev/null 2>&1 && exec nu
+        # Need to use mkOrder 2000 because zoxide options use mkOrder 2000
+        initExtra = lib.mkOrder 3000 ''
+          # Use nushell in place of bash unless FORCE_BASH is set
+          if [[ -z "$FORCE_BASH" ]] && command -v nu >/dev/null 2>&1; then
+            exec nu
+          fi
         '';
       };
-
-      # Starship prompt
-      programs.starship.enable = true;
 
       # Carapace completer
       programs.carapace.enable = true;

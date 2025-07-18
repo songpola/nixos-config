@@ -42,11 +42,17 @@ rec {
       homeConfig ? [ ],
       extraConfig ? [ ],
     }:
+    let
+      homeCfg = config.snowfallorg.users.${namespace}.home.config;
+
+      # Supply homeConfig with homeCfg if it is a function
+      mkHomeConfig = if builtins.isFunction homeConfig then homeConfig homeCfg else homeConfig;
+    in
     {
       options.${namespace}.presets = setAttrByPath presetPath mkEnableOption;
       config = mkIf (config |> hasPresetEnabled presetPath) (mkMerge [
         (mkMerge systemConfig)
-        (mkHomeConfigModule (mkMerge homeConfig))
+        (mkHomeConfigModule (mkMerge mkHomeConfig))
         (mkMerge extraConfig)
       ]);
     };
