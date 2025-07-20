@@ -7,6 +7,7 @@ let
     setAttrByPath
     getAttrFromPath
     mkMerge
+    recursiveUpdate
     ;
   inherit (lib.snowfall.fs) get-file;
 in
@@ -87,19 +88,41 @@ rec {
       (mkMerge extraConfig)
     ]);
 
-  # [ WSL ONLY ]
-  # NOTE:   Always set `*.quadletConfig.defaultDependencies = false;`
-  # REASON: `network-online.target` is always inactive in WSL
-  # SEE:    https://github.com/containers/podman/issues/22197
-  #         https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
   mkRootlessQuadletModule =
     config: mkConfig:
     let
       homeCfg = config.snowfallorg.users.${namespace}.home.config;
-      cfg = homeCfg.virtualisation.quadlet;
+      quadletCfg = homeCfg.virtualisation.quadlet;
+      quadletConfig = mkConfig quadletCfg;
+      isWSL = config |> hasBaseEnabled "wsl";
+
+      # Update each toplevel config with `quadletConfig.defaultDependencies = false;`
+      # Example: `containers.*.quadletConfig.defaultDependencies = false;`
+      #          `volumes.*.quadletConfig.defaultDependencies = false;`
+      disableDefaultDependencies =
+        inputConfig:
+        recursiveUpdate inputConfig (
+          inputConfig
+          |> builtins.mapAttrs (
+            toplevelName: toplevelConfig:
+            toplevelConfig
+            |> builtins.mapAttrs (
+              subName: subConfig: {
+                quadletConfig.defaultDependencies = false;
+              }
+            )
+          )
+        );
     in
+    # [ WSL ONLY ]
+    # NOTE:   Always set `*.quadletConfig.defaultDependencies = false;`
+    # REASON: `network-online.target` is always inactive in WSL
+    # SEE:    https://github.com/containers/podman/issues/22197
+    #         https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
+    #
+    # If `isWSL` is true, then disable default dependencies for quadletConfig
     mkHomeConfigModule {
-      virtualisation.quadlet = mkConfig cfg;
+      virtualisation.quadlet = if isWSL then disableDefaultDependencies quadletConfig else quadletConfig;
     };
 
   getConfigPath = path: (get-file "config") + path;
