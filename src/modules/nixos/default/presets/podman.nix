@@ -15,14 +15,14 @@ lib.${namespace}.mkPresetModule config [ "podman" ] {
 
       environment.systemPackages = [ pkgs.podman-tui ];
 
-      # users.users.${namespace} = {
-      #   # Required for auto start before user login
-      #   linger = true;
+      users.users.${namespace} = {
+        # Required for auto start before user login
+        linger = true;
 
-      #   # Required for rootless container with multiple users
-      #   # NOTE: Already defaults to true if no subUidRanges and subGidRanges are set
-      #   # autoSubUidGidRange = true;
-      # };
+        # Required for rootless container with multiple users
+        # NOTE: Already defaults to true if no subUidRanges and subGidRanges are set
+        # autoSubUidGidRange = true;
+      };
     }
   ];
   # extraConfig = [
