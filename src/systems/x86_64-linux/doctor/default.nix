@@ -26,6 +26,9 @@ mkMerge [
   (mkRootlessQuadletModule config (quadletCfg: {
     containers = {
       trilium = {
+        serviceConfig = {
+          Restart = "on-failure";
+        };
         containerConfig = {
           image = "docker.io/triliumnext/trilium:v0.96.0";
           publishPorts = [ "8080:8080" ];
