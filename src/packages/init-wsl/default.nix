@@ -29,8 +29,6 @@ writeTextFile {
           nh os boot github:songpola/nixos-config
             --hostname $hostname
             ...$rest
-            --
-            --extra-experimental-features 'nix-command flakes pipe-operators'
         )
       }
     '';
