@@ -17,4 +17,4 @@ add-podman-connections-desktop:
 	podman.exe system connection default nixos-wsl
 
 allow-ssh-to-wsl-firewall:
-	sudo.exe pwsh.exe -c 'New-NetFirewallHyperVRule -Name "Allow-SSH-To-WSL" -DisplayName "Allow SSH to WSL" -Direction Inbound -VMCreatorId "{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}" -Protocol TCP -LocalPorts 2222'
+	sudo.exe pwsh.exe -c 'New-NetFirewallHyperVRule -Name "Allow-SSH-To-WSL-From-Localhost" -DisplayName "Allow SSH to WSL from localhost" -VMCreatorId "{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}" -Protocol TCP -LocalPorts 2222 -RemoteAddresses "127.0.0.1"'
