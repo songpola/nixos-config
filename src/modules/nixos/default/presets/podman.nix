@@ -29,6 +29,7 @@ lib.${namespace}.mkPresetModule config [ "podman" ] {
   extraConfig = [
     (mkIfBaseEnabled config "wsl" {
       systemConfig = [
+        # Remote: NixOS-WSL -> Podman Desktop
         {
           # https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance
           users.groups = {
@@ -43,6 +44,18 @@ lib.${namespace}.mkPresetModule config [ "podman" ] {
               members = [ namespace ];
             };
           };
+        }
+        # Remote: Podman Desktop -> NixOS-WSL
+        {
+          # Enable SSH access for Podman Desktop
+          services.openssh = {
+            enable = true;
+            # Windows has built-in SSH server, so we use a different port
+            ports = [ 2222 ];
+          };
+          users.users.${namespace}.openssh.authorizedKeys.keys = [
+            sshPublicKeys.podman-desktop-nixos-wsl
+          ];
         }
       ];
     })
