@@ -13,7 +13,10 @@ lib.${namespace}.mkPresetModule config [ "podman" ] {
     {
       virtualisation.podman.enable = true;
 
-      environment.systemPackages = [ pkgs.podman-tui ];
+      environment.systemPackages = with pkgs; [
+        podman-tui
+        docker-compose # use original implementation for `podman compose` commands
+      ];
 
       users.users.${namespace} = {
         # Required for auto start before user login
