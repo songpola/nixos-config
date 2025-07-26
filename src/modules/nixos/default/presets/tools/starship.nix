@@ -103,7 +103,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "starship" ] {
         };
 
       programs.bash.initExtra = ''
-        if [[ $TERM != "dumb" ]]; then
+        if [[ $TERM != "dumb" && $TERM != "linux" ]]; then
           eval "$(${lib.getExe package} init bash --print-full-init)"
         fi
       '';
@@ -115,7 +115,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "starship" ] {
           '';
         in
         ''
-          if ($env.TERM != "dumb") {
+          if ($env.TERM != "dumb" and $env.TERM != "linux") {
               source ${starshipInit}
           }
         '';
