@@ -1,5 +1,8 @@
 set shell := ["nu", "-c"]
 
+prts-sw:
+  nh os switch . -H prts --build-host prts --target-host prts -v
+
 clean-channels:
 	sudo rm -r /root/.nix-defexpr/channels
 	sudo rm -r /nix/var/nix/profiles/per-user/root/channels
