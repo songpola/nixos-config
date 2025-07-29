@@ -4,6 +4,7 @@
     ./disko.nix
     ./network.nix
     ./nvidia.nix
+    # ./containers.nix
   ];
 
   facter.reportPath = ./facter.json;
@@ -22,6 +23,8 @@
       services = {
         tailscale = true;
       };
+
+      podman = true;
     };
   };
 

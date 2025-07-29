@@ -1,7 +1,10 @@
 set shell := ["nu", "-c"]
 
-prts-sw:
-  nh os switch . -H prts --build-host prts --target-host prts -v
+nh-prts OP="switch" *FLAGS:
+  nh os {{OP}} . -H prts --target-host prts -v {{FLAGS}}
+
+ng-prts OP="switch" *FLAGS:
+	nixos-rebuild-ng {{OP}} --flake .#prts --build-host prts --target-host prts --use-substitutes -v {{FLAGS}}
 
 clean-channels:
 	sudo rm -r /root/.nix-defexpr/channels

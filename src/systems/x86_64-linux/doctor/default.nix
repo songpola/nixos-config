@@ -18,6 +18,14 @@ mkMerge [
         stdenv.full = true;
 
         podman = true;
+
+        tools = {
+          nixos-rebuild-ng = true;
+        };
+
+        remote-build = {
+          client = true;
+        };
       };
     };
   }
