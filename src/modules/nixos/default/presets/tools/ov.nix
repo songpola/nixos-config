@@ -16,7 +16,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "ov" ] {
       environment.systemPackages = [ pkgs.ov ];
 
       # Set as default pager (also used by systemd)
-      environment.variables = {
+      environment.sessionVariables = {
         PAGER = "ov";
         SYSTEMD_PAGERSECURE = "false";
       };

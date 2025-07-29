@@ -45,13 +45,13 @@ lib.${namespace}.mkPresetModule config [ "tools" "bat" ] {
             #
             # NOTE: Delta pager *might* use this environment variable too
             #       if DELTA_PAGER is not set.
-            environment.variables = {
+            environment.sessionVariables = {
               BAT_PAGER = "ov -F -H3 -X";
             };
           }
           {
             # For batman command
-            environment.variables = {
+            environment.sessionVariables = {
               MANPAGER = "ov --section-delimiter '^[^\\s]'";
             };
 

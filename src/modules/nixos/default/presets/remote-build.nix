@@ -2,10 +2,9 @@
   lib,
   config,
   namespace,
-  pkgs,
   ...
 }:
-lib.${namespace}.mkPresetModule config [ "remote-build" "client" ] {
+lib.${namespace}.mkPresetModule config [ "remote-build" ] {
   systemConfig = [
     {
       nix = {
@@ -19,6 +18,7 @@ lib.${namespace}.mkPresetModule config [ "remote-build" "client" ] {
         buildMachines = [
           {
             protocol = "ssh-ng";
+            sshUser = namespace;
             hostName = "prts"; # prts.tail7623c.ts.net
             system = "x86_64-linux";
             maxJobs = 12;

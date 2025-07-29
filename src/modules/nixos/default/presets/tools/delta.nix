@@ -49,7 +49,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "delta" ] {
       {
         systemConfig = [
           {
-            environment.variables = {
+            environment.sessionVariables = {
               # -F, --quit-if-one-screen: Quit if one screen
               # NOTE: No need to use `--raw` option; ov can handle the escape sequences
               DELTA_PAGER = "ov -F";

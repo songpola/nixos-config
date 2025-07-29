@@ -19,13 +19,7 @@ mkMerge [
 
         podman = true;
 
-        tools = {
-          nixos-rebuild-ng = true;
-        };
-
-        remote-build = {
-          client = true;
-        };
+        remote-build = true;
       };
     };
   }

@@ -8,7 +8,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "ssh" ] {
   systemConfig = [
     {
       # Enable ssh-agent-wsl preset (WSL only)
-      ${namespace}.presets.tools.ssh-agent-wsl = true;
+      ${namespace}.presets.services.ssh-agent-wsl = true;
     }
   ];
   homeConfig = [

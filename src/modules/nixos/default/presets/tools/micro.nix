@@ -13,7 +13,7 @@ lib.${namespace}.mkPresetModule config [ "tools" "micro" ] {
       environment.systemPackages = [ pkgs.micro ];
 
       # Set as default editor
-      environment.variables = {
+      environment.sessionVariables = {
         EDITOR = "micro";
       };
     }
