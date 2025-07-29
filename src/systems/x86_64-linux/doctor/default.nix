@@ -17,9 +17,11 @@ mkMerge [
       presets = {
         stdenv.full = true;
 
-        podman = true;
-
         remote-build = true;
+
+        services = {
+          podman = true;
+        };
       };
     };
   }

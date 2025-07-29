@@ -8,7 +8,7 @@
 let
   inherit (lib.${namespace}) mkIfBaseEnabled sshPublicKeys;
 in
-lib.${namespace}.mkPresetModule config [ "podman" ] {
+lib.${namespace}.mkPresetModule config [ "services" "podman" ] {
   systemConfig = [
     {
       virtualisation.podman.enable = true;
