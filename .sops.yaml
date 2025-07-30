@@ -1,0 +1,11 @@
+keys:
+  - &doctor age1zzjf0zng7lm7zqjlx7x52kwse8t83h42uqhhyn2ggryu38jh93dqwtx8j9
+  - &prts age1lew4ex3dyrap05gjtk6h3tx94yjvh9kcax69xpfrr6z59q925pdqy047mh
+creation_rules:
+  - key_groups:
+    - age:
+      - *doctor
+      - *prts
+stores:
+  yaml:
+    indent: 2

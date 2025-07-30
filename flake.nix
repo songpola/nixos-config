@@ -17,6 +17,9 @@
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -36,6 +39,7 @@
         nixos-wsl.nixosModules.default
         disko.nixosModules.default
         nixos-facter-modules.nixosModules.facter
+        sops-nix.nixosModules.sops
       ];
 
       # Add modules to all homes.

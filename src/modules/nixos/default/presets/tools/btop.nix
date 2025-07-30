@@ -5,7 +5,6 @@
   pkgs,
   ...
 }:
-
 let
   inherit (lib.${namespace}) hasPresetEnabled;
 

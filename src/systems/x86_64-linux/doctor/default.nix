@@ -22,6 +22,10 @@ mkMerge [
         services = {
           podman = true;
         };
+
+        tools = {
+          sops = true;
+        };
       };
     };
   }
