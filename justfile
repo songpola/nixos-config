@@ -1,7 +1,13 @@
 set shell := ["nu", "-c"]
 
-nh-prts OP="switch" *FLAGS:
+prts-nh OP="switch" *FLAGS="-- -j0":
   nh os {{OP}} . -H prts --build-host songpola@prts --target-host songpola@prts -v {{FLAGS}}
+
+prts-rebuild OP="switch" *FLAGS="-- -j0":
+	nixos-rebuild {{OP}} --flake .#prts --build-host songpola@prts --target-host songpola@prts --debug {{FLAGS}}
+
+generate-binary-cache-key:
+	nix-store --generate-binary-cache-key prts-1 cache-private-key.pem cache-public-key.pem
 
 clean-channels:
 	sudo rm -r /root/.nix-defexpr/channels
