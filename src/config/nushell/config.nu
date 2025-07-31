@@ -29,9 +29,10 @@ alias swn = sw -n
 alias bt = nh os boot
 
 alias jl = jj log
-alias jc = jj commit
 alias je = jj edit
-alias jd = jj diff
+alias jc = jj commit
+alias jd = jj desc
+alias jdf = jj diff
 alias jn = jj new
 alias jm = jj new main
 alias ju = jj bookmark move
