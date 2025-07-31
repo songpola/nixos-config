@@ -24,6 +24,8 @@
         podman = true;
         tailscale = true;
       };
+
+      binary-cache.server = true;
     };
   };
 

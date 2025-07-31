@@ -18,6 +18,7 @@ mkMerge [
         stdenv.full = true;
 
         remote-build = true;
+        binary-cache.client = true;
 
         services = {
           podman = true;

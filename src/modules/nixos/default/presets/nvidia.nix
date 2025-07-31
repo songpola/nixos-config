@@ -13,10 +13,10 @@ lib.${namespace}.mkPresetModule config [ "nvidia" ] {
 
       ${namespace}.presets.tools.btop = true;
 
-      environment.systemPackages = with pkgs; [
-        nvitop
-        nvtopPackages.nvidia
-      ];
+      # environment.systemPackages = with pkgs; [
+      #   nvitop
+      #   nvtopPackages.nvidia
+      # ];
     }
   ];
 }

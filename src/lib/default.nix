@@ -126,4 +126,7 @@ rec {
     };
 
   getConfigPath = path: (get-file "config") + path;
+  getSecretsPath = path: (get-file "secrets") + path;
+
+  secrets = import (get-file "secrets");
 }
