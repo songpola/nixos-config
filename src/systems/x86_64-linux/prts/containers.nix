@@ -11,22 +11,24 @@ in
 mkMerge [
   (mkRootlessQuadletModule config (quadletCfg: {
     containers = {
-      trilium = {
+      int-301-db = {
         serviceConfig = {
           Restart = "on-failure";
         };
         containerConfig = {
-          image = "docker.io/triliumnext/trilium:v0.96.0";
-          publishPorts = [ "8080:8080" ];
+          image = "container-registry.oracle.com/database/free:23.8.0.0";
+          publishPorts = [ "1521:1521" ];
           volumes = [
-            "${quadletCfg.volumes.trilium-data.ref}:/home/node/trilium-data"
-            "/etc/localtime:/etc/localtime:ro"
+            "${quadletCfg.volumes.int-302-db-data.ref}:/opt/oracle/oradata"
           ];
         };
       };
     };
     volumes = {
-      trilium-data = { };
+      int-302-db-data = { };
     };
   }))
+  {
+    networking.firewall.allowedTCPPorts = [ 1521 ];
+  }
 ]

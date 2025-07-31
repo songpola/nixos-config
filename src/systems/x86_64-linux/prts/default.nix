@@ -3,7 +3,7 @@
   imports = [
     ./disko.nix
     ./network.nix
-    # ./containers.nix
+    ./containers.nix
   ];
 
   facter.reportPath = ./facter.json;
