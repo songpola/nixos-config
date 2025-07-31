@@ -16,10 +16,14 @@ let
     # Enable line breaks for two-line prompts.
     # `disabled = true` by default from catppuccin-powerline preset.
     line_break.disabled = false;
-    # Enable showing current OS symbol
     os.disabled = false;
-    # Enable showing current shell symbol
     shell.disabled = false;
+    username.format = "[ $user@]($style)";
+    hostname = {
+      ssh_only = false;
+      style = "bg:red fg:crust";
+      format = "[$hostname$ssh_symbol ]($style)";
+    };
 
     # Add $shell to the prompt
     format =
@@ -27,6 +31,7 @@ let
         [](red)
         $os
         $username
+        $hostname
         [](bg:peach fg:red)
         $directory
         [](bg:yellow fg:peach)
