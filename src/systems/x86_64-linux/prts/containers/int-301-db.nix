@@ -9,12 +9,10 @@ let
   inherit (lib.${namespace}) mkRootlessQuadletModule;
 in
 mkMerge [
-  (mkRootlessQuadletModule config (quadletCfg: {
+  (mkRootlessQuadletModule config { } (quadletCfg: {
     containers = {
       int-301-db = {
-        serviceConfig = {
-          Restart = "on-failure";
-        };
+        serviceConfig.Restart = "on-failure";
         containerConfig = {
           image = "container-registry.oracle.com/database/free:23.8.0.0";
           publishPorts = [ "1521:1521" ];

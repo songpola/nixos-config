@@ -3,8 +3,10 @@
   imports = [
     ./disko.nix
     ./network.nix
-    ./containers/int-301-db.nix
+    ./containers/caddy.nix
+    ./containers/adguardhome.nix
     ./containers/trilium.nix
+    ./containers/int-301-db.nix
   ];
 
   facter.reportPath = ./facter.json;

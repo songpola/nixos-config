@@ -27,6 +27,8 @@ rec {
   hasPresetEnabled = presetPath: config: getAttrFromPath presetPath config.${namespace}.presets;
   hasBaseEnabled = name: config: config.${namespace}.base == name;
 
+  getHomeCfg = config: config.snowfallorg.users.${namespace}.home.config;
+
   mkEnableOption = mkOption {
     type = types.bool;
     default = false;
@@ -44,7 +46,7 @@ rec {
       extraConfig ? [ ],
     }:
     let
-      homeCfg = config.snowfallorg.users.${namespace}.home.config;
+      homeCfg = getHomeCfg config;
 
       # Supply homeConfig with homeCfg if it is a function
       mkHomeConfig = if builtins.isFunction homeConfig then homeConfig homeCfg else homeConfig;
@@ -89,12 +91,23 @@ rec {
     ]);
 
   mkRootlessQuadletModule =
-    config: mkConfig:
+    config:
+    {
+      # NOTE: Always set `*.quadletConfig.defaultDependencies = false;`
+      # REASONS:
+      # - For "server": currently, `network-online.target` don't have any dependents, so it is always inactive
+      # - For "wsl":    `network-online.target` is always inactive
+      # SEE: https://github.com/containers/podman/issues/22197
+      #      https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
+      withDefaultDependencies ? false,
+
+      autoEscape ? true,
+    }:
+    mkConfig:
     let
-      homeCfg = config.snowfallorg.users.${namespace}.home.config;
+      homeCfg = getHomeCfg config;
       quadletCfg = homeCfg.virtualisation.quadlet;
       quadletConfig = mkConfig quadletCfg;
-      isWSL = config |> hasBaseEnabled "wsl";
 
       # Update each toplevel config with `quadletConfig.defaultDependencies = false;`
       # Example: `containers.*.quadletConfig.defaultDependencies = false;`
@@ -114,15 +127,12 @@ rec {
           )
         );
     in
-    # [ WSL ONLY ]
-    # NOTE:   Always set `*.quadletConfig.defaultDependencies = false;`
-    # REASON: `network-online.target` is always inactive in WSL
-    # SEE:    https://github.com/containers/podman/issues/22197
-    #         https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
-    #
-    # If `isWSL` is true, then disable default dependencies for quadletConfig
     mkHomeConfigModule {
-      virtualisation.quadlet = if isWSL then disableDefaultDependencies quadletConfig else quadletConfig;
+      virtualisation.quadlet =
+        (if withDefaultDependencies then quadletConfig else disableDefaultDependencies quadletConfig)
+        // {
+          inherit autoEscape;
+        };
     };
 
   getConfigPath = path: (get-file "config") + path;

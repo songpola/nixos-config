@@ -1,0 +1,19 @@
+{
+	email ice.songpola@pm.me
+	# acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+
+	auto_https disable_redirects
+	default_bind fd/{env.CADDY_HTTPS_FD} {
+		protocols h1 h2
+	}
+	default_bind fdgram/{env.CADDY_HTTP3_FD} {
+		protocols h3
+	}
+}
+
+http:// {
+	bind fd/{env.CADDY_HTTP_FD} {
+		protocols h1
+	}
+	redir https://{host}{uri}
+}
