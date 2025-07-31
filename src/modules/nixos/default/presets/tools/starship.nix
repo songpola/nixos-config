@@ -21,6 +21,7 @@ let
     username.format = "[ $user@]($style)";
     hostname = {
       ssh_only = false;
+      ssh_symbol = " ";
       style = "bg:red fg:crust";
       format = "[$hostname$ssh_symbol ]($style)";
     };
