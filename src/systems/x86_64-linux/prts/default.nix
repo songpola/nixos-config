@@ -5,6 +5,7 @@
     ./network.nix
     ./containers/caddy.nix
     ./containers/adguardhome.nix
+    ./containers/dozzle.nix
     ./containers/trilium.nix
     ./containers/int-301-db.nix
   ];
