@@ -3,7 +3,7 @@ set shell := ["nu", "-c"]
 repl:
 	nix repl .
 
-prts-nh OP="switch" *FLAGS="-- -j0":
+prts-nh OP="switch" *FLAGS:
   nh os {{OP}} . -H prts --build-host songpola@prts --target-host songpola@prts {{FLAGS}}
 
 prts-rebuild OP="switch" *FLAGS="-- -j0":

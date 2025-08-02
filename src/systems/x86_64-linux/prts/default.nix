@@ -7,6 +7,7 @@
     ./containers/adguardhome.nix
     ./containers/dozzle.nix
     ./containers/trilium.nix
+    ./containers/radicale.nix
     ./containers/int-301-db.nix
   ];
 
