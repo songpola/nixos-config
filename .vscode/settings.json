@@ -1,0 +1,4 @@
+{
+  // Disable the Git extension to avoid conflicts while using colocated Jujutsu and Git.
+  "git.enabled": false
+}
