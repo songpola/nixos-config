@@ -12,6 +12,7 @@ mkMerge [
   (mkRootlessQuadletModule config { } (quadletCfg: {
     containers = {
       radicale = {
+        serviceConfig.Restart = "on-failure";
         containerConfig = {
           image = "docker.io/tomsquest/docker-radicale:3.5.4.0";
           volumes = [

@@ -12,6 +12,7 @@ mkMerge [
   (mkRootlessQuadletModule config { } (quadletCfg: {
     containers = {
       dozzle = {
+        serviceConfig.Restart = "on-failure";
         containerConfig = {
           image = "docker.io/amir20/dozzle:v8.13.8";
           volumes = [
