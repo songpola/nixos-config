@@ -8,6 +8,7 @@
     ./containers/dozzle.nix
     ./containers/trilium.nix
     ./containers/radicale.nix
+    ./containers/firefly-iii.nix
     ./containers/int-301-db.nix
   ];
 

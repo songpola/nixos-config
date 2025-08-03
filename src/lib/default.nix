@@ -100,8 +100,6 @@ rec {
       # SEE: https://github.com/containers/podman/issues/22197
       #      https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#implicit-network-dependencies
       withDefaultDependencies ? false,
-
-      autoEscape ? true,
     }:
     mkConfig:
     let
@@ -113,14 +111,16 @@ rec {
       # Example: `containers.*.quadletConfig.defaultDependencies = false;`
       #          `volumes.*.quadletConfig.defaultDependencies = false;`
       disableDefaultDependencies =
-        inputConfig:
-        recursiveUpdate inputConfig (
-          inputConfig
+        cfg:
+        recursiveUpdate cfg (
+          cfg
+          |> lib.filterAttrs (n: builtins.isAttrs) # only keep attrs values
           |> builtins.mapAttrs (
-            toplevelName: toplevelConfig:
-            toplevelConfig
-            |> builtins.mapAttrs (
-              subName: subConfig: {
+            # n1: containers, volumes, networks, pods, etc.
+            n1:
+            builtins.mapAttrs (
+              # n2: containers.*, volumes.*, networks.*, pods.*, etc.
+              n2: v2: {
                 quadletConfig.defaultDependencies = false;
               }
             )
@@ -129,10 +129,7 @@ rec {
     in
     mkHomeConfigModule {
       virtualisation.quadlet =
-        (if withDefaultDependencies then quadletConfig else disableDefaultDependencies quadletConfig)
-        // {
-          inherit autoEscape;
-        };
+        if withDefaultDependencies then quadletConfig else disableDefaultDependencies quadletConfig;
     };
 
   getConfigPath = path: (get-file "config") + path;

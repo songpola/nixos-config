@@ -8,11 +8,12 @@ let
   inherit (lib) mkMerge;
   inherit (lib.${namespace}) mkRootlessQuadletModule mkHomeConfigModule getConfigPath;
 
-  secret = "containers/caddy";
+  secret = "containers/caddy/env";
   secretPath = config.sops.secrets.${secret}.path;
 in
 mkMerge [
   (mkRootlessQuadletModule config { } (quadletCfg: {
+    autoEscape = true;
     containers = {
       caddy = {
         # No need to autostart/restart; will be socket activated when needed
