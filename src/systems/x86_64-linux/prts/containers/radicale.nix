@@ -27,6 +27,7 @@ mkMerge [
 
           # Hardening container security.
           # Based on https://github.com/tomsquest/docker-radicale/issues/122#issuecomment-2323388423
+          notify = "healthy";
           healthCmd = "curl -f http://127.0.0.1:5232 || exit 1";
           healthInterval = "30s";
           healthRetries = 3;

@@ -37,6 +37,8 @@ mkMerge [
           tag = "songpola/firefly-iii-core-thai:${coreImageVersion}";
           file = getConfigPath "/firefly-iii/Containerfile";
           podmanArgs = [
+            "--format"
+            "docker" # needed for HEALTHCHECK directive support
             "--build-arg"
             "VERSION=${coreImageVersion}"
           ];
@@ -71,6 +73,14 @@ mkMerge [
             (getConfigPath "/firefly-iii/.db.env")
             dbSecretPath
           ];
+
+          # Custom health check, based on this:
+          # https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/installing-mariadb/binary-packages/automated-mariadb-deployment-and-administration/docker-and-mariadb/using-healthcheck-sh
+          notify = "healthy";
+          healthCmd = "healthcheck.sh --connect --innodb_initialized";
+          healthInterval = "10s";
+          healthTimeout = "5s";
+          healthRetries = 3;
         };
       };
       # # TODO: setup cron job

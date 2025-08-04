@@ -36,7 +36,9 @@ mkMerge [
             "${getConfigPath "/caddy/Caddyfile"}:/config/Caddyfile:ro"
           ];
           networks = [ quadletCfg.networks.caddy-net.ref ];
-          notify = true; # caddy supports sd_notify
+          # The image don't have HEALTHCHECK
+          # but caddy supports sd_notify
+          notify = true;
         };
       };
     };

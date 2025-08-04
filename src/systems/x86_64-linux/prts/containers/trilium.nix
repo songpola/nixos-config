@@ -24,6 +24,7 @@ mkMerge [
             "caddy.reverse_proxy" = "{{upstreams 8080}}";
           };
           networks = [ quadletCfg.networks.caddy-net.ref ];
+          notify = "healthy";
         };
       };
     };
