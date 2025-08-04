@@ -13,6 +13,8 @@ let
 
   dbSecret = "containers/firefly-iii-db/env";
   dbSecretPath = config.sops.secrets.${dbSecret}.path;
+
+  coreImageVersion = "version-6.2.21";
 in
 mkMerge [
   (mkRootlessQuadletModule config { } (quadletCfg: {
@@ -28,15 +30,29 @@ mkMerge [
         };
       };
     };
+    builds = {
+      # Custom build image with Thai locale
+      firefly-iii-core-thai = {
+        buildConfig = {
+          tag = "songpola/firefly-iii-core-thai:${coreImageVersion}";
+          file = getConfigPath "/firefly-iii/Containerfile";
+          podmanArgs = [
+            "--build-arg"
+            "VERSION=${coreImageVersion}"
+          ];
+        };
+      };
+    };
     containers = {
       firefly-iii-core = {
         unitConfig = {
-          After = quadletCfg.containers.firefly-iii-db.ref;
           Requires = quadletCfg.containers.firefly-iii-db.ref;
+          After = quadletCfg.containers.firefly-iii-db.ref;
         };
         containerConfig = {
           pod = quadletCfg.pods.firefly-iii.ref;
-          image = "docker.io/fireflyiii/core:version-6.2.21";
+          # Use the custom build image
+          image = quadletCfg.builds.firefly-iii-core-thai.ref;
           environmentFiles = [
             (getConfigPath "/firefly-iii/.env")
             coreSecretPath
