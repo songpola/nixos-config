@@ -34,12 +34,14 @@ alias jc = jj commit
 alias jd = jj desc
 alias jdf = jj diff
 alias js = jj split
+alias jsh = jj show
 alias jsq = jj squash
 alias jst = jj status
 alias jr = jj rebase
 alias jn = jj new
 alias jm = jj new main
-alias ju = jj bookmark move
+alias ju = jj bookmark move # u = update
+alias jum = jj bookmark move main -t @- # update main to last commit
 alias jf = jj git fetch
 alias jp = jj git push
 
