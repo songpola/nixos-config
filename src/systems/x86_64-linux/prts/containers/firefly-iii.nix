@@ -110,7 +110,5 @@ mkMerge [
       ${coreSecret}.owner = namespace;
       ${dbSecret}.owner = namespace;
     };
-
-    i18n.extraLocales = [ "th_TH.UTF-8/UTF-8" ];
   }
 ]
