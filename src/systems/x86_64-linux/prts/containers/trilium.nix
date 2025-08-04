@@ -14,7 +14,7 @@ mkMerge [
       trilium = {
         serviceConfig.Restart = "on-failure";
         containerConfig = {
-          image = "docker.io/triliumnext/notes:v0.95.0";
+          image = "docker.io/triliumnext/trilium:v0.97.2";
           volumes = [
             "/tank/songpola/trilium:/home/node/trilium-data"
             "/etc/localtime:/etc/localtime:ro"
@@ -24,7 +24,9 @@ mkMerge [
             "caddy.reverse_proxy" = "{{upstreams 8080}}";
           };
           networks = [ quadletCfg.networks.caddy-net.ref ];
-          notify = "healthy";
+          # # FIXME: Podman fails to recognize HEALTHCHECK in certain BuildKit images
+          # # See:   https://github.com/containers/podman/issues/18904
+          # notify = "healthy";
         };
       };
     };
