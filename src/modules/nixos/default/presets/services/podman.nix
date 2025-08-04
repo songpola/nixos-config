@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkIfBaseEnabled sshPublicKeys;
+  inherit (lib.${namespace}) mkIfBaseEnabled mkIfPresetEnabled sshPublicKeys;
 in
 lib.${namespace}.mkPresetModule config [ "services" "podman" ] {
   systemConfig = [
@@ -23,13 +23,30 @@ lib.${namespace}.mkPresetModule config [ "services" "podman" ] {
         # and prevent containers termination on shell logout
         linger = true;
 
-        # Required for rootless container with multiple users
-        # NOTE: Already defaults to true if no subUidRanges and subGidRanges are set
+        # # Required for rootless container with multiple users
+        # # NOTE: Already defaults to true if no subUidRanges and subGidRanges are set
         # autoSubUidGidRange = true;
       };
     }
   ];
   extraConfig = [
+    (mkIfPresetEnabled config [ "nvidia" ] {
+      systemConfig = [
+        {
+          hardware.nvidia-container-toolkit.enable = true;
+
+          # ISSUE: podman: 5.5.1 breaks cdi
+          # See:   https://github.com/NixOS/nixpkgs/issues/417312#issuecomment-3024705964
+          # TODO:  Remove this when the issue is closed
+          virtualisation.containers.containersConf.settings = {
+            engine.cdi_spec_dirs = [
+              "/etc/cdi" # the only default (since v5.5.0)
+              "/var/run/cdi" # where the NixOS module places the generated CDI spec
+            ];
+          };
+        }
+      ];
+    })
     (mkIfBaseEnabled config "wsl" {
       systemConfig = [
         # Remote: NixOS-WSL -> Podman Desktop
