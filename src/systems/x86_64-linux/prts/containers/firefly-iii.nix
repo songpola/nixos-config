@@ -22,10 +22,6 @@ mkMerge [
       firefly-iii = {
         serviceConfig.Restart = "on-failure";
         podConfig = {
-          volumes = [
-            "${quadletCfg.volumes.firefly-iii-core-upload.ref}:/var/www/html/storage/upload"
-            "${quadletCfg.volumes.firefly-iii-db-data.ref}:/var/lib/mysql"
-          ];
           networks = [ quadletCfg.networks.caddy-net.ref ];
         };
       };
@@ -55,6 +51,9 @@ mkMerge [
           pod = quadletCfg.pods.firefly-iii.ref;
           # Use the custom build image
           image = quadletCfg.builds.firefly-iii-core-thai.ref;
+          volumes = [
+            "${quadletCfg.volumes.firefly-iii-core-upload.ref}:/var/www/html/storage/upload"
+          ];
           environmentFiles = [
             (getConfigPath "/firefly-iii/.env")
             coreSecretPath
@@ -63,12 +62,16 @@ mkMerge [
             "caddy" = "firefly-iii.songpola.dev";
             "caddy.reverse_proxy" = "{{upstreams 8080}}";
           };
+          notify = "healthy";
         };
       };
       firefly-iii-db = {
         containerConfig = {
           pod = quadletCfg.pods.firefly-iii.ref;
           image = "docker.io/mariadb:lts";
+          volumes = [
+            "${quadletCfg.volumes.firefly-iii-db-data.ref}:/var/lib/mysql"
+          ];
           environmentFiles = [
             (getConfigPath "/firefly-iii/.db.env")
             dbSecretPath
