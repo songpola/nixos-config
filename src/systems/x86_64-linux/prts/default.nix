@@ -57,4 +57,12 @@
 
   # I don't want to type my password every time I use sudo on this system
   security.sudo.wheelNeedsPassword = false;
+
+  # For Podman rootful containers
+  virtualisation.containers.storage.settings = {
+    storage = {
+      driver = "zfs";
+      options.zfs.fsname = "tank/podman";
+    };
+  };
 }
