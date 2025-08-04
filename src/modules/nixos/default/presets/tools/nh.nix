@@ -19,4 +19,22 @@ lib.${namespace}.mkPresetModule config [ "tools" "nh" ] {
       };
     }
   ];
+  extraConfig = [
+    (lib.${namespace}.mkIfBaseEnabled config "server" {
+      systemConfig = [
+        {
+          # Servers would have plenty of storage.
+          # So we can keep the cache for a long time.
+          programs.nh.clean.extraArgs =
+            [
+              "--keep=10" # keep at least 10 generations
+              "--keep-since=1m" # keep gcroots and generations in the last 1 month
+              "--nogc" # don't run `nix store --gc`
+              "--nogcroots" # don't clean gcroots
+            ]
+            |> lib.concatStringsSep " ";
+        }
+      ];
+    })
+  ];
 }
