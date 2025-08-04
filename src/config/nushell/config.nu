@@ -15,26 +15,30 @@ if ($env.TERM_PROGRAM? == "vscode") {
 alias c = clear
 alias l = ls
 
-alias gcm = bunx -b czg emoji gpg
+alias sw = nh os switch
+alias swn = sw -n
+alias bt = nh os boot
+
+alias bm = batman
 
 alias ga = git add .
 alias gp = git push
 
+alias gcm = bunx -b czg emoji gpg
+
 alias j = just
-
-alias bm = batman
-
-alias sw = nh os switch
-alias swn = sw -n
-alias bt = nh os boot
 
 alias jl = jj log
 alias je = jj edit
 alias jc = jj commit
 alias jd = jj desc
 alias jdf = jj diff
+alias js = jj split
+alias jsq = jj squash
 alias jn = jj new
 alias jm = jj new main
 alias ju = jj bookmark move
 alias jf = jj git fetch
 alias jp = jj git push
+
+alias p = podman
