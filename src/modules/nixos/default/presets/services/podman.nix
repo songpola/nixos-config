@@ -35,9 +35,8 @@ lib.${namespace}.mkPresetModule config [ "services" "podman" ] {
         {
           hardware.nvidia-container-toolkit.enable = true;
 
-          # ISSUE: podman: 5.5.1 breaks cdi
+          # FIXME: podman: 5.5.1 breaks cdi
           # See:   https://github.com/NixOS/nixpkgs/issues/417312#issuecomment-3024705964
-          # TODO:  Remove this when the issue is closed
           virtualisation.containers.containersConf.settings = {
             engine.cdi_spec_dirs = [
               "/etc/cdi" # the only default (since v5.5.0)
