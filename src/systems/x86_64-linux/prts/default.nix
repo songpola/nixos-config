@@ -3,6 +3,9 @@
   imports = [
     ./disko.nix
     ./network.nix
+    ./tailscale.nix # additional Tailscale configs
+
+    # Containers
     ./containers/caddy.nix
     ./containers/adguardhome.nix
     ./containers/dozzle.nix
@@ -50,11 +53,6 @@
 
   # 1050Ti (Pascal) doesn't support open-source kernel module
   hardware.nvidia.open = false;
-
-  services.tailscale.extraSetFlags = [
-    "--advertise-routes=10.0.0.0/16"
-    "--advertise-exit-node"
-  ];
 
   # I don't want to type my password every time I use sudo on this system
   security.sudo.wheelNeedsPassword = false;
