@@ -27,6 +27,10 @@ mkMerge [
         tools = {
           sops = true;
         };
+
+        devenv = {
+          node = true;
+        };
       };
     };
   }
