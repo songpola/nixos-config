@@ -21,6 +21,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
           isd = true;
           httpie = true;
           ripgrep = true;
+          sysadmin = true;
         };
 
         devenv = {
