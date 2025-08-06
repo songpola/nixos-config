@@ -20,6 +20,8 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
 
           ssh = true;
           isd = true;
+
+          httpie = true;
         };
 
         devenv = {
