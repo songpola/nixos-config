@@ -28,10 +28,6 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
           nix = true;
         };
       };
-
-      # NOTE: Not sure why do I need this.
-      # Enable polkit for managing system permissions
-      # security.polkit.enable = true;
     }
   ];
   homeConfig = [
