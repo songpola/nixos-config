@@ -17,11 +17,10 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
           direnv = true;
           delta = true;
           just = true;
-
           ssh = true;
           isd = true;
-
           httpie = true;
+          ripgrep = true;
         };
 
         devenv = {
