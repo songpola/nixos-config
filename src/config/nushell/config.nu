@@ -46,3 +46,7 @@ alias jf = jj git fetch
 alias jp = jj git push
 
 alias p = podman
+
+# HTTPie
+alias h = ^http
+alias hs = ^https
