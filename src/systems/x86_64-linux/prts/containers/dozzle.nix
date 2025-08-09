@@ -24,6 +24,7 @@ mkMerge [
           labels = {
             "caddy" = "dozzle.songpola.dev";
             "caddy.reverse_proxy" = "{{upstreams 8080}}";
+            "caddy.reverse_proxy.flush_interval" = "-1";
           };
           networks = [ quadletCfg.networks.caddy-net.ref ];
         };
