@@ -12,6 +12,7 @@
     ./containers/immich.nix
     ./containers/trilium.nix
     ./containers/radicale.nix
+    ./containers/protonmail-bridge.nix
     ./containers/n8n.nix
     ./containers/firefly-iii.nix
     ./containers/kimai.nix
