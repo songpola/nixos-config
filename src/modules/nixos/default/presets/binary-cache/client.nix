@@ -9,7 +9,8 @@ lib.${namespace}.mkPresetModule config [ "binary-cache" "client" ] {
     {
       nix.settings = {
         substituters = [
-          "ssh-ng://prts" # prts.tail7623c.ts.net (SSH)
+          # NOTE: Don't use ssh-ng protocol here
+          "ssh://prts" # prts.tail7623c.ts.net (SSH)
           "http://prts:5000" # prts.tail7623c.ts.net (Harmonia)
         ];
         trusted-public-keys = [
