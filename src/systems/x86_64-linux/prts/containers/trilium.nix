@@ -16,7 +16,7 @@ mkMerge [
         containerConfig = {
           image = "docker.io/triliumnext/trilium:v0.97.2";
           volumes = [
-            "/tank/songpola/trilium:/home/node/trilium-data"
+            "/tank/songpola/trilium/trilium-data:/home/node/trilium-data"
             "/etc/localtime:/etc/localtime:ro"
           ];
           labels = {
