@@ -6,6 +6,8 @@ repl:
 prts-nh OP="switch" *FLAGS:
   nh os {{OP}} . -H prts --target-host songpola@prts {{FLAGS}}
 
+prts-nh-sw *FLAGS: (prts-nh "switch" FLAGS)
+
 prts-rebuild OP="switch" *FLAGS="-- -j0":
 	nixos-rebuild {{OP}} --flake .#prts --build-host songpola@prts --target-host songpola@prts --debug {{FLAGS}}
 
