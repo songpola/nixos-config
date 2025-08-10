@@ -41,6 +41,7 @@
       services = {
         podman = true;
         tailscale = true;
+        libvirtd = true;
       };
 
       binary-cache.server = true;

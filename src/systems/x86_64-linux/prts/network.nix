@@ -4,7 +4,6 @@ let
 
   bridgeInterfaces = [
     "eno1"
-    "vm-*" # for microvm
   ];
 in
 mkMerge [
