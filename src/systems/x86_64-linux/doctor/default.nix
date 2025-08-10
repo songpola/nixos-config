@@ -33,5 +33,9 @@ mkMerge [
         };
       };
     };
+
+    wsl.startMenuLaunchers = true;
+
+    programs.virt-manager.enable = true;
   }
 ]
