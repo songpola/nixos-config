@@ -6,7 +6,7 @@
   ...
 }:
 let
-  name = builtins.baseNameOf ./.;
+  name = baseNameOf ./.;
 
   text =
     ''

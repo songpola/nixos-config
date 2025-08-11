@@ -12,14 +12,6 @@ let
   inherit (lib.snowfall.fs) get-file;
 in
 rec {
-  nixosConfigPath = "/home/${namespace}/nixos-config";
-
-  githubUserEmail = "1527535+songpola@users.noreply.github.com";
-  githubUserName = "Songpol Anannetikul";
-  opSshSignWslPath = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
-
-  sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSjfctCxjS+/jDcVERwcTN6wP+GaScfSo4VtfsmagOz";
-
   sshPublicKeys = {
     podman-desktop-nixos-wsl = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJH6u5g1JTV97z44w5UKQNBu7UQsA18AMQ+piNOomuyI";
   };

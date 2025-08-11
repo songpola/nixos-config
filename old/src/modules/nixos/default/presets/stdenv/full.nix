@@ -8,9 +8,6 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
   systemConfig = [
     {
       ${namespace}.presets = {
-        # Extends the minimal standard environment preset
-        stdenv.mini = true;
-
         shells = true;
 
         tools = {
