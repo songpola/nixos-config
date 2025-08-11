@@ -20,6 +20,9 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixowos.url = "github:yunfachi/nixowos";
+    nixowos.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -40,6 +43,7 @@
         disko.nixosModules.default
         nixos-facter-modules.nixosModules.facter
         sops-nix.nixosModules.sops
+        nixowos.nixosModules.default
       ];
 
       # Add modules to all homes.

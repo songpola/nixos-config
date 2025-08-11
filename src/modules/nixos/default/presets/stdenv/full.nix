@@ -29,6 +29,14 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
         };
       };
     }
+    {
+      # Make this system *cute* OwO
+      # NOTE: This is mandatory ( •̀ ω •́ )✧
+      nixowos.enable = true;
+
+      # NOTE: Starship prompt don't know NixOwOS and will show default linux icon
+      nixowos.os-release.enable = false;
+    }
   ];
   homeConfig = [
     {
