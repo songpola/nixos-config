@@ -30,6 +30,8 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "full" ] {
       };
     }
     {
+      # FIXME: fastfetch patch doesn't work
+
       # Make this system *cute* OwO
       # NOTE: This is mandatory ( •̀ ω •́ )✧
       nixowos.enable = true;

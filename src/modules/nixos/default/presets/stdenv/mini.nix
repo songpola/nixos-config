@@ -19,6 +19,7 @@ lib.${namespace}.mkPresetModule config [ "stdenv" "mini" ] {
           git = true;
           jujutsu = true;
           vscode-remote = true;
+          fastfetch = true;
         };
       };
 
