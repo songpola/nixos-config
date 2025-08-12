@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
@@ -8,7 +7,7 @@ delib.module {
   # https://github.com/ajeetdsouza/zoxide
   name = "zoxide";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     programs.zoxide.enable = true;

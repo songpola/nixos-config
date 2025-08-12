@@ -1,13 +1,12 @@
 {
   delib,
   const,
-  host,
   ...
 }:
 delib.module {
   name = "git";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     programs.git.enable = true;

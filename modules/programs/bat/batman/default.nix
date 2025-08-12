@@ -1,13 +1,12 @@
 {
   delib,
-  host,
   pkgs,
   ...
 }:
 delib.module {
   name = "bat.batman";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     # Auto generate the immutable cache for man apropos

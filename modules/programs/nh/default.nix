@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   const,
   ...
 }:
@@ -9,7 +8,7 @@ delib.module {
   # https://github.com/nix-community/nh
   name = "nh";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     programs.nh = {

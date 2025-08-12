@@ -2,7 +2,6 @@
   delib,
   pkgs,
   const,
-  host,
   ...
 }:
 delib.module {
@@ -10,7 +9,7 @@ delib.module {
   # https://github.com/noborus/ov
   name = "ov";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     environment = {

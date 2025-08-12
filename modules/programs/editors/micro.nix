@@ -1,7 +1,6 @@
 {
   delib,
   pkgs,
-  host,
   ...
 }:
 delib.module {
@@ -9,7 +8,7 @@ delib.module {
   # https://github.com/zyedidia/micro
   name = "micro";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     environment = {

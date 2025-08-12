@@ -1,12 +1,11 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
   name = "bash";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.bash.enable = true;

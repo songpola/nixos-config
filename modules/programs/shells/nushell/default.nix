@@ -1,12 +1,11 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
   name = "nushell";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.nushell.enable = true;

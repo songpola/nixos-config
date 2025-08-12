@@ -2,13 +2,12 @@
   delib,
   pkgs,
   const,
-  host,
   ...
 }:
 delib.module {
   name = "jujutsu";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     environment.systemPackages = [ pkgs.jujutsu ];

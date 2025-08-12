@@ -1,13 +1,12 @@
 {
   delib,
-  host,
   const,
   ...
 }:
 delib.module {
   name = "nushell.settings";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.nushell = {

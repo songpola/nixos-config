@@ -1,12 +1,11 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
   name = "carapace";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.carapace.enable = true;

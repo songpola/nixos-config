@@ -1,13 +1,12 @@
 {
+  delib,
   lib,
-  config,
-  namespace,
   pkgs,
+  config,
+  homeManagerUser,
   ...
 }:
 let
-  inherit (lib) mkIf;
-
   presets = [
     "catppuccin-powerline"
     "nerd-font-symbols"
@@ -61,7 +60,6 @@ let
       |> lib.replaceString "\n" ""; # remove newlines
   };
 
-  package = pkgs.starship;
   tomlFormat = pkgs.formats.toml { };
   settingsFile = tomlFormat.generate "starship.toml" settings;
   finalSettingsFile =
@@ -76,55 +74,30 @@ let
           tomlq -s -t 'reduce .[] as $item ({}; . * $item)' \
             ${
               lib.concatStringsSep " " (
-                presets |> map (preset: "${package}/share/starship/presets/${preset}.toml")
+                presets |> map (preset: "${pkgs.starship}/share/starship/presets/${preset}.toml")
               )
             } \
             ${settingsFile} \
             > $out
         '';
+
+  # FIXME: Try adding this to `delib.module :: home` args
+  homeconfig = config.home-manager.users.${homeManagerUser};
+
+  configPath = "${homeconfig.xdg.configHome}/starship.toml";
 in
-lib.${namespace}.mkPresetModule config [ "tools" "starship" ] {
-  # starship - a cross-shell prompt
-  # https://github.com/starship/starship
-  #
-  # NOTE: Custom starship integration implementation.
-  # The NixOS options don't have Nushell integration and
-  # the current Nushell integration in Home Manager is too old (since 2022).
-  #
-  # TODO: Implement custom system-wide integration
-  homeConfig = homeCfg: [
-    ({
-      home =
-        let
-          configPath = "${homeCfg.xdg.configHome}/starship.toml";
-        in
-        {
-          packages = [ package ];
+delib.module {
+  name = "starship.settings";
 
-          sessionVariables.STARSHIP_CONFIG = configPath;
+  options = delib.singleEnableOption false;
 
-          file.${configPath} = mkIf (settings != { }) {
-            source = finalSettingsFile;
-          };
-        };
+  home.ifEnabled = {
+    home = {
+      sessionVariables.STARSHIP_CONFIG = configPath;
 
-      programs.bash.initExtra = ''
-        if [[ $TERM != "dumb" && $TERM != "linux" ]]; then
-          eval "$(${lib.getExe package} init bash --print-full-init)"
-        fi
-      '';
-
-      programs.nushell.extraConfig =
-        let
-          starshipInit = pkgs.runCommand "starship-nushell-config.nu" { } ''
-            ${lib.getExe config.programs.starship.package} init nu >> "$out"
-          '';
-        in
-        ''
-          if ($env.TERM != "dumb" and $env.TERM != "linux") {
-              source ${starshipInit}
-          }
-        '';
-    })
-  ];
+      file.${configPath} = lib.mkIf (settings != { }) {
+        source = finalSettingsFile;
+      };
+    };
+  };
 }

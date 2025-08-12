@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   pkgs,
   ...
 }:
@@ -9,7 +8,7 @@ delib.module {
   # https://github.com/junegunn/fzf
   name = "fzf";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     environment.systemPackages = [ pkgs.fzf ];

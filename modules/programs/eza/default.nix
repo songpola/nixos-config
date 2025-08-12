@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
@@ -8,7 +7,7 @@ delib.module {
   # https://github.com/eza-community/eza
   name = "eza";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.eza = {

@@ -1,13 +1,12 @@
 {
   delib,
-  host,
   lib,
   ...
 }:
 delib.module {
   name = "shells.integrations.bashExecNushell";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   home.ifEnabled = {
     programs.bash = {

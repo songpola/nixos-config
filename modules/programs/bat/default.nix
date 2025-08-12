@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   ...
 }:
 delib.module {
@@ -8,7 +7,7 @@ delib.module {
   # https://github.com/sharkdp/bat
   name = "bat";
 
-  options = delib.singleEnableOption host.stdenvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     programs.bat.enable = true;

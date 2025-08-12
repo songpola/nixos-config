@@ -1,13 +1,12 @@
 {
   delib,
   pkgs,
-  host,
   ...
 }:
 delib.module {
   name = "vscode-remote";
 
-  options = delib.singleEnableOption host.minienvFeatured;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
     # Setup VSCode Remote
