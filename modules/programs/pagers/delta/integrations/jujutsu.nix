@@ -6,9 +6,9 @@
 delib.module {
   name = "delta.integrations.jujutsu";
 
-  options = { myconfig, ... }@args: delib.singleEnableOption myconfig.jujutsu.enable args;
+  options = delib.singleEnableOptionDependency "jujutsu";
 
-  home.ifEnabled = {
+  home.ifEnabled = delib.ifParentEnabled "delta" {
     # Use delta as the default pager for jujutsu
     programs.jujutsu = {
       settings = {

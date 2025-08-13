@@ -31,14 +31,21 @@
                     features = [
                       "minienv"
                       "stdenv"
+                      "remoteBuild"
                     ];
                     default = [
                       "minienv"
                     ];
+                    defaultByHostType = {
+                      "wsl" = [
+                        "remoteBuild"
+                      ];
+                    };
                   };
                 };
               }
             ))
+            (denix.lib.callExtension ./extensions/mylib.nix)
           ];
 
           specialArgs = { inherit inputs username; };
@@ -61,5 +68,8 @@
 
     nixos-wsl.url = "github:nix-community/NixOS-WSL";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixowos.url = "github:yunfachi/nixowos";
+    nixowos.inputs.nixpkgs.follows = "nixpkgs";
   };
 }

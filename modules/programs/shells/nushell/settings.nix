@@ -8,7 +8,7 @@ delib.module {
 
   options = delib.singleEnableOption false;
 
-  home.ifEnabled = {
+  home.ifEnabled = delib.ifParentEnabled "nushell" {
     programs.nushell = {
       configFile.source = ./config.nu;
       shellAliases = {
