@@ -2,42 +2,28 @@
 delib.extension {
   name = "mylib";
 
-  # config = {};
-  # config = prev: {};
-  # config = final: prev: { };
+  libExtension =
+    let
+      tryWith =
+        args: maybeLambda:
+        if builtins.typeOf maybeLambda == "lambda" then (maybeLambda args) else maybeLambda;
+    in
+    {
+      singleEnableOptionDependency =
+        dependencyName:
+        { myconfig, ... }@args:
+        delib.singleEnableOption (delib.getAttrByStrPath "${dependencyName}.enable" myconfig false) args;
 
-  # initialConfig = {};
-  # initialConfig = final: {}
-  # initialConfig = null;
+      enableOptionWith =
+        default: optionsOrLambda:
+        { name, ... }@args:
+        delib.setAttrByStrPath name (
+          { enable = delib.boolOption default; } // (tryWith args optionsOrLambda)
+        );
 
-  # configOrder = 0;
-
-  libExtension = {
-    singleEnableOptionDependency =
-      dependencyName:
-      { myconfig, ... }@args:
-      delib.singleEnableOption myconfig.${dependencyName}.enable args;
-
-    enableOptionWith =
-      default: options:
-      { name, ... }:
-      delib.setAttrByStrPath name ({ enable = delib.boolOption default; } // options);
-
-    ifParentEnabled =
-      name: configOrLambda:
-      { myconfig, ... }@args:
-      lib.mkIf (delib.getAttrByStrPath "${name}.enable" myconfig false) (
-        if builtins.typeOf configOrLambda == "lambda" then (configOrLambda args) else configOrLambda
-      );
-  };
-  # libExtension = config: {};
-  # libExtension = config: prev: {};
-  # libExtension =
-  #   config: final: prev:
-  #   { };
-
-  # libExtensionOrder = 0;
-
-  # modules = config: [];
-  # modules = [ ];
+      ifParentEnabled =
+        name: configOrLambda:
+        { myconfig, ... }@args:
+        lib.mkIf (delib.getAttrByStrPath "${name}.enable" myconfig false) (tryWith args configOrLambda);
+    };
 }

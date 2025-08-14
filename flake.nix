@@ -32,13 +32,21 @@
                       "minienv"
                       "stdenv"
                       "remoteBuild"
+                      "cacheClient"
+                      "cacheServer"
+                      "secrets"
                     ];
                     default = [
                       "minienv"
                     ];
                     defaultByHostType = {
                       "wsl" = [
+                        "cacheClient"
                         "remoteBuild"
+                      ];
+                      "server" = [
+                        "cacheServer"
+                        "secrets"
                       ];
                     };
                   };
@@ -71,5 +79,8 @@
 
     nixowos.url = "github:yunfachi/nixowos";
     nixowos.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 }

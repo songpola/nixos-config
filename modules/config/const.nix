@@ -13,5 +13,13 @@ delib.module rec {
       userName = "Songpol Anannetikul";
       userEmail = "1527535+songpola@users.noreply.github.com";
     };
+    prts = {
+      hostName = "prts.tail7623c.ts.net";
+      sshPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBD1r/jrkJbCXK7p6RNd4+fyCcxYCl7tdPwIGaWLhjzq";
+      binaryCache = {
+        publicKey = "prts-1:js8+ltSqLuUR06p1IMycRJtBTINqBlIK7vv5c3ZNnuw=";
+        privateKeySecret = "prts/binary-cache-private-key";
+      };
+    };
   };
 }

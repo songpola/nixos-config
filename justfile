@@ -12,10 +12,10 @@ prts-rebuild OP="switch" *FLAGS="-- -j0":
 	nixos-rebuild {{OP}} --flake .#prts --build-host songpola@prts --target-host songpola@prts --debug {{FLAGS}}
 
 sops-edit:
-	sops edit src/secrets/secret.yaml
+	sops edit modules/secrets/secret.yaml
 
 sops-updatekeys:
-  sops updatekeys src/secrets/secret.yaml
+  sops updatekeys modules/secrets/secret.yaml
 
 get-host-age-public-key:
 	nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'

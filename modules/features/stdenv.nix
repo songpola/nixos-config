@@ -11,11 +11,15 @@ delib.module {
 
   myconfig.ifEnabled =
     [
+      # Settings
+      "ssh"
+
       # Shells
       "carapace"
       "direnv"
       "nushell.settings"
       "shells.integrations.bashExecNushell"
+      "starship.settings"
       "starship"
 
       # Tools

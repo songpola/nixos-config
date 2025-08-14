@@ -2,24 +2,17 @@
   delib,
   username,
   host,
-  lib,
+  const,
   ...
 }:
-let
-  hostName = "prts.tail7623c.ts.net";
-in
 delib.module {
-  name = "remote-build";
+  name = "remoteBuild";
 
   options =
     with delib;
-    { myconfig, ... }:
-    {
-      enable = boolOption host.remoteBuildFeatured;
-
-      integrations = {
-        ssh-agent-wsl.enable = boolOption myconfig.ssh.integrations.ssh-agent-wsl.enable;
-      };
+    enableOptionWith host.remoteBuildFeatured {
+      hostName = readOnly (strOption const.prts.hostName);
+      sshPublicKey = readOnly (strOption const.prts.sshPublicKey);
     };
 
   nixos.ifEnabled =
@@ -36,7 +29,7 @@ delib.module {
           {
             protocol = "ssh-ng";
             sshUser = username;
-            inherit hostName;
+            inherit (cfg) hostName;
             system = "x86_64-linux";
             maxJobs = 12;
             speedFactor = 9;
@@ -51,18 +44,10 @@ delib.module {
       };
 
       # For nix-daemon and root to connect to the remote build machine
-      programs.ssh = {
-        knownHosts = {
-          ${hostName} = {
-            extraHostNames = [ "prts" ];
-            publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBD1r/jrkJbCXK7p6RNd4+fyCcxYCl7tdPwIGaWLhjzq";
-          };
+      programs.ssh.knownHosts = {
+        ${cfg.hostName} = {
+          publicKey = cfg.sshPublicKey;
         };
-        extraConfig = lib.mkIf cfg.integrations.ssh-agent-wsl.enable ''
-          Host ${hostName}
-            User ${username}
-            IdentityAgent ${myconfig.ssh.integrations.ssh-agent-wsl.sshAuthSock}
-        '';
       };
     };
 }
