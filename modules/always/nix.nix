@@ -11,5 +11,7 @@ delib.module {
         "pipe-operators"
       ];
     };
+
+    nixpkgs.config.allowUnfree = true;
   };
 }

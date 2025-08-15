@@ -1,13 +1,12 @@
 {
   delib,
-  host,
   lib,
   ...
 }:
 delib.module {
   name = "devenv.node";
 
-  options = delib.singleEnableOption host.devenvNodeFeatured;
+  options = delib.singleEnableOption false;
 
   myconfig.ifEnabled =
     [

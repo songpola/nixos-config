@@ -35,6 +35,9 @@
                       "cacheClient"
                       "cacheServer"
                       "secrets"
+                      "bootable"
+                      "zfs"
+                      "nvidia"
                     ];
                     default = [
                       "minienv"
@@ -45,6 +48,7 @@
                         "remoteBuild"
                       ];
                       "server" = [
+                        "bootable"
                         "cacheServer"
                         "secrets"
                       ];
@@ -82,5 +86,10 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
   };
 }

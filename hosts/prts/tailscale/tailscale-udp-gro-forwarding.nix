@@ -1,16 +1,18 @@
-{ lib, pkgs, ... }:
 {
-  services.tailscale.extraSetFlags = [
-    "--advertise-routes=10.0.0.0/16"
-    "--advertise-exit-node"
-  ];
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
+delib.host {
+  name = "prts";
 
   # Enable UDP GRO forwarding on the public interface (when routing features are enabled)
   # See: https://tailscale.com/kb/1320/performance-best-practices#linux-optimizations-for-subnet-routers-and-exit-nodes
   # Credit: https://github.com/NixOS/nixpkgs/issues/411980#issuecomment-3129215477
-  systemd.services =
+  nixos.systemd.services =
     let
-      publicInterface = "br0"; # From ./network.nix
+      publicInterface = "br0"; # From ../network/bridge.nix
       cmd = "${lib.getExe pkgs.ethtool} -K ${publicInterface} rx-udp-gro-forwarding on rx-gro-list off";
     in
     {

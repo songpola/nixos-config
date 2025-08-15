@@ -12,6 +12,8 @@ delib.host {
   myconfig = {
     nixowos.enable = true;
 
+    podman.enable = true;
+
     devenv = {
       nix.enable = true;
       node.enable = true;

@@ -1,13 +1,12 @@
 {
   delib,
-  host,
   lib,
   ...
 }:
 delib.module {
   name = "devenv.nix";
 
-  options = delib.singleEnableOption host.devenvNixFeatured;
+  options = delib.singleEnableOption false;
 
   myconfig.ifEnabled =
     [

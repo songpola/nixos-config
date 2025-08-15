@@ -3,7 +3,6 @@ delib.module rec {
   name = "const";
 
   myconfig.always.args.shared.${name} = rec {
-    configPath = ./.;
     homeDirPath = "/home/${username}";
     nixosConfigPath = "${homeDirPath}/nixos-config";
     timeZone = "Asia/Bangkok";

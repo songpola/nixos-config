@@ -1,7 +1,6 @@
 {
   delib,
   pkgs,
-  const,
   ...
 }:
 delib.module {
@@ -26,7 +25,7 @@ delib.module {
 
   home.ifEnabled = {
     xdg.configFile = {
-      "ov/config.yaml".source = const.configPath + "/ov/config.yaml";
+      "ov/config.yaml".source = ./config.yaml;
     };
   };
 }
