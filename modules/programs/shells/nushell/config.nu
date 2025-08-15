@@ -39,9 +39,10 @@ alias jsq = jj squash
 alias jst = jj status
 alias jr = jj rebase
 alias jn = jj new
-alias jm = jj new main
-alias ju = jj bookmark move # u = update
-alias jum = jj bookmark move main -t @- # update main to last commit
+alias jnm = jj new main
+alias jb = jj bookmark
+alias jm = jj bookmark move
+alias jmm = jj bookmark move main -t @- # move main to last commit
 alias jf = jj git fetch
 alias jp = jj git push
 
