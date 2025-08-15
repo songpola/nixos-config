@@ -4,7 +4,7 @@
   host,
   ...
 }:
-delib.module {
+delib.module rec {
   name = "dozzle";
 
   options = delib.singleEnableOption host.containersFeatured;
@@ -22,7 +22,7 @@ delib.module {
             DOZZLE_ENABLE_ACTIONS = "true";
           };
           labels = {
-            "caddy" = "dozzle.songpola.dev";
+            "caddy" = "${name}.songpola.dev";
             "caddy.reverse_proxy" = "{{upstreams 8080}}";
             "caddy.reverse_proxy.flush_interval" = "-1";
           };
