@@ -1,6 +1,5 @@
 {
   delib,
-  host,
   inputs,
   config,
   ...
@@ -8,7 +7,7 @@
 delib.module {
   name = "secrets";
 
-  options = delib.singleEnableOption host.secretsFeatured;
+  options = delib.singleEnableOption false;
 
   myconfig.always.args.shared = {
     inherit (config.sops) secrets;

@@ -34,7 +34,6 @@
                       "remoteBuild"
                       "cacheClient"
                       "cacheServer"
-                      "secrets"
                       "bootable"
                       "zfs"
                       "nvidia"
@@ -51,7 +50,6 @@
                       "server" = [
                         "bootable"
                         "cacheServer"
-                        "secrets"
                       ];
                     };
                   };
