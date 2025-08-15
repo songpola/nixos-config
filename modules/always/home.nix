@@ -1,15 +1,20 @@
 {
   delib,
-  username,
   const,
+  moduleSystem,
+  homeManagerUser,
+  config,
   ...
 }:
 delib.module {
   name = "home";
 
+  myconfig.always.args.shared.homeconfig =
+    if moduleSystem == "home" then config else config.home-manager.users.${homeManagerUser};
+
   home.always = {
     home = {
-      username = username;
+      username = homeManagerUser;
       homeDirectory = const.homeDirPath;
     };
 

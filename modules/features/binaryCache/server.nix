@@ -1,13 +1,12 @@
 {
   delib,
   host,
-  config,
   const,
+  secrets,
   ...
 }:
 let
   secret = const.prts.binaryCache.privateKeySecret;
-  secretPath = config.sops.secrets.${secret}.path;
 in
 delib.module {
   name = "binaryCache.server";
@@ -22,6 +21,6 @@ delib.module {
   nixos.ifEnabled = {
     sops.secrets.${secret} = { };
 
-    nix.settings.secret-key-files = [ secretPath ];
+    nix.settings.secret-key-files = [ secrets.${secret}.path ];
   };
 }

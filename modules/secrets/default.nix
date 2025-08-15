@@ -2,12 +2,17 @@
   delib,
   host,
   inputs,
+  config,
   ...
 }:
 delib.module {
   name = "secrets";
 
   options = delib.singleEnableOption host.secretsFeatured;
+
+  myconfig.always.args.shared = {
+    inherit (config.sops) secrets;
+  };
 
   nixos.always.imports = [ inputs.sops-nix.nixosModules.sops ];
 

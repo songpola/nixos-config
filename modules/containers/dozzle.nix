@@ -1,15 +1,15 @@
 {
-  lib,
-  config,
-  namespace,
+  delib,
+  homeconfig,
+  host,
   ...
 }:
-let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkRootlessQuadletModule;
-in
-mkMerge [
-  (mkRootlessQuadletModule config { } (quadletCfg: {
+delib.module {
+  name = "dozzle";
+
+  options = delib.singleEnableOption host.containersFeatured;
+
+  home.ifEnabled = delib.rootlessQuadletModule homeconfig { } (quadletCfg: {
     containers = {
       dozzle = {
         serviceConfig.Restart = "on-failure";
@@ -30,5 +30,5 @@ mkMerge [
         };
       };
     };
-  }))
-]
+  });
+}

@@ -1,12 +1,11 @@
 {
   delib,
-  config,
   const,
+  secrets,
   ...
 }:
 let
   secret = const.prts.binaryCache.privateKeySecret;
-  secretPath = config.sops.secrets.${secret}.path;
 in
 delib.module {
   name = "harmonia";
@@ -22,7 +21,7 @@ delib.module {
 
     services.harmonia = {
       enable = true;
-      signKeyPaths = [ secretPath ];
+      signKeyPaths = [ secrets.${secret}.path ];
     };
 
     networking.firewall.allowedTCPPorts = [ 5000 ];

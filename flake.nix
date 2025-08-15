@@ -38,6 +38,7 @@
                       "bootable"
                       "zfs"
                       "nvidia"
+                      "containers"
                     ];
                     default = [
                       "minienv"
@@ -60,7 +61,7 @@
             (denix.lib.callExtension ./extensions/mylib.nix)
           ];
 
-          specialArgs = { inherit inputs username; };
+          specialArgs = { inherit inputs username moduleSystem; };
         };
     in
     {
@@ -91,5 +92,7 @@
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
+
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 }

@@ -8,6 +8,7 @@ delib.host {
     "stdenv"
     "zfs"
     "nvidia"
+    "containers"
   ];
 
   nixos.system.stateVersion = "24.11";

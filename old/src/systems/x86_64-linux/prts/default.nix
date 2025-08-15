@@ -1,9 +1,6 @@
 {
   imports = [
     # Containers
-    ./containers/caddy.nix
-    ./containers/adguardhome.nix
-    ./containers/dozzle.nix
     ./containers/immich.nix
     ./containers/trilium.nix
     ./containers/radicale.nix

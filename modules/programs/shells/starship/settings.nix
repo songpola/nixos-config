@@ -2,8 +2,7 @@
   delib,
   lib,
   pkgs,
-  config,
-  homeManagerUser,
+  homeconfig,
   ...
 }:
 let
@@ -80,9 +79,6 @@ let
             ${settingsFile} \
             > $out
         '';
-
-  # FIXME: Try adding this to `delib.module :: home` args
-  homeconfig = config.home-manager.users.${homeManagerUser};
 
   configPath = "${homeconfig.xdg.configHome}/starship.toml";
 in
