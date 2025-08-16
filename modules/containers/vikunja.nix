@@ -1,45 +1,50 @@
 {
-  lib,
-  config,
-  namespace,
+  delib,
+  homeconfig,
+  host,
+  username,
+  secrets,
   ...
 }:
 let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkRootlessQuadletModule;
+  name = "vikunja";
 
-  podName = "vikunja";
+  podName = name;
   serverName = "${podName}-server";
   dbName = "${podName}-db";
 
+  serverImage = "docker.io/vikunja/vikunja:0.24.6";
+  dbImage = "docker.io/postgres:17";
+
+  serverVolumes = [
+    "/tank/songpola/${name}/server-data:/app/vikunja/files"
+  ];
+  dbVolumes = [
+    "/tank/songpola/db/${name}/db-data:/var/lib/postgresql/data"
+  ];
+
   serverSecretName = "containers/${serverName}/env";
-  serverSecretPath = config.sops.secrets.${serverSecretName}.path;
+  serverSecretPath = secrets.${serverSecretName}.path;
   dbSecretName = "containers/${dbName}/env";
-  dbSecretPath = config.sops.secrets.${dbSecretName}.path;
+  dbSecretPath = secrets.${dbSecretName}.path;
 in
-mkMerge [
-  {
-    ${namespace}.presets.secrets = true;
-    sops.secrets = {
-      ${serverSecretName}.owner = namespace;
-      ${dbSecretName}.owner = namespace;
-    };
-  }
-  (mkRootlessQuadletModule config { } (
+delib.module {
+  inherit name;
+
+  options = delib.singleEnableOption host.containersFeatured;
+
+  myconfig.ifEnabled.secrets.enable = true;
+
+  nixos.ifEnabled.sops.secrets = {
+    ${serverSecretName}.owner = username;
+    ${dbSecretName}.owner = username;
+  };
+
+  home.ifEnabled = delib.rootlessQuadletModule homeconfig { } (
     quadletCfg:
     let
       podRef = quadletCfg.pods.${podName}.ref;
       dbRef = quadletCfg.containers.${dbName}.ref;
-
-      serverImage = "docker.io/vikunja/vikunja:0.24.6";
-      dbImage = "docker.io/postgres:17";
-
-      serverVolumes = [
-        "/tank/songpola/vikunja/server-data:/app/vikunja/files"
-      ];
-      dbVolumes = [
-        "/tank/songpola/db/vikunja/db-data:/var/lib/postgresql/data"
-      ];
     in
     {
       pods = {
@@ -52,28 +57,22 @@ mkMerge [
       };
       containers = {
         ${serverName} = {
-          unitConfig =
-            let
-              dependsOn = [
-                dbRef
-              ];
-            in
-            {
-              Requires = dependsOn;
-              After = dependsOn;
-            };
+          unitConfig = rec {
+            Requires = [ dbRef ];
+            After = Requires;
+          };
           containerConfig = {
             pod = podRef;
             image = serverImage;
             volumes = serverVolumes;
             environments = {
-              VIKUNJA_SERVICE_PUBLICURL = "https://vikunja.songpola.dev";
+              VIKUNJA_SERVICE_PUBLICURL = "https://${name}.songpola.dev";
               VIKUNJA_DATABASE_HOST = dbName;
               VIKUNJA_DATABASE_TYPE = "postgres";
             };
             environmentFiles = [ serverSecretPath ];
             labels = {
-              "caddy" = "${podName}.songpola.dev";
+              "caddy" = "${name}.songpola.dev";
               "caddy.reverse_proxy" = "{{upstreams 3456}}";
             };
           };
@@ -92,5 +91,5 @@ mkMerge [
         };
       };
     }
-  ))
-]
+  );
+}
