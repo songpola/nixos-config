@@ -24,6 +24,7 @@ delib.module {
 
       # Tools
       "bat.batman"
+      "btop"
       "delta"
       "doggo"
       "fzf"
