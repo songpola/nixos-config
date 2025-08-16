@@ -17,3 +17,7 @@ http:// {
 	}
 	redir https://{host}{uri}
 }
+
+glances.songpola.dev {
+	reverse_proxy host.containers.internal:61208
+}
