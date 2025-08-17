@@ -22,6 +22,9 @@ delib.module {
       "starship.settings"
       "starship"
 
+      # Editors
+      "helix"
+
       # Tools
       "bat.batman"
       "btop"
