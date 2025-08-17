@@ -1,13 +1,8 @@
-{
-  delib,
-  host,
-  ...
-}:
+{ delib, ... }:
 delib.module {
   name = "nh.clean";
 
-  # Enabled by default on WSL
-  options = delib.singleEnableOption host.isWsl;
+  options = delib.singleEnableOption false;
 
   nixos.ifEnabled = delib.ifParentEnabled "nh" {
     # Auto clean (all) (default: weekly)
