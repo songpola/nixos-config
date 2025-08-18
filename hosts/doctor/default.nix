@@ -1,4 +1,4 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.host {
   name = "doctor";
 
@@ -24,5 +24,7 @@ delib.host {
     wsl.startMenuLaunchers = true;
 
     programs.virt-manager.enable = true;
+
+    environment.systemPackages = [ pkgs.devenv ];
   };
 }
