@@ -6,8 +6,14 @@
   ...
 }:
 let
+  # open firewall
   PORT_UDP_DNS = "53";
-  PORT_TCP_WEBUI = "5380"; # local only
+  PORT_TCP_DNS = "53";
+  # local only
+  PORT_TCP_DOH = "5380";
+  # PORT_TCP_DOHS = "5443";
+  # PORT_UDP_DOH3 = "5443";
+  PORT_TCP_WEBUI = "8080";
 in
 delib.module rec {
   name = "adguardhome";
@@ -25,7 +31,12 @@ delib.module rec {
 
     networking = {
       nameservers = [ "127.0.0.1" ]; # Use AdGuard Home as DNS server
-      firewall.allowedUDPPorts = [ (lib.toInt PORT_UDP_DNS) ];
+      firewall.allowedUDPPorts =
+        [
+          PORT_UDP_DNS
+          PORT_TCP_DNS
+        ]
+        |> map lib.toInt;
     };
   };
 
@@ -41,14 +52,21 @@ delib.module rec {
         # NOTE: Need to use pasta without custom network to preserved source address.
         # See: https://github.com/eriksjolund/podman-networking-docs#source-address-preserved
         publishPorts = [
-          "${PORT_UDP_DNS}:53/udp" # DNS
+          "${PORT_TCP_DNS}:53" # DNS (TCP)
+          "${PORT_UDP_DNS}:53/udp" # DNS (UDP)
+          "${PORT_TCP_DOH}:80" # DNS-over-HTTP
+          # "${PORT_TCP_DOHS}:443" # DNS-over-HTTPS
+          # "${PORT_UDP_DOH3}:443/udp" # DNS-over-HTTP3
           "${PORT_TCP_WEBUI}:80" # Web UI
         ];
         labels = {
-          "caddy" = "${name}.songpola.dev";
           # Without custom network, caddy need to access AdGuard Home via host network through
           # "host.containers.internal" address and published port.
-          "caddy.reverse_proxy" = "host.containers.internal:${PORT_TCP_WEBUI}";
+          "caddy" = "${name}.songpola.dev";
+          "caddy.handle_1" = "/dns-query*";
+          "caddy.handle_1.reverse_proxy" = "host.containers.internal:${PORT_TCP_DOH}";
+          "caddy.handle_2" = "/*";
+          "caddy.handle_2.reverse_proxy" = "host.containers.internal:${PORT_TCP_WEBUI}";
         };
       };
     };
