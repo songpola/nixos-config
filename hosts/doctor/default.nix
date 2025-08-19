@@ -18,6 +18,8 @@ delib.host {
       nix.enable = true;
       node.enable = true;
     };
+
+    zellij.enable = true;
   };
 
   nixos = {
