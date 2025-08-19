@@ -11,31 +11,25 @@ delib.module {
 
   myconfig.ifEnabled =
     [
-      # Settings
-      "ssh"
-
-      # Shells
-      "carapace"
-      "direnv"
-      "nushell.settings"
-      "shells.integrations.bashExecNushell"
-      "starship.settings"
-      "starship"
-
-      # Editors
-      "helix"
-
-      # Tools
       "bat.batman"
       "btop"
+      "carapace"
       "delta"
+      "direnv"
       "doggo"
       "fzf"
+      "helix"
       "httpie"
       "isd"
       "just"
       "lsof"
+      "nushell.settings"
+      "shells.integrations.bashExecNushell"
       "sops"
+      "ssh"
+      "starship.settings"
+      "starship"
+      "zellij"
       "zoxide"
     ]
     |> map (name: delib.setAttrByStrPath "${name}.enable" true)
