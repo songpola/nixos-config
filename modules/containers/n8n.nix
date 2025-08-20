@@ -1,65 +1,62 @@
 {
-  lib,
-  config,
-  namespace,
+  delib,
+  homeconfig,
+  host,
+  username,
+  secrets,
   ...
 }:
 let
-  inherit (lib) mkMerge;
-  inherit (lib.${namespace}) mkRootlessQuadletModule;
+  name = "n8n";
 
-  podName = "n8n";
-  serverName = "${podName}-server";
-  dbName = "${podName}-db";
+  podName = name;
+  serverName = "${name}-server";
+  dbName = "${name}-db";
+
+  serverImage = "docker.io/n8nio/n8n:1.105.4";
+  dbImage = "docker.io/postgres:16";
+
+  serverVolumes = [
+    "/tank/songpola/n8n/server-data:/home/node/.n8n"
+  ];
+  dbVolumes = [
+    "/tank/songpola/db/n8n/db-data:/var/lib/postgresql/data"
+  ];
 
   serverSecretName = "containers/${serverName}/env";
-  serverSecretPath = config.sops.secrets.${serverSecretName}.path;
   dbSecretName = "containers/${dbName}/env";
-  dbSecretPath = config.sops.secrets.${dbSecretName}.path;
 in
-mkMerge [
-  {
-    ${namespace}.presets.secrets = true;
-    sops.secrets = {
-      ${serverSecretName}.owner = namespace;
-      ${dbSecretName}.owner = namespace;
-    };
-  }
-  (mkRootlessQuadletModule config { } (
+delib.module {
+  inherit name;
+
+  options = delib.singleEnableOption host.containersFeatured;
+
+  myconfig.ifEnabled.secrets.enable = true;
+
+  nixos.ifEnabled.sops.secrets = {
+    ${serverSecretName}.owner = username;
+    ${dbSecretName}.owner = username;
+  };
+
+  home.ifEnabled = delib.rootlessQuadletModule homeconfig { } (
     quadletCfg:
     let
       podRef = quadletCfg.pods.${podName}.ref;
       dbRef = quadletCfg.containers.${dbName}.ref;
-
-      serverImage = "docker.io/n8nio/n8n:1.105.4";
-      dbImage = "docker.io/postgres:16";
-
-      serverVolumes = [
-        "/tank/songpola/n8n/server-data:/home/node/.n8n"
-      ];
-      dbVolumes = [
-        "/tank/songpola/db/n8n/db-data:/var/lib/postgresql/data"
-      ];
     in
     {
-      pods = {
-        ${podName} = {
-          serviceConfig.Restart = "on-failure";
-          podConfig = {
-            networks = [ quadletCfg.networks.caddy-net.ref ];
-          };
+      pods.${podName} = {
+        serviceConfig.Restart = "on-failure";
+        podConfig = {
+          networks = [ quadletCfg.networks.caddy-net.ref ];
         };
       };
       containers = {
         ${serverName} = {
-          unitConfig =
-            let
-              dependsOn = [ dbRef ];
-            in
-            {
-              Requires = dependsOn;
-              After = dependsOn;
-            };
+          unitConfig = rec {
+            Requires = [ dbRef ];
+            After = Requires;
+          };
           containerConfig = {
             pod = podRef;
             image = serverImage;
@@ -80,7 +77,7 @@ mkMerge [
               # Learn more: https://docs.n8n.io/hosting/configuration/task-runners/
               N8N_RUNNERS_ENABLED = "true";
             };
-            environmentFiles = [ serverSecretPath ];
+            environmentFiles = [ secrets.${serverSecretName}.path ];
             labels = {
               "caddy" = "${podName}.songpola.dev";
               "caddy.reverse_proxy" = "{{upstreams 5678}}";
@@ -92,7 +89,7 @@ mkMerge [
             pod = podRef;
             image = dbImage;
             volumes = dbVolumes;
-            environmentFiles = [ dbSecretPath ];
+            environmentFiles = [ secrets.${dbSecretName}.path ];
             notify = "healthy";
             healthCmd = "pg_isready -h localhost -U $$POSTGRES_USER -d $$POSTGRES_DB";
             healthInterval = "5s";
@@ -102,5 +99,5 @@ mkMerge [
         };
       };
     }
-  ))
-]
+  );
+}
