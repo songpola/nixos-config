@@ -26,7 +26,9 @@ delib.module rec {
         After = Requires;
       };
       containerConfig = {
-        image = "ghcr.io/open-webui/open-webui:v0.6.22-cuda";
+        # NOTE: Use cuda126 tag to support 1050 Ti
+        # https://github.com/open-webui/open-webui/pull/14592
+        image = "ghcr.io/open-webui/open-webui:v0.6.22-cuda126";
         volumes = [
           "/tank/songpola/open-webui/app-backend-data:/app/backend/data"
         ];
