@@ -5,6 +5,8 @@
   ...
 }:
 delib.module {
+  # btop - A monitor of resources
+  # https://github.com/aristocratos/btop
   name = "btop";
 
   options =
