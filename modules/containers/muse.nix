@@ -24,8 +24,8 @@ delib.module rec {
       serviceConfig.Restart = "on-failure";
       containerConfig = {
         # Fix for v2.11.1
-        # See: https://github.com/museofficial/muse/pull/1256
-        image = "ghcr.io/museofficial/muse:pr-1256";
+        # See: https://github.com/museofficial/muse/pull/1278
+        image = "ghcr.io/museofficial/muse:pr-1278";
         volumes = [
           "/tank/songpola/muse/data:/data"
         ];
