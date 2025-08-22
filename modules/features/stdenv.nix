@@ -23,6 +23,7 @@ delib.module {
       "isd"
       "just"
       "lsof"
+      "neovim"
       "nushell.settings"
       "shells.integrations.bashExecNushell"
       "sops"
