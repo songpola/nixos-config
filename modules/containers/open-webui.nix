@@ -33,8 +33,8 @@ delib.module rec {
           "/tank/songpola/open-webui/app-backend-data:/app/backend/data"
         ];
         labels = {
-          "caddy_1" = "${name}.songpola.dev, ai.songpola.dev";
-          "caddy_1.reverse_proxy" = "{{upstreams 8080}}";
+          "caddy" = "${name}.songpola.dev, ai.songpola.dev";
+          "caddy.reverse_proxy" = "{{upstreams 8080}}";
         };
         environments = {
           inherit OLLAMA_BASE_URL;
