@@ -17,6 +17,8 @@ delib.module {
       "delta"
       "direnv"
       "doggo"
+      "duf"
+      "dust"
       "fzf"
       "helix"
       "httpie"
