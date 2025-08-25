@@ -27,6 +27,7 @@ delib.module {
       "lsof"
       "neovim"
       "nushell.settings"
+      "programs.ouch"
       "shells.integrations.bashExecNushell"
       "sops"
       "ssh"

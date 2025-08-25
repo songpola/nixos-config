@@ -57,9 +57,13 @@
               }
             ))
             (denix.lib.callExtension ./extensions/mylib.nix)
+            (denix.lib.callExtension ./extensions/mkModule.nix)
           ];
 
-          specialArgs = { inherit inputs username moduleSystem; };
+          specialArgs = {
+            inherit inputs username moduleSystem;
+            packagesPath = ./packages;
+          };
         };
     in
     {
