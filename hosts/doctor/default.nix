@@ -17,6 +17,7 @@ delib.host {
     devenv = {
       nix.enable = true;
       node.enable = true;
+      nickel.enable = true;
     };
   };
 
