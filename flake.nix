@@ -68,7 +68,17 @@
     in
     {
       nixosConfigurations = mkConfigurations "nixos";
-      homeConfigurations = mkConfigurations "home";
+      templates = rec {
+        default = devshell;
+        devshell = {
+          path = ./templates/devshell;
+          description = "A template for per-project development environments using hercules-ci/flake-parts and numtide/devshell.";
+        };
+        just = {
+          path = ./templates/just;
+          description = "A justfile with nushell as default shell";
+        };
+      };
     };
 
   inputs = {

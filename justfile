@@ -1,7 +1,7 @@
 set shell := ["nu", "-c"]
 
-repl:
-	nix repl .
+repl *FLAGS:
+	nix repl . {{FLAGS}}
 
 prts-nh OP="switch" *FLAGS:
   nh os {{OP}} . -H prts --target-host songpola@prts {{FLAGS}}
