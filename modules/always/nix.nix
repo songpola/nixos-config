@@ -1,4 +1,4 @@
-{ delib, ... }:
+{ delib, inputs, ... }:
 delib.module {
   name = "nix";
 
@@ -10,6 +10,7 @@ delib.module {
         "nix-command"
         "pipe-operators"
       ];
+      registry.self.flake = inputs.self;
     };
 
     nixpkgs.config.allowUnfree = true;
