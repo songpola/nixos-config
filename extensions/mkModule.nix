@@ -39,10 +39,30 @@ delib.extension {
         name,
         # Whether to enable by default
         enable ? true,
+        # An attrset for secrets
+        rootlessSecrets,
+        # An attrset for rootless quadlet config
+        rootlessQuadletConfig,
         ...
-      }@serviceOptions:
+      }:
       let
         moduleName = "services.${name}";
+
+        finalRootlessQuadletConfig =
+          rootlessQuadletConfig
+          |> lib.recursiveUpdate (
+            rootlessQuadletConfig
+            |> builtins.mapAttrs (
+              n1: # pods, containers, ...
+              builtins.mapAttrs (
+                n2: v2: # pods.<n2>, containers.<n2>, ...
+                {
+                  quadletConfig.defaultDependencies = false;
+                  serviceConfig.Restart = "on-abnormal";
+                }
+              )
+            )
+          );
       in
       prev.module {
         name = moduleName;
@@ -53,8 +73,12 @@ delib.extension {
             enable = boolOption (enable);
           };
 
+        nixos.ifEnabled = {
+          sops.secrets = rootlessSecrets;
+        };
+
         home.ifEnabled = {
-          virtualisation.quadlet = serviceOptions.rootlessQuadlet;
+          virtualisation.quadlet = finalRootlessQuadletConfig;
         };
       };
   };
