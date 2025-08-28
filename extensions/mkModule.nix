@@ -2,6 +2,10 @@
 delib.extension {
   name = "mkModule";
 
+  config = {
+    username = null;
+  };
+
   libExtension = config: prev: {
     mkProgramModule =
       {
@@ -38,9 +42,9 @@ delib.extension {
         # Name of the service
         name,
         # Whether to enable by default
-        enable ? true,
-        # An attrset for secrets
-        rootlessSecrets,
+        defaultEnable ? false,
+        # A list of secret names
+        rootlessSecrets ? [ ],
         # An attrset for rootless quadlet config
         rootlessQuadletConfig,
         ...
@@ -67,14 +71,18 @@ delib.extension {
       prev.module {
         name = moduleName;
 
-        options =
-          with delib;
-          setAttrByStrPath moduleName {
-            enable = boolOption (enable);
-          };
+        options = delib.setAttrByStrPath moduleName ({ enable = delib.boolOption (defaultEnable); });
+
+        myconfig.ifEnabled.secrets.enable = rootlessSecrets != [ ];
 
         nixos.ifEnabled = {
-          sops.secrets = rootlessSecrets;
+          sops.secrets =
+            rootlessSecrets
+            |> map (secretName: {
+              name = secretName;
+              value = ({ owner = config.username; });
+            })
+            |> builtins.listToAttrs;
         };
 
         home.ifEnabled = {

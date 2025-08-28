@@ -19,6 +19,10 @@ delib.host {
     podman.enable = true;
     libvirtd.enable = true;
     glances.enable = true;
+
+    services = {
+      pdfding.enable = true;
+    };
   };
 
   nixos = {

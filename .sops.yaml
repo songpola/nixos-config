@@ -1,11 +1,13 @@
 keys:
-  - &doctor age1zzjf0zng7lm7zqjlx7x52kwse8t83h42uqhhyn2ggryu38jh93dqwtx8j9
-  - &prts age1lew4ex3dyrap05gjtk6h3tx94yjvh9kcax69xpfrr6z59q925pdqy047mh
+  - &doctor_env age1zzjf0zng7lm7zqjlx7x52kwse8t83h42uqhhyn2ggryu38jh93dqwtx8j9
+  - &doctor_host age1v0lc6gca3e2md8ucjfqa0xlkw4zp7tlx7s9qm6zq94cmqp0ld5gq9pnr0f
+  - &prts_host age1lew4ex3dyrap05gjtk6h3tx94yjvh9kcax69xpfrr6z59q925pdqy047mh
 creation_rules:
   - key_groups:
     - age:
-      - *doctor
-      - *prts
+      - *doctor_env
+      - *doctor_host
+      - *prts_host
 stores:
   yaml:
     indent: 2

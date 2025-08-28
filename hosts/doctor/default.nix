@@ -19,6 +19,8 @@ delib.host {
       node.enable = true;
       nickel.enable = true;
     };
+
+    services.int-105-wordpress.enable = true;
   };
 
   nixos = {

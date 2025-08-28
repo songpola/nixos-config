@@ -57,7 +57,7 @@
               }
             ))
             (denix.lib.callExtension ./extensions/mylib.nix)
-            (denix.lib.callExtension ./extensions/mkModule.nix)
+            ((denix.lib.callExtension ./extensions/mkModule.nix).withConfig { inherit username; })
           ];
 
           specialArgs = {

@@ -2,7 +2,6 @@
   delib,
   quadletCfg,
   secrets,
-  username,
   ...
 }:
 let
@@ -12,9 +11,8 @@ in
 delib.mkServiceModule rec {
   inherit name;
 
-  rootlessSecrets = {
-    ${secretName}.owner = username;
-  };
+  rootlessSecrets = [ secretName ];
+
   rootlessQuadletConfig.containers.${name}.containerConfig = rec {
     image = "docker.io/mrmn/pdfding:v1.3.1";
     volumes = [
