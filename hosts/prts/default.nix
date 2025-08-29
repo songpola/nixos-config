@@ -22,6 +22,7 @@ delib.host {
 
     services = {
       pdfding.enable = true;
+      gitea.enable = true;
     };
   };
 

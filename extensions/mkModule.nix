@@ -47,6 +47,8 @@ delib.extension {
         rootlessSecrets ? [ ],
         # An attrset for rootless quadlet config
         rootlessQuadletConfig,
+        # Extra NixOS config
+        nixos ? { },
         ...
       }:
       let
@@ -83,7 +85,8 @@ delib.extension {
               value = ({ owner = config.username; });
             })
             |> builtins.listToAttrs;
-        };
+        }
+        // nixos;
 
         home.ifEnabled = {
           virtualisation.quadlet = finalRootlessQuadletConfig;
