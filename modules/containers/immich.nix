@@ -29,7 +29,7 @@ let
     "/tank/songpola/${name}/external:/mnt/external:ro"
   ];
 
-  IMMICH_VERSION = "v1.137.3";
+  IMMICH_VERSION = "v1.139.4";
   serverImage = "ghcr.io/immich-app/immich-server:${IMMICH_VERSION}";
   mlImage = "ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION}-cuda";
   redisImage = "docker.io/valkey/valkey:8-bookworm@sha256:facc1d2c3462975c34e10fccb167bfa92b0e0dbd992fc282c29a61c3243afb11";
