@@ -14,6 +14,12 @@ delib.module {
       # Enable SSH connection multiplexing
       controlMaster = "auto";
       controlPersist = "10m";
+
+      matchBlocks = {
+        "gitea.songpola.dev" = {
+          port = 2222;
+        };
+      };
     };
   };
 }
