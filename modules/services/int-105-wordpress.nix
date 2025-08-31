@@ -2,6 +2,7 @@
   delib,
   quadletCfg,
   secrets,
+  lib,
   ...
 }:
 let
@@ -14,9 +15,15 @@ let
   nameDb = "${name}-db";
   nameDbVol = "${nameDb}-data";
   nameDbSecret = "containers/${nameDb}/env";
+
+  PORT_TCP_WP_WEB = "8080";
 in
 delib.mkServiceModule rec {
   inherit name;
+
+  nixos.networking.firewall.allowedTCPPorts = map lib.toInt [
+    PORT_TCP_WP_WEB
+  ];
 
   rootlessSecrets = [
     nameServerSecret
@@ -24,7 +31,9 @@ delib.mkServiceModule rec {
   ];
 
   rootlessQuadletConfig = {
-    pods.${name} = { };
+    pods.${name}.podConfig.publishPorts = [
+      "${PORT_TCP_WP_WEB}:80"
+    ];
     volumes.${nameServerVol} = { };
     volumes.${nameDbVol} = { };
     containers.${nameServer} = {
