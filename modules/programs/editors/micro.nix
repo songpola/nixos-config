@@ -13,7 +13,7 @@ delib.module {
   nixos.ifEnabled = {
     environment = {
       systemPackages = [ pkgs.micro ];
-      sessionVariables.EDITOR = "micro"; # set as default editor
+      # sessionVariables.EDITOR = "micro"; # set as default editor
     };
   };
 

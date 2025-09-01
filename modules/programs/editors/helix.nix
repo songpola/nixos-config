@@ -10,7 +10,14 @@ delib.module {
 
   options = delib.singleEnableOption false;
 
-  nixos.ifEnabled.environment.systemPackages = [ pkgs.helix ];
+  nixos.ifEnabled = {
+    environment = {
+      systemPackages = [ pkgs.helix ];
+      sessionVariables.EDITOR = "hx"; # set as default editor
+    };
+  };
 
-  home.ifEnabled.programs.helix.enable = true;
+  home.ifEnabled = {
+    programs.helix.enable = true;
+  };
 }
