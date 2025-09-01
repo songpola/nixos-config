@@ -51,3 +51,5 @@ alias p = podman
 # HTTPie
 alias h = ^http
 alias hs = ^https
+
+alias ze = zellij
