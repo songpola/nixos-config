@@ -10,8 +10,8 @@ delib.mkContainerModule rec {
           WEBDAV_BASE_URL = "https://seafile.songpola.dev/seafdav";
           WEBDAV_USERNAME = "songpola@songpola.dev";
           WEBDAV_SYNC_FOLDER_PATH = "super-productivity";
-          IS_COMPRESSION_ENABLED = true;
-          IS_ENCRYPTION_ENABLED = false;
+          IS_COMPRESSION_ENABLED = "true";
+          IS_ENCRYPTION_ENABLED = "false";
         };
         networks = [ quadletCfg.networks.caddy-net.ref ];
         labels = {

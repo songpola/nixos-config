@@ -20,7 +20,9 @@ delib.host {
       nickel.enable = true;
     };
 
-    services.int-105-wordpress.enable = true;
+    containers = {
+      int-105-wordpress.enable = true;
+    };
   };
 
   nixos = {

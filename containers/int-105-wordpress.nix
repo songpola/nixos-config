@@ -18,12 +18,12 @@ let
 
   PORT_TCP_WP_WEB = "8080";
 in
-delib.mkServiceModule rec {
+delib.mkContainerModule rec {
   inherit name;
 
-  nixos.networking.firewall.allowedTCPPorts = map lib.toInt [
-    PORT_TCP_WP_WEB
-  ];
+  extraNixosConfig = {
+    networking.firewall.allowedTCPPorts = map lib.toInt [ PORT_TCP_WP_WEB ];
+  };
 
   rootlessSecrets = [
     nameServerSecret
@@ -31,12 +31,14 @@ delib.mkServiceModule rec {
   ];
 
   rootlessQuadletConfig = {
-    pods.${name}.podConfig.publishPorts = [
-      "${PORT_TCP_WP_WEB}:80"
-    ];
+    pods.${name} = {
+      autoStart = false;
+      podConfig.publishPorts = [ "${PORT_TCP_WP_WEB}:80" ];
+    };
     volumes.${nameServerVol} = { };
     volumes.${nameDbVol} = { };
     containers.${nameServer} = {
+      autoStart = false;
       containerConfig = {
         pod = quadletCfg.pods.${name}.ref;
         image = "docker.io/wordpress:6.8.2";
@@ -51,11 +53,14 @@ delib.mkServiceModule rec {
         After = Requires;
       };
     };
-    containers.${nameDb}.containerConfig = {
-      pod = quadletCfg.pods.${name}.ref;
-      image = "docker.io/mariadb:12.0.2";
-      volumes = [ "${quadletCfg.volumes.${nameDbVol}.ref}:/var/lib/mysql" ];
-      environmentFiles = [ secrets.${nameDbSecret}.path ];
+    containers.${nameDb} = {
+      autoStart = false;
+      containerConfig = {
+        pod = quadletCfg.pods.${name}.ref;
+        image = "docker.io/mariadb:12.0.2";
+        volumes = [ "${quadletCfg.volumes.${nameDbVol}.ref}:/var/lib/mysql" ];
+        environmentFiles = [ secrets.${nameDbSecret}.path ];
+      };
     };
   };
 }

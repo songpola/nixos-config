@@ -24,6 +24,10 @@ delib.host {
       pdfding.enable = true;
       gitea.enable = true;
     };
+
+    containers = {
+      int-302-oracle-db.enable = true;
+    };
   };
 
   nixos = {

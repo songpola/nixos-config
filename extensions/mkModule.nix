@@ -75,7 +75,7 @@ delib.extension {
 
         options = delib.setAttrByStrPath moduleName ({ enable = delib.boolOption (defaultEnable); });
 
-        myconfig.ifEnabled.secrets.enable = rootlessSecrets != [ ];
+        myconfig.ifEnabled.secrets.enable = lib.mkIf (rootlessSecrets != [ ]) true;
 
         nixos.ifEnabled = {
           sops.secrets =
@@ -103,7 +103,6 @@ delib.extension {
         rootlessQuadletConfig,
         # Extra NixOS config
         extraNixosConfig ? { },
-        ...
       }:
       let
         moduleName = "containers.${name}";
