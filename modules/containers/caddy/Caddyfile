@@ -11,13 +11,31 @@
 	}
 }
 
+(webdav-cors) {
+	@options {
+		method OPTIONS # WebDAV specific verbs
+		path {args[1]}
+	}
+
+	handle @options {
+		header {
+			Access-Control-Allow-Origin {args[0]}
+			Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE"
+			Access-Control-Allow-Headers "Authorization, Content-Type, Depth, If-Modified-Since, If-None-Match, Destination, Overwrite"
+			Access-Control-Allow-Credentials true
+		}
+		respond "" 204
+	}
+
+	header {args[1]} {
+		Access-Control-Allow-Origin {args[0]}
+		Access-Control-Allow-Credentials true
+	}
+}
+
 http:// {
 	bind fd/{env.CADDY_HTTP_FD} {
 		protocols h1
 	}
 	redir https://{host}{uri}
-}
-
-glances.songpola.dev {
-	reverse_proxy host.containers.internal:61208
 }

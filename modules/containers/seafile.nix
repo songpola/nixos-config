@@ -120,6 +120,7 @@ delib.module {
         labels = {
           "caddy" = SEAFILE_SERVER_HOSTNAME;
           "caddy.reverse_proxy" = "{{upstreams 80}}";
+          "caddy.import" = "webdav-cors https://super-productivity.songpola.dev /seafdav/*";
         };
       };
     };

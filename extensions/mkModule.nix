@@ -92,5 +92,63 @@ delib.extension {
           virtualisation.quadlet = finalRootlessQuadletConfig;
         };
       };
+
+    mkContainerModule =
+      {
+        # Name of the container
+        name,
+        # A list of secret names
+        rootlessSecrets ? [ ],
+        # An attrset for rootless quadlet config
+        rootlessQuadletConfig,
+        # Extra NixOS config
+        extraNixosConfig ? { },
+        ...
+      }:
+      let
+        moduleName = "containers.${name}";
+
+        defaultConfig = {
+          quadletConfig.defaultDependencies = false;
+          serviceConfig.Restart = "on-abnormal";
+        };
+      in
+      prev.module {
+        name = moduleName;
+
+        options = delib.singleCascadeEnableOption;
+
+        myconfig.ifEnabled = {
+          secrets.enable = lib.mkIf (rootlessSecrets != [ ]) true;
+        };
+
+        nixos.ifEnabled = (
+          {
+            sops.secrets =
+              rootlessSecrets
+              |> map (secretName: {
+                name = secretName;
+                value = ({ owner = config.username; });
+              })
+              |> builtins.listToAttrs;
+          }
+          // extraNixosConfig
+        );
+
+        home.ifEnabled = {
+          virtualisation.quadlet =
+            rootlessQuadletConfig
+            |> lib.recursiveUpdate (
+              rootlessQuadletConfig
+              |> builtins.mapAttrs (
+                n1: # pods, containers, ...
+                builtins.mapAttrs (
+                  n2: v2: # pods.<n2>, containers.<n2>, ...
+                  defaultConfig
+                )
+              )
+            );
+        };
+      };
   };
 }

@@ -15,6 +15,7 @@
           paths = [
             ./hosts
             ./modules
+            ./containers
           ];
 
           extensions = with denix.lib.extensions; [

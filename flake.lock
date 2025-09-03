@@ -13,11 +13,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1755848673,
-        "narHash": "sha256-DIqMRjWVJCNwAhNVWIncDpd6WhsPc5/6h/Q0NcuqXaM=",
+        "lastModified": 1756634464,
+        "narHash": "sha256-gX6r5TaRiowVtwv+KrmaM9/M/Ddp0yTmi3eHMDtkpMI=",
         "owner": "yunfachi",
         "repo": "denix",
-        "rev": "e90b6708864578c6c39b67eb6c1858c7511b0be6",
+        "rev": "d41fe5f061e52db0e9aa4d07e8f9e7635e778541",
         "type": "github"
       },
       "original": {
