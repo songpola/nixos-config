@@ -7,7 +7,7 @@
 let
   name = "int-302-oracle-db";
 
-  nameVol = "${name}-data";
+  volData = "${name}-data";
 
   PORT_TCP_DB = "1521";
 in
@@ -19,11 +19,12 @@ delib.mkContainerModule {
   };
 
   rootlessQuadletConfig = {
-    volumes.${nameVol} = { };
+    volumes.${volData} = { };
+
     containers.${name}.containerConfig = {
       image = "container-registry.oracle.com/database/free:23.8.0.0";
       publishPorts = [ "${PORT_TCP_DB}:1521" ];
-      volumes = [ "${quadletCfg.volumes.${nameVol}.ref}:/opt/oracle/oradata" ];
+      volumes = [ "${quadletCfg.volumes.${volData}.ref}:/opt/oracle/oradata" ];
     };
   };
 }

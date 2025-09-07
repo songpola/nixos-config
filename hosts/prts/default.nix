@@ -18,7 +18,6 @@ delib.host {
     zfs.hostId = "eb8b6756";
     podman.enable = true;
     libvirtd.enable = true;
-    glances.enable = true;
 
     services = {
       pdfding.enable = true;

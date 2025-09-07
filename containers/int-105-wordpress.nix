@@ -7,14 +7,14 @@
 }:
 let
   name = "int-105-wordpress";
-
   nameServer = "${name}-server";
-  nameServerVol = "${nameServer}-data";
-  nameServerSecret = "containers/${nameServer}/env";
-
   nameDb = "${name}-db";
-  nameDbVol = "${nameDb}-data";
-  nameDbSecret = "containers/${nameDb}/env";
+
+  volServerData = "${nameServer}-data";
+  volDbData = "${nameDb}-data";
+
+  secretServer = "containers/${nameServer}/env";
+  secretDb = "containers/${nameDb}/env";
 
   PORT_TCP_WP_WEB = "8080";
 in
@@ -26,8 +26,8 @@ delib.mkContainerModule rec {
   };
 
   rootlessSecrets = [
-    nameServerSecret
-    nameDbSecret
+    secretServer
+    secretDb
   ];
 
   rootlessQuadletConfig = {
@@ -35,31 +35,35 @@ delib.mkContainerModule rec {
       autoStart = false;
       podConfig.publishPorts = [ "${PORT_TCP_WP_WEB}:80" ];
     };
-    volumes.${nameServerVol} = { };
-    volumes.${nameDbVol} = { };
+
+    volumes.${volServerData} = { };
+
+    volumes.${volDbData} = { };
+
     containers.${nameServer} = {
       autoStart = false;
       containerConfig = {
         pod = quadletCfg.pods.${name}.ref;
         image = "docker.io/wordpress:6.8.2";
-        volumes = [ "${quadletCfg.volumes.${nameServerVol}.ref}:/var/www/html" ];
+        volumes = [ "${quadletCfg.volumes.${volServerData}.ref}:/var/www/html" ];
         environments = {
           WORDPRESS_DB_HOST = nameDb;
         };
-        environmentFiles = [ secrets.${nameServerSecret}.path ];
+        environmentFiles = [ secrets.${secretServer}.path ];
       };
       unitConfig = rec {
         Requires = [ quadletCfg.containers.${nameDb}.ref ];
         After = Requires;
       };
     };
+
     containers.${nameDb} = {
       autoStart = false;
       containerConfig = {
         pod = quadletCfg.pods.${name}.ref;
         image = "docker.io/mariadb:12.0.2";
-        volumes = [ "${quadletCfg.volumes.${nameDbVol}.ref}:/var/lib/mysql" ];
-        environmentFiles = [ secrets.${nameDbSecret}.path ];
+        volumes = [ "${quadletCfg.volumes.${volDbData}.ref}:/var/lib/mysql" ];
+        environmentFiles = [ secrets.${secretDb}.path ];
       };
     };
   };
