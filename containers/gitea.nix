@@ -7,39 +7,43 @@
 }:
 let
   name = "gitea";
-
   nameServer = "${name}-server";
-  nameServerSecret = "containers/${nameServer}/env";
-
   nameDb = "${name}-db";
-  nameDbSecret = "containers/${nameDb}/env";
 
-  PORT_TCP_GITEA_WEB = "3000";
+  secretServer = "containers/${nameServer}/env";
+  secretDb = "containers/${nameDb}/env";
+
   PORT_TCP_GITEA_SSH = "2222";
+
+  refPod = quadletCfg.pods.${name}.ref;
+  refDb = quadletCfg.containers.${nameDb}.ref;
+  refCaddyNet = quadletCfg.networks.caddy-net.ref;
 in
-delib.mkServiceModule rec {
+delib.mkContainerModule {
   inherit name;
 
-  nixos.networking.firewall.allowedTCPPorts = map lib.toInt [
-    PORT_TCP_GITEA_WEB
-    PORT_TCP_GITEA_SSH
-  ];
+  extraNixosConfig = {
+    networking.firewall.allowedTCPPorts = map lib.toInt [
+      PORT_TCP_GITEA_SSH
+    ];
+  };
 
   rootlessSecrets = [
-    nameServerSecret
-    nameDbSecret
+    secretServer
+    secretDb
   ];
 
   rootlessQuadletConfig = {
     pods.${name}.podConfig = {
+      networks = [ refCaddyNet ];
       publishPorts = [
-        "${PORT_TCP_GITEA_WEB}:3000"
         "${PORT_TCP_GITEA_SSH}:22"
       ];
     };
+
     containers.${nameServer} = {
       containerConfig = {
-        pod = quadletCfg.pods.${name}.ref;
+        pod = refPod;
         image = "docker.gitea.com/gitea:1.24.5";
         volumes = [
           "/tank/songpola/gitea/server-data:/data"
@@ -49,22 +53,23 @@ delib.mkServiceModule rec {
           GITEA__database__DB_TYPE = "postgres";
           GITEA__database__HOST = nameDb;
         };
-        environmentFiles = [ secrets.${nameServerSecret}.path ];
+        environmentFiles = [ secrets.${secretServer}.path ];
         labels = {
           "caddy" = "${name}.songpola.dev";
-          "caddy.reverse_proxy" = "host.containers.internal:${PORT_TCP_GITEA_WEB}";
+          "caddy.reverse_proxy" = "{{upstreams 3000}}";
         };
       };
       unitConfig = rec {
-        Requires = [ quadletCfg.containers.${nameDb}.ref ];
+        Requires = [ refDb ];
         After = Requires;
       };
     };
+
     containers.${nameDb}.containerConfig = {
-      pod = quadletCfg.pods.${name}.ref;
+      pod = refPod;
       image = "docker.io/library/postgres:14";
       volumes = [ "/tank/songpola/db/gitea/db-data:/var/lib/postgresql/data" ];
-      environmentFiles = [ secrets.${nameDbSecret}.path ];
+      environmentFiles = [ secrets.${secretDb}.path ];
     };
   };
 }

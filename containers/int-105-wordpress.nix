@@ -22,7 +22,9 @@ delib.mkContainerModule rec {
   inherit name;
 
   extraNixosConfig = {
-    networking.firewall.allowedTCPPorts = map lib.toInt [ PORT_TCP_WP_WEB ];
+    networking.firewall.allowedTCPPorts = map lib.toInt [
+      PORT_TCP_WP_WEB
+    ];
   };
 
   rootlessSecrets = [

@@ -21,11 +21,11 @@ delib.host {
 
     services = {
       pdfding.enable = true;
-      gitea.enable = true;
       netdata.enable = true;
     };
 
     containers = {
+      gitea.enable = true;
       int-302-oracle-db.enable = true;
     };
   };
