@@ -11,7 +11,7 @@ delib.module {
 
   myconfig.ifEnabled =
     [
-      "atuin"
+      # "atuin"
       "bat.batman"
       "btop"
       "carapace"
