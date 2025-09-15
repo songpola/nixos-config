@@ -10,7 +10,7 @@ delib.module rec {
     opSshSignWslPath = "/mnt/c/Users/songpola/AppData/Local/1Password/app/8/op-ssh-sign-wsl";
     github = {
       userName = "Songpol Anannetikul";
-      userEmail = "1527535+songpola@users.noreply.github.com";
+      userEmail = "ice.songpola@pm.me";
     };
     prts = {
       hostName = "prts.tail7623c.ts.net";
