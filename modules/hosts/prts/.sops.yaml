@@ -1,0 +1,17 @@
+keys:
+  # Local development key
+  - &local age1zzjf0zng7lm7zqjlx7x52kwse8t83h42uqhhyn2ggryu38jh93dqwtx8j9
+  # Deployment target keys
+  - &target_spla-laptop-wsl age1v0lc6gca3e2md8ucjfqa0xlkw4zp7tlx7s9qm6zq94cmqp0ld5gq9pnr0f
+  - &target_spla-desktop-wsl age1krct4r8r8vaetv2m55qe5ts8w79shn62xwev4np5pu6fkfh6w49sxp9kfh
+  - &target_prts age1lew4ex3dyrap05gjtk6h3tx94yjvh9kcax69xpfrr6z59q925pdqy047mh
+creation_rules:
+  - key_groups:
+      - age:
+          - *local
+          - *target_spla-laptop-wsl
+          - *target_spla-desktop-wsl
+          - *target_prts
+stores:
+  yaml:
+    indent: 2
