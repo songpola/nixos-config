@@ -85,5 +85,19 @@ in
         # Enable xdg-open for opening files and URLs in WSL
         environment.systemPackages = [ pkgs.xdg-utils ];
       };
+
+    # Hardware Vulkan/D3D12 on AMD GPUs via Mesa's dozen driver.
+    # dozen dlopens libd3d12.so (linked into /run/opengl-driver/lib by
+    # useWindowsDriver), and AMD's WSL driver (amdxc64.so) dlopens libssl.so;
+    # neither is on the search path of Nix binaries, so they fall back to llvmpipe.
+    # See https://github.com/songpola/debug-nixos-amd-gpu-accel
+    _.amd-gpu.nixos =
+      { pkgs, ... }:
+      {
+        environment.variables.LD_LIBRARY_PATH = [
+          "/run/opengl-driver/lib"
+          "${lib.getLib pkgs.openssl}/lib"
+        ];
+      };
   };
 }

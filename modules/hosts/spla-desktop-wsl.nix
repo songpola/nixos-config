@@ -13,6 +13,8 @@
       profiles.base
 
       programs.podman
+
+      wsl.amd-gpu
     ];
   };
 }
