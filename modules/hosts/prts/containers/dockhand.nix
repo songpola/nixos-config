@@ -41,11 +41,13 @@ in
             STACKS_DIR = stacksDir;
           };
           extraOptions = [ "--group-add=${toString config.users.groups.podman.gid}" ];
-          networks = [ ingressNetwork ];
-          labels = {
-            "caddy" = "dockhand.songpola.dev";
-            "caddy.reverse_proxy" = "{{upstreams 3000}}";
-          };
+          # Exposed directly on the host for now, until Caddy is running again
+          ports = [ "3000:3000" ];
+          # networks = [ ingressNetwork ];
+          # labels = {
+          #   "caddy" = "dockhand.songpola.dev";
+          #   "caddy.reverse_proxy" = "{{upstreams 3000}}";
+          # };
         };
       };
   };
