@@ -3,6 +3,7 @@
   den.aspects.profiles.interactive = {
     includes = with den.aspects.programs; [
       nix-index
+      nix-index.comma
       claude-code
       claude-code.tools
     ];
