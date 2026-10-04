@@ -1,4 +1,4 @@
-# { lib, ... }:
+{ lib, ... }:
 {
   # den.schema.user = {
   #   options.authorizedKeys = lib.mkOption {
@@ -9,8 +9,22 @@
   # };
 
   den.aspects.services.openssh = {
-    # Allow SSH remote login
-    nixos.services.openssh.enable = true;
+    # Allow SSH remote login (public key only)
+    nixos.services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = lib.mkDefault false;
+        KbdInteractiveAuthentication = lib.mkDefault false;
+      };
+    };
+
+    # Opt-in: also allow password login
+    _.password-login = {
+      nixos.services.openssh.settings = {
+        PasswordAuthentication = true;
+        KbdInteractiveAuthentication = true;
+      };
+    };
 
     # # Authorize each host user's `authorizedKeys`.
     # # The `user` class lands on `users.users.<userName>`.

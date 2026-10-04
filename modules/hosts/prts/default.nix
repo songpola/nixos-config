@@ -47,6 +47,8 @@
       # programs.sops
 
       services.tailscale
+      services.auto-upgrade
+      services.auto-upgrade.allow-reboot
     ];
 
     nixos = {
