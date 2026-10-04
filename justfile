@@ -10,3 +10,7 @@ check:
 
 switch:
     nh os switch .
+
+# Run an nh os action on prts remotely, e.g. `just prts switch` or `just prts boot`
+prts action="switch":
+    nh os {{ action }} . --hostname=prts --target-host=prts --build-host=prts --elevation-strategy=passwordless --show-activation-logs --ask
