@@ -85,6 +85,15 @@ in
         Flake registry: `nixpkgs` is the system's pinned stable nixpkgs;
         `unstable` is an alias for `github:NixOS/nixpkgs/nixos-unstable`
         (e.g. `nix shell unstable#<pkg>` for a newer version).
+      - Tool lookup order: (1) use what is already on PATH; (2) otherwise
+        `nix shell nixpkgs#<pkg>` (reuses the pinned nixpkgs, no re-download);
+        (3) only if the pinned nixpkgs lacks the needed version, fall back to
+        omnibin, a lazy store of every binary nixpkgs ever shipped:
+        `nix run github:fzakaria/omnibin -- <cmd>@<version> <args>` (e.g.
+        `python3@3.6.2 -c 'print(1)'`). Find versions with
+        `nix run github:fzakaria/omnibin -- omnibin which --all <cmd>`.
+        Omnibin only runs prebuilt binaries: no `nix build`, and no
+        `python3.withPackages`-style environments.
       - Version control: I use jujutsu (`jj`), not git. Repos are colocated
         jj + git. Use `jj` for status, diff, log, commits, bookmarks and
         pushing; read-only `git` commands are fine only when jj has no
