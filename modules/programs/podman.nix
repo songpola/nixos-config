@@ -9,6 +9,10 @@
         # Use original implementation for `podman compose` commands
         environment.systemPackages = [ pkgs.docker-compose ];
         virtualisation.containers.containersConf.settings.engine.compose_warning_logs = false;
+
+        # Start containers with a restart policy (e.g. `unless-stopped`) on boot.
+        # The unit ships with podman but is not enabled by default.
+        systemd.services.podman-restart.wantedBy = [ "multi-user.target" ];
       };
 
     user.extraGroups = [ "podman" ];
