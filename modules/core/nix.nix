@@ -1,5 +1,7 @@
 {
   den.default = {
+    nixos.nixpkgs.config.allowUnfree = true;
+
     nixos.nix = {
       settings.experimental-features = [
         "flakes"

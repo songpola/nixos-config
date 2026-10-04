@@ -1,11 +1,16 @@
 { inputs, ... }:
 {
   den.default.nixos =
-    { pkgs, ... }:
+    { config, ... }:
     {
       nixpkgs.overlays = [
         (final: prev: {
-          unstable = inputs.unstable.legacyPackages.${final.stdenv.hostPlatform.system};
+          # Re-import (rather than `legacyPackages`) so unstable inherits the
+          # host's nixpkgs config, e.g. `allowUnfree`.
+          unstable = import inputs.unstable {
+            inherit (final.stdenv.hostPlatform) system;
+            inherit (config.nixpkgs) config;
+          };
         })
       ];
     };
