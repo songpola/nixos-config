@@ -1,0 +1,14 @@
+# ProtonMail Bridge for email integration with Thunderbird
+# https://github.com/shenxn/protonmail-bridge-docker/issues/135
+services:
+  protonmail-bridge:
+    image: docker.io/dancwilliams/protonmail-bridge:latest
+    container_name: protonmail-bridge
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Bangkok
+    volumes:
+      - /tank/v2/services/protonmail-bridge/root:/root
+    ports:
+      - "1025:25" # SMTP
+      - "1143:143" # IMAP

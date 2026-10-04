@@ -1,0 +1,24 @@
+# Dozzle for viewing container logs
+services:
+  dozzle:
+    image: docker.io/amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Bangkok
+      DOZZLE_ENABLE_ACTIONS: "true"
+    volumes:
+      - /run/podman/podman.sock:/var/run/docker.sock
+      - dozzle-data:/data
+    networks:
+      - caddy-reverse-proxy-ingress
+    labels:
+      caddy: dozzle.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
+volumes:
+  dozzle-data:
+
+networks:
+  caddy-reverse-proxy-ingress:
+    external: true
