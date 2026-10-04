@@ -44,6 +44,15 @@
                   mountOptions = [ "compress=zstd" ];
                   mountpoint = "/home";
                 };
+                # Podman images and container layers (overlay driver): re-downloadable,
+                # so keep them on the root SSD, away from the pool's special vdev.
+                "@containers" = {
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                  mountpoint = "/var/lib/containers/storage";
+                };
               };
             };
           };

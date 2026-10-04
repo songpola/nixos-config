@@ -20,7 +20,7 @@
 
       networking.networkd-bridge.macAddress = "b4:2e:99:91:b1:10"; # eno1
 
-      programs.podman.zfs-storage-driver.dataset = "tank/unmanaged/podman";
+      programs.podman.volume-path.path = "/tank/v2/podman-volumes";
 
       services.tailscale = {
         optimizeUdpInterface = "eno1";
@@ -43,7 +43,7 @@
       networking.networkd-bridge
 
       programs.podman
-      programs.podman.zfs-storage-driver
+      programs.podman.volume-path
       # programs.sops
 
       services.tailscale
