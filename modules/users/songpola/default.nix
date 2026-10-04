@@ -72,6 +72,34 @@ in
         };
       };
 
+    # User-level memory for Claude Code (~/.claude/CLAUDE.md), loaded in every project.
+    # Only written on hosts that include `programs.claude-code`.
+    homeManager.programs.claude-code.context = ''
+      # Personal preferences
+
+      - System: hosts run NixOS (some under WSL). Don't use apt, pip
+        install, npm -g, curl | sh, etc. If a tool is missing, get it from
+        nixpkgs for one-off use: `nix shell nixpkgs#<pkg> -c <cmd>` or
+        `nix run nixpkgs#<pkg> -- <args>` (`nix-locate bin/<cmd>` finds the
+        package). Tools needed permanently belong in the NixOS config.
+        Flake registry: `nixpkgs` is the system's pinned stable nixpkgs;
+        `unstable` is an alias for `github:NixOS/nixpkgs/nixos-unstable`
+        (e.g. `nix shell unstable#<pkg>` for a newer version).
+      - Version control: I use jujutsu (`jj`), not git. Repos are colocated
+        jj + git. Use `jj` for status, diff, log, commits, bookmarks and
+        pushing; read-only `git` commands are fine only when jj has no
+        equivalent. Don't create git branches or commits directly.
+      - Shell: my interactive shell is nushell. Commands, snippets and
+        scripts meant for me to run should be nushell syntax. (Your own
+        Bash tool still runs bash; that's fine.)
+    '';
+
+    # Personal Claude Code skills. Linked one by one, so ~/.claude/skills itself
+    # stays writable (Claude Code keeps synced skills there too).
+    homeManager.programs.claude-code.skills = {
+      jj-commit = ./claude-skills/jj-commit;
+    };
+
     homeManager.programs.jujutsu.settings = {
       user.name = userName;
       user.email = userEmail;
