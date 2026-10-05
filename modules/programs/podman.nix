@@ -2,9 +2,20 @@
 {
   den.aspects.programs.podman = {
     nixos =
-      { pkgs, ... }:
+      { config, pkgs, ... }:
       {
         virtualisation.podman.enable = true;
+
+        # Containers on user-created networks resolve names through aardvark-dns on the
+        # bridge gateway, which the host firewall drops (nixpkgs only opens it for the default
+        # network). Allow DNS from every podman bridge (podman0, podman1, ...).
+        networking.firewall.extraInputRules = lib.mkIf config.networking.nftables.enable ''
+          iifname "podman*" meta l4proto { tcp, udp } th dport 53 accept comment "podman aardvark-dns"
+        '';
+        networking.firewall.extraCommands = lib.mkIf (!config.networking.nftables.enable) ''
+          iptables -A nixos-fw -i podman+ -p udp --dport 53 -j nixos-fw-accept
+          iptables -A nixos-fw -i podman+ -p tcp --dport 53 -j nixos-fw-accept
+        '';
 
         # Use original implementation for `podman compose` commands
         environment.systemPackages = [ pkgs.docker-compose ];
