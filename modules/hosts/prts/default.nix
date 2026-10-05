@@ -30,6 +30,23 @@
         advertiseRoutes = [ "10.0.0.0/16" ];
         advertiseExitNode = true;
       };
+
+      services.caddy-reverse-proxy = {
+        email = "songpola@songpola.dev";
+        cloudflareApiTokenSopsFile = ./caddy-reverse-proxy.secrets.yaml;
+        configDir = "/tank/v2/services/caddy-reverse-proxy/config";
+      };
+
+      services.dockhand = {
+        dataDir = "/tank/v2/services/dockhand";
+        user = "songpola";
+        domain = "dockhand.songpola.dev";
+      };
+
+      services.dozzle = {
+        enableActions = true;
+        domain = "dozzle.songpola.dev";
+      };
     };
   };
 
@@ -44,13 +61,14 @@
 
       programs.podman
       programs.podman.volume-path
-      # programs.sops
+      programs.sops
 
       services.tailscale
       services.auto-upgrade
       services.auto-upgrade.allow-reboot
-
-      prts.dockhand
+      services.caddy-reverse-proxy
+      services.dockhand
+      services.dozzle
     ];
 
     nixos = {
