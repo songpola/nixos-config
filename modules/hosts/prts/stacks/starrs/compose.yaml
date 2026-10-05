@@ -1,0 +1,159 @@
+# Starrs stack for media automation. Setup guide: ./starrs.md
+#
+# Like the former podman pod: every app shares the network namespace of the `starrs`
+# container (network_mode: service:starrs), so they reach each other on localhost, and
+# `starrs` holds the published ports, the Caddy labels and the extra hosts.
+#
+# Same container data path everywhere (/mnt/starrs-data) to enable the "Atomic Move"
+# technique (hardlinking instead of copying files).
+
+x-common-env: &common-env
+  TZ: Asia/Bangkok
+  PUID: "1000"
+  PGID: "1000"
+
+x-app: &app
+  restart: unless-stopped
+  network_mode: service:starrs
+  depends_on:
+    - starrs
+
+services:
+  # Network namespace holder (the pod's infra container)
+  starrs:
+    image: registry.k8s.io/pause:3.10
+    container_name: starrs
+    restart: unless-stopped
+    ports:
+      # starrs-qbittorrent torrenting port
+      - "6882:6882"
+      - "6882:6882/udp"
+    networks:
+      - caddy
+      - default
+    labels:
+      caddy_1: starrs-qbittorrent.songpola.dev
+      caddy_1.reverse_proxy: "{{upstreams 8080}}"
+      caddy_2: starrs-clonarr.songpola.dev
+      caddy_2.reverse_proxy: "{{upstreams 6060}}"
+      caddy_3: starrs-prowlarr.songpola.dev
+      caddy_3.reverse_proxy: "{{upstreams 9696}}"
+      caddy_4: starrs-radarr.songpola.dev
+      caddy_4.reverse_proxy: "{{upstreams 7878}}"
+      caddy_5: starrs-radarr-anime.songpola.dev
+      caddy_5.reverse_proxy: "{{upstreams 7879}}"
+      caddy_6: starrs-sonarr.songpola.dev
+      caddy_6.reverse_proxy: "{{upstreams 8989}}"
+      caddy_7: starrs-sonarr-anime.songpola.dev
+      caddy_7.reverse_proxy: "{{upstreams 8990}}"
+    # starrs-prowlarr: a little hack for bypassing Cloudflare
+    extra_hosts:
+      - "bearbit.org:128.1.35.170"
+      - "www.bearbit.org:128.1.35.170"
+
+  # Downloader: qBittorrent (will be used by Radarr/Sonarr)
+  # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./starrs.md
+  qbittorrent:
+    <<: *app
+    image: lscr.io/linuxserver/qbittorrent:version-5.1.4-r3
+    container_name: starrs-qbittorrent
+    environment:
+      <<: *common-env
+      TORRENTING_PORT: "6882"
+    volumes:
+      - /tank/v2/starrs-stack/starrs-qbittorrent/config:/config
+      - /tank/v2/starrs-data/torrents:/mnt/starrs-data/torrents
+    mem_limit: 2g
+
+  # Guide Sync (configuration management)
+  clonarr:
+    <<: *app
+    image: ghcr.io/prophetse7en/clonarr:latest
+    container_name: starrs-clonarr
+    environment: *common-env
+    volumes:
+      - /tank/v2/starrs-stack/starrs-clonarr/config:/config
+
+  # Indexer Proxies (for bypassing Cloudflare blocks on indexers)
+  byparr:
+    <<: *app
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: starrs-byparr
+
+  # Indexer
+  prowlarr:
+    <<: *app
+    image: lscr.io/linuxserver/prowlarr:version-2.3.5.5327
+    container_name: starrs-prowlarr
+    environment: *common-env
+    volumes:
+      - /tank/v2/starrs-stack/starrs-prowlarr/config:/config
+
+  # Movies (Main)
+  radarr:
+    <<: *app
+    image: lscr.io/linuxserver/radarr:version-6.1.1.10360
+    container_name: starrs-radarr
+    environment:
+      <<: *common-env
+      RADARR__SERVER__PORT: "7878" # Radarr default
+    volumes:
+      - /tank/v2/starrs-stack/starrs-radarr/config:/config
+      - /tank/v2/starrs-data:/mnt/starrs-data
+
+  # Movies (Anime)
+  radarr-anime:
+    <<: *app
+    image: lscr.io/linuxserver/radarr:version-6.1.1.10360
+    container_name: starrs-radarr-anime
+    environment:
+      <<: *common-env
+      RADARR__SERVER__PORT: "7879" # Radarr default + 1
+    volumes:
+      - /tank/v2/starrs-stack/starrs-radarr-anime/config:/config
+      - /tank/v2/starrs-data:/mnt/starrs-data
+
+  # TV Series (Main)
+  sonarr:
+    <<: *app
+    image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
+    container_name: starrs-sonarr
+    environment:
+      <<: *common-env
+      SONARR__SERVER__PORT: "8989" # Sonarr default
+    volumes:
+      - /tank/v2/starrs-stack/starrs-sonarr/config:/config
+      - /tank/v2/starrs-data:/mnt/starrs-data
+
+  # TV Series (Anime)
+  sonarr-anime:
+    <<: *app
+    image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
+    container_name: starrs-sonarr-anime
+    environment:
+      <<: *common-env
+      SONARR__SERVER__PORT: "8990" # Sonarr default + 1
+    volumes:
+      - /tank/v2/starrs-stack/starrs-sonarr-anime/config:/config
+      - /tank/v2/starrs-data:/mnt/starrs-data
+
+  # qui for managing qBittorrent (reaches it at starrs:8080 on the default network)
+  # https://getqui.com/docs/getting-started/docker#local-filesystem-access
+  qui:
+    image: ghcr.io/hotio/qui:latest
+    container_name: qui
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /tank/v2/services/qui/config:/config
+      - /tank/v2/starrs-data/torrents:/mnt/starrs-data/torrents
+    networks:
+      - caddy
+      - default
+    labels:
+      caddy: qui.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 7476}}"
+
+networks:
+  caddy:
+    external: true

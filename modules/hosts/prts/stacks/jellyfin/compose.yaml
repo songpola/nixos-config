@@ -1,0 +1,27 @@
+# Jellyfin for media streaming (with NVIDIA GPU)
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:version-10.11.8ubu2404
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Bangkok
+      PUID: "1000"
+      PGID: "1000"
+      # JELLYFIN_PublishedServerUrl:
+    volumes:
+      - /tank/v2/services/jellyfin/config:/config
+      # Same container path as in the starrs stack, so hardlinks ("Atomic Move") work
+      - /tank/v2/starrs-data/media:/mnt/starrs-data/media
+    # NVIDIA GPU via CDI (hardware.nvidia-container-toolkit); untested through compose
+    devices:
+      - nvidia.com/gpu=all
+    networks:
+      - caddy
+    labels:
+      caddy: jf.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8096}}"
+
+networks:
+  caddy:
+    external: true
