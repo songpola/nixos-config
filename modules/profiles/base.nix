@@ -53,6 +53,7 @@
 
       # Sysadmin tools
       btop
+      isd
     ];
 
     nixos =
@@ -66,7 +67,6 @@
           dix
 
           # Sysadmin tools
-          isd
           lsof
           fastfetch
 

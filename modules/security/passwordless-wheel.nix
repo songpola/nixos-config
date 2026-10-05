@@ -10,12 +10,13 @@
     # `error: cannot ... because it lacks a signature by a trusted key`.
     nix.settings.trusted-users = [ "@wheel" ];
 
-    # security.polkit.enable = true;
-    # security.polkit.extraConfig = ''
-    #   polkit.addRule(function(action, subject) {
-    #     if (subject.isInGroup("wheel"))
-    #       return polkit.Result.YES;
-    #   });
-    # '';
+    # Same trust as passwordless sudo, but only for systemd (systemctl, isd).
+    # Takes effect where polkit is enabled (security.polkit aspect).
+    security.polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (action.id.indexOf("org.freedesktop.systemd1.") == 0 && subject.isInGroup("wheel"))
+          return polkit.Result.YES;
+      });
+    '';
   };
 }
