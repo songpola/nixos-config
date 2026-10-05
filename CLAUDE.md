@@ -24,7 +24,7 @@ Format Nix with `nixfmt`.
 
 ## Architecture
 
-Every `.nix` file under `modules/` is a flake-parts module auto-loaded by import-tree — there is no import list to update. Files/dirs whose path contains a `_` prefix (e.g. `_caddy.nix`, `_settings-type.nix`) are skipped by import-tree and used as plain `import`ed helpers. `.md` files next to modules document design decisions.
+Every `.nix` file under `modules/` is a flake-parts module auto-loaded by import-tree — there is no import list to update. Files/dirs whose path contains a `_` prefix (e.g. `_settings-type.nix`) are skipped by import-tree and used as plain `import`ed helpers. `.md` files next to modules document design decisions.
 
 Key den concepts as used here:
 
@@ -38,11 +38,11 @@ Key den concepts as used here:
 
 ### prts
 
-`modules/hosts/prts/`: ZFS (`tank` pool), NVIDIA legacy 580 driver, systemd-networkd bridge, disko layout, `facter.json` hardware report. Containers in `containers/` are Podman quadlets (quadlet-nix); each is a `den.aspects."prts"._.<service>` sub-aspect and all are currently **disabled**. To enable one, add it to `den.aspects."prts".includes`; this also requires uncommenting the `quadlet-nix` input in `containers/quadlet.nix` (then `write-flake`) and including `programs.quadlet`. Web services are exposed through caddy-docker-proxy labels via the `_caddy.nix` helper. Service data lives under `/tank/v2/...`.
+`modules/hosts/prts/`: ZFS (`tank` pool), NVIDIA legacy 580 driver, systemd-networkd bridge, disko layout, `facter.json` hardware report. Containers run on rootful Podman (overlay storage on the `@containers` btrfs subvolume, named volumes in `/tank/v2/podman-volumes`). Infrastructure containers are Nix-managed `virtualisation.oci-containers` in reusable aspects configured through host settings: `services.caddy-reverse-proxy` (caddy-docker-proxy), `services.dockhand` and `services.dozzle` (`modules/services/`). Application stacks are managed outside Nix by Dockhand (deployed in `/tank/v2/services/dockhand/stacks/<stack>/compose.yaml`); `modules/hosts/prts/stacks/` keeps copies of the stacks written here, in the same layout. Apps are exposed by joining the external `caddy` network and setting `caddy` / `caddy.reverse_proxy` labels. Service data lives under `/tank/v2/...`.
 
 ### Secrets
 
-sops-nix with age; recipients in `modules/hosts/prts/.sops.yaml` (local dev key + each host). Encrypted files sit next to the module as `*.secrets.{yaml,env}`. The `programs.sops` aspect and the `sops-nix` input are currently commented out, so modules that reference `config.sops` only evaluate once those are re-enabled.
+sops-nix with age; recipients in the root `.sops.yaml` (local dev key + each host). Encrypted files are `*.secrets.{yaml,env}`, kept in the host directory that uses them (e.g. `modules/hosts/prts/`) and passed to reusable aspects through settings. Hosts decrypt with their SSH ed25519 host key; the local dev age key is kept in 1Password, and `just sops-edit <file>` edits a file with it (`op.exe read`, the Windows 1Password CLI via WSL).
 
 ## Deployment / CI
 
