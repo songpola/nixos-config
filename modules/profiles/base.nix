@@ -45,6 +45,9 @@
       bat # replace cat
       zoxide # cd enhancement
 
+      # Task runners
+      just
+
       # SSH settings
       ssh
 
@@ -79,7 +82,6 @@
           httpie # replace curl
           doggo # replace dig
           ouch # replace zip
-          just # replace make
 
           # Utilities
           jq

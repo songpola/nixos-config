@@ -6,6 +6,7 @@
       nix-index.comma
       claude-code
       claude-code.tools
+      just.lsp
     ];
 
     nixos = { pkgs, ... }: {
