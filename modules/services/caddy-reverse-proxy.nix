@@ -1,35 +1,37 @@
 # Caddy as reverse proxy for web services, configured from container labels (caddy-docker-proxy).
-# Certificates via ACME DNS-01 with Cloudflare; the API token comes from sops.
-# Includes the `programs.podman` and `programs.sops` aspects it needs.
+# Certificates via ACME DNS-01 with Cloudflare, from the `security.acme-cloudflare` account.
+# Includes the `programs.podman` and `security.acme-cloudflare` aspects it needs.
 #
 # Containers opt in by joining the ingress network (settings.network), e.g. in a compose stack:
 #   networks: [ caddy ]   (external: true)
 #   labels:
 #     caddy: app.example.com
 #     caddy.reverse_proxy: "{{upstreams 8080}}"
+#
+# Other aspects extend it through quirks (data, collected from every aspect on the host):
+#   caddy-sites    sites for upstreams outside the network, e.g. native services (see services.kanidm)
+#   caddy-snippets Caddyfile text after the global options, e.g. snippets for labels to `import`
 { den, lib, ... }:
 let
   name = "caddy-reverse-proxy";
   unit = "podman-${name}.service";
-
-  secret = "${name}/CLOUDFLARE_API_TOKEN";
 in
 {
+  den.quirks.caddy-sites.description = ''
+    Sites served by services.caddy-reverse-proxy, as `{ domain, upstream, reverseProxy ? { } }`;
+    `reverseProxy` holds `reverse_proxy` subdirectives as label suffixes (e.g. `transport = "http"`).
+    Each domain is also a network alias of the proxy, so containers on its network reach the
+    site through the proxy directly, instead of looping out via the host's address.
+  '';
+  den.quirks.caddy-snippets.description = "Caddyfile text for services.caddy-reverse-proxy, appended after the global options";
+
   den.aspects.services.${name} = {
-    includes = with den.aspects.programs; [
-      podman
-      sops
+    includes = [
+      den.aspects.programs.podman
+      den.aspects.security.acme-cloudflare
     ];
 
     settings = {
-      email = lib.mkOption {
-        type = lib.types.str;
-        description = "ACME account email";
-      };
-      cloudflareApiTokenSopsFile = lib.mkOption {
-        type = lib.types.path;
-        description = "sops file with the Cloudflare API token at `${secret}`";
-      };
       network = lib.mkOption {
         type = lib.types.str;
         default = "caddy";
@@ -62,26 +64,46 @@ in
         config,
         pkgs,
         host,
+        caddy-sites,
+        caddy-snippets,
         ...
       }:
       let
         cfg = host.settings.services.${name};
+        acme = config.security.acme.defaults;
 
-        secretPath = config.sops.secrets.${secret}.path;
+        tokenSecret = den.aspects.security.acme-cloudflare.meta.tokenSecret;
+        tokenPath = acme.credentialFiles.CLOUDFLARE_DNS_API_TOKEN_FILE;
 
         caddyfile = pkgs.writeText "Caddyfile" ''
           {
-            email ${cfg.email}
-            acme_dns cloudflare {file.${secretPath}}
+            email ${acme.email}
+            acme_dns cloudflare {file.${tokenPath}}
             ${cfg.extraGlobalConfig}
           }
+
+          ${lib.concatStringsSep "\n\n" caddy-snippets}
         '';
+
+        # Sorted, so the indexed label prefixes (caddy_0, caddy_1, ...) stay stable
+        sites = lib.sort (a: b: a.domain < b.domain) caddy-sites;
+        siteLabels = lib.mergeAttrsList (
+          lib.imap0 (
+            i: site:
+            let
+              prefix = "caddy_${toString i}";
+            in
+            {
+              ${prefix} = site.domain;
+              "${prefix}.reverse_proxy" = site.upstream;
+            }
+            // lib.mapAttrs' (k: lib.nameValuePair "${prefix}.reverse_proxy.${k}") (site.reverseProxy or { })
+          ) sites
+        );
+        aliases = map (site: site.domain) sites;
       in
       {
-        sops.secrets.${secret} = {
-          sopsFile = cfg.cloudflareApiTokenSopsFile;
-          restartUnits = [ unit ];
-        };
+        sops.secrets.${tokenSecret}.restartUnits = [ unit ];
 
         systemd.tmpfiles.rules = [ "d ${cfg.configDir} 0755 root root -" ];
 
@@ -104,7 +126,16 @@ in
             "443:443" # HTTPS
             "443:443/udp" # HTTP3
           ];
-          networks = [ cfg.network ];
+          networks = [
+            (
+              cfg.network
+              + lib.optionalString (aliases != [ ]) (
+                ":" + lib.concatMapStringsSep "," (alias: "alias=${alias}") aliases
+              )
+            )
+          ];
+          # caddy-docker-proxy also reads the proxy's own labels
+          labels = siteLabels;
           environment = {
             CADDY_INGRESS_NETWORKS = cfg.network;
             CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility
@@ -116,7 +147,7 @@ in
             "${cfg.configDir}:/config"
             "${cfg.dataVolume}:/data"
             "${caddyfile}:/config/Caddyfile:ro"
-            "${secretPath}:${secretPath}:ro"
+            "${tokenPath}:${tokenPath}:ro"
           ];
         };
       };

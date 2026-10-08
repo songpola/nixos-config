@@ -62,8 +62,13 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 ## 4. Central auth (Kanidm + oauth2-proxy)
 
-Status: planned, nothing implemented yet (plan saved 2026-10-06, reviewed
+Status (2026-10-08): steps 1-3 are written and committed, but not deployed or
+tested on prts yet; steps 4-7 are still planned (plan saved 2026-10-06, reviewed
 against the current setup the same day).
+
+Next: deploy prts (merge to `main`, or `nh os switch` on prts), then check that
+both ACME certificates are issued, `https://idm.songpola.dev` works through
+Caddy, and "Verify" 1 (alias loop); enroll the passkey; then step 4.
 
 Goal: one login (passkeys) for the web services on prts, behind Caddy. Access
 stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
@@ -98,7 +103,9 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
   is a bare token that Caddy reads with `{file.<path>}`, and ACME can read the
   same decrypted file through
   `security.acme.certs.<name>.credentialFiles.CLOUDFLARE_DNS_API_TOKEN_FILE`
-  (no env-file template). Declare the sops secret once.
+  (no env-file template). Done as the `security.acme-cloudflare` aspect: it
+  declares the secret once and sets `security.acme.defaults` (email, DNS
+  provider, token), which Kanidm's certificate inherits and Caddy reads.
 - Caddy runs in a container, Kanidm on the host: Caddy proxies to
   `https://host.containers.internal:8443` (checked: that is `10.89.1.1`, the
   `caddy` network's bridge gateway). Kanidm binds `0.0.0.0:8443`; the firewall
@@ -107,7 +114,8 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
   Tailscale accepts everything arriving on `tailscale0`, so the tailnet can reach
   8443 directly; fine for an IdP with its own TLS.
 - Storage: database stays at `/var/lib/kanidm` on the root SSD (path is fixed by
-  the module). Online backups go to `/tank/v2/services/kanidm/backups` so ZFS
+  the module), default `db_fs_type`. Kanidm starts after `zfs-mount.service`
+  but doesn't require it, so login survives a failed pool import. Online backups go to `/tank/v2/services/kanidm/backups` so ZFS
   snapshots and the planned syncoid replication cover them.
 - LDAP stays off until an app needs it.
 - Tailnet auto-allow / tsidp: deferred.
@@ -119,40 +127,40 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
 
 ### Steps
 
-1. [ ] **Secrets move.** Move `caddy-reverse-proxy.secrets.yaml` into
-   `modules/hosts/prts/secrets/` and rename it `cloudflare.secrets.yaml` (it
-   serves Caddy and ACME); renaming the key inside goes through `just sops-edit`.
-   New `secrets/auth.secrets.yaml` with the oauth2-proxy client secret (shared
-   with Kanidm provisioning), the cookie secret, optionally the `idm_admin`
-   password. Update the path in `modules/hosts/prts/default.nix`, the key in the
-   `services.caddy-reverse-proxy` option description, the `justfile` example and
-   CLAUDE.md. `.sops.yaml` has no path filter, so it needs no change.
-2. [ ] **Caddy** (`services.caddy-reverse-proxy`): add a NixOS option (e.g.
-   `extraConfig`, `types.lines`) in the aspect's `nixos` module so other aspects
-   can append snippets. It can't be an aspect setting: settings are only set by
-   the host, so other aspects can't add to them.
-   - `(auth)` snippet: strip client-supplied `X-Auth-Request-*`, `forward_auth`
-     to `oauth2-proxy:4180` at `/oauth2/auth?allowed_groups={args[0]}`, redirect
-     401 to `https://auth.songpola.dev/oauth2/start?rd=...`. Apps opt in with the
+1. [x] **Secrets move.** `modules/hosts/prts/secrets/cloudflare.secrets.yaml`
+   with the key `cloudflare/API_TOKEN` (renamed, checked), passed to
+   `security.acme-cloudflare` through settings. `secrets/auth.secrets.yaml`
+   (oauth2-proxy client secret shared with Kanidm provisioning, cookie secret,
+   optionally the `admin` / `idm_admin` passwords) is created in step 4.
+2. [x] **Caddy** (`services.caddy-reverse-proxy`): other aspects extend it through
+   quirks (done): `caddy-snippets` (Caddyfile text after the global options) and
+   `caddy-sites` (sites for upstreams outside the network; each domain also
+   becomes a network alias of the proxy). Not settings: those are only set by the
+   host, so other aspects can't add to them.
+   - The `(auth)` snippet is part of step 4 (emit it as `caddy-snippets` from
+     the oauth2-proxy aspect):
+     strip client-supplied `X-Auth-Request-*`, `forward_auth` to
+     `oauth2-proxy:4180` at `/oauth2/auth?allowed_groups={args[0]}`, redirect 401
+     to `https://auth.songpola.dev/oauth2/start?rd=...`. Apps opt in with the
      label `caddy.import: auth <group>`.
-   - Kanidm's site block (`idm.songpola.dev`) can be labels on the Caddy
-     container itself (oci-containers `labels` merge across modules, and
-     caddy-docker-proxy reads its own labels), so only the snippet needs the
-     option.
-   - Give the Caddy container the network alias
-     `networks = [ "caddy:alias=idm.songpola.dev" ]`, so containers on `caddy`
-     resolve `idm.songpola.dev` to Caddy directly instead of looping through the
-     host's Tailscale IP (see "Verify" 1).
-3. [ ] **`services.kanidm`** (new aspect, native): settings `version`, `domain`,
-   `backupDir`, optional `ldap`; ACME certificate; firewall rule; Caddy site
-   block for `idm.songpola.dev`. Enroll your passkey in the web UI.
+   - [x] Kanidm's site block and the `idm.songpola.dev` network alias come from
+     its `caddy-sites` entry, so containers on `caddy` resolve it to Caddy
+     directly instead of looping through the host's Tailscale IP (see "Verify" 1).
+3. [~] **`services.kanidm`** (new aspect, native): done in code (settings
+   `version`, `domain`, `port`, `backupDir`, `backupVersions`; ACME
+   certificate; firewall rule; `caddy-sites` entry for `idm.songpola.dev`).
+   LDAP is left out until needed. After deploying: enroll your passkey in the
+   web UI.
 4. [ ] **`services.oauth2-proxy`** (new aspect, container): Kanidm OIDC with PKCE
    S256, `--cookie-domain=.songpola.dev`, `--whitelist-domain=.songpola.dev`,
    `--set-xauthrequest`, username from `preferred_username` (Kanidm's `sub` is a
-   UUID). Secrets via an env file from sops. Caddy site block
-   `auth.songpola.dev`.
+   UUID). Secrets via an env file from sops (new `secrets/auth.secrets.yaml`).
+   Site `auth.songpola.dev` through the container's own labels; the `(auth)`
+   snippet (step 2) as `caddy-snippets`.
 5. [ ] **Kanidm provisioning** (in `modules/hosts/prts/`): person `songpola`,
-   groups, OIDC client `oauth2-proxy`.
+   groups `prts_admins` / `prts_media`, OIDC client `oauth2-proxy`. Likely
+   needs the `admin` and `idm_admin` password files; check whether `provision`
+   can add members to built-in groups like `idm_admins`, else do it by hand.
 6. [ ] **Apps (only these for now).** Dozzle: `import auth <admin group>`; new
    `settings.auth` option sets `DOZZLE_AUTH_PROVIDER=forward-proxy` and
    `DOZZLE_AUTH_HEADER_*` to `X-Auth-Request-*`. Dockhand: `import auth <admin
@@ -166,7 +174,9 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
 
 ### Open questions
 
-- **Group names**: decide later (candidates: `prts_admins`, `prts_media`).
+- **Group names**: decided: `prts_admins` and `prts_media`. Gate apps with these,
+  not Kanidm's built-in groups (`idm_admins` etc. grant Kanidm admin rights, not
+  app access).
 
 ### Verify while implementing
 
