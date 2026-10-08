@@ -1,27 +1,10 @@
 { den, lib, ... }:
 {
-  # Hosts opt in with `nvidia.enable = true;`.
+  # Hosts opt in with `nvidia.enable = true;` (a host fact other aspects read, e.g. programs.btop)
+  # and tune the aspect through `settings.nvidia`.
   den.schema.host.imports = [
     {
-      options.nvidia = {
-        enable = lib.mkEnableOption "NVIDIA GPU support (includes the nvidia aspect)";
-        open = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Use the open-source kernel module (hardware.nvidia.open); older GPUs such as the GTX 10 series need false";
-        };
-        driverBranch = lib.mkOption {
-          type = lib.types.str;
-          default = "stable";
-          example = "legacy_580";
-          description = "Driver branch from `boot.kernelPackages.nvidiaPackages` (hardware.nvidia.package); Maxwell/Pascal/Volta GPUs such as the GTX 10 series need legacy_580";
-        };
-        containerToolkit = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Enable CDI devices (`nvidia.com/gpu=all`) for containers";
-        };
-      };
+      options.nvidia.enable = lib.mkEnableOption "NVIDIA GPU support (includes the nvidia aspect)";
     }
   ];
 
@@ -33,6 +16,25 @@
   den.schema.host.includes = [ den.policies.nvidia-on-host ];
 
   den.aspects.nvidia = {
+    settings = {
+      open = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Use the open-source kernel module (hardware.nvidia.open); older GPUs such as the GTX 10 series need false";
+      };
+      driverBranch = lib.mkOption {
+        type = lib.types.str;
+        default = "stable";
+        example = "legacy_580";
+        description = "Driver branch from `boot.kernelPackages.nvidiaPackages` (hardware.nvidia.package); Maxwell/Pascal/Volta GPUs such as the GTX 10 series need legacy_580";
+      };
+      containerToolkit = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable CDI devices (`nvidia.com/gpu=all`) for containers";
+      };
+    };
+
     nixos =
       {
         config,
@@ -41,7 +43,7 @@
         ...
       }:
       let
-        cfg = host.nvidia;
+        cfg = host.settings.nvidia;
       in
       {
         # Required by the NVIDIA driver

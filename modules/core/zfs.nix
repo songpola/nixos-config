@@ -1,21 +1,10 @@
 { den, lib, ... }:
 {
-  # Hosts opt in with `zfs.enable = true;`.
+  # Hosts opt in with `zfs.enable = true;` (a host fact other aspects read) and tune the
+  # aspect through `settings.zfs`.
   den.schema.host.imports = [
     {
-      options.zfs = {
-        enable = lib.mkEnableOption "ZFS support (includes the zfs aspect)";
-        hostId = lib.mkOption {
-          type = lib.types.nullOr (lib.types.strMatching "[0-9a-f]{8}");
-          default = null;
-          description = "networking.hostId; ZFS refuses to import pools without a unique 8-hex-digit ID (required when enabled)";
-        };
-        extraPools = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [ ];
-          description = "Pools to import after boot (boot.zfs.extraPools)";
-        };
-      };
+      options.zfs.enable = lib.mkEnableOption "ZFS support (includes the zfs aspect)";
     }
   ];
 
@@ -24,19 +13,24 @@
     lib.optional (host.class == "nixos" && host.zfs.enable) (den.lib.policy.include den.aspects.zfs);
   den.schema.host.includes = [ den.policies.zfs-on-host ];
 
+  den.aspects.zfs.settings = {
+    hostId = lib.mkOption {
+      type = lib.types.strMatching "[0-9a-f]{8}";
+      description = "networking.hostId; ZFS refuses to import pools without a unique 8-hex-digit ID";
+    };
+    extraPools = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Pools to import after boot (boot.zfs.extraPools)";
+    };
+  };
+
   den.aspects.zfs.nixos =
     { host, ... }:
     let
-      cfg = host.zfs;
+      cfg = host.settings.zfs;
     in
     {
-      assertions = [
-        {
-          assertion = cfg.hostId != null;
-          message = "zfs.hostId must be set on host ${host.name} when zfs.enable is true";
-        }
-      ];
-
       networking.hostId = cfg.hostId;
 
       boot.supportedFilesystems = [ "zfs" ];

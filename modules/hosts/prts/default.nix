@@ -2,20 +2,22 @@
 {
   den.hosts."x86_64-linux"."prts" = {
     users."songpola" = { };
-    zfs = {
-      enable = true;
-      hostId = "eb8b6756";
-      extraPools = [ "tank" ];
-    };
-    nvidia = {
-      enable = true;
-      # GTX 1050 Ti does not support open-source kernel module
-      open = false;
-      # The 590+ drivers dropped Pascal (GTX 10 series)
-      driverBranch = "legacy_580";
-    };
+    zfs.enable = true;
+    nvidia.enable = true;
 
     settings = {
+      zfs = {
+        hostId = "eb8b6756";
+        extraPools = [ "tank" ];
+      };
+
+      nvidia = {
+        # GTX 1050 Ti does not support open-source kernel module
+        open = false;
+        # The 590+ drivers dropped Pascal (GTX 10 series)
+        driverBranch = "legacy_580";
+      };
+
       programs.getty.autologinUser = "songpola";
 
       networking.networkd-bridge.macAddress = "b4:2e:99:91:b1:10"; # eno1
