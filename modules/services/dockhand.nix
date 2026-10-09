@@ -165,6 +165,48 @@ in
         };
     };
 
+    # Key for the credentials Dockhand stores (registry, git, environment secrets) from sops instead
+    # of `<dataDir>/.encryption_key`. To adopt an existing key, put the file's base64 into sops:
+    # Dockhand deletes the file on the first start with a matching key. A different key makes it
+    # re-encrypt the stored credentials under the new one (and delete the file as well).
+    _.encryption-key = {
+      includes = [ den.aspects.programs.sops ];
+
+      settings = {
+        sopsFile = lib.mkOption {
+          type = lib.types.path;
+          description = "sops-encrypted file holding the encryption key";
+        };
+        key = lib.mkOption {
+          type = lib.types.str;
+          default = "dockhand/ENCRYPTION_KEY";
+          description = "Key of the encryption key (base64 of 32 bytes) inside `sopsFile`";
+        };
+      };
+
+      nixos =
+        { config, host, ... }:
+        let
+          cfg = host.settings.services.${name}.encryption-key;
+          secret = "${name}/encryption-key";
+        in
+        {
+          sops.secrets.${secret} = {
+            inherit (cfg) sopsFile key;
+          };
+          sops.templates."${name}.env" = {
+            content = ''
+              ENCRYPTION_KEY=${config.sops.placeholder.${secret}}
+            '';
+            restartUnits = [ "podman-${name}.service" ];
+          };
+
+          virtualisation.oci-containers.containers.${name}.environmentFiles = [
+            config.sops.templates."${name}.env".path
+          ];
+        };
+    };
+
     # Sign in only through the one OIDC provider: skip the login form and hide local logins
     # (still reachable at /login?local=1 for recovery). The provider itself is configured in
     # Dockhand's UI (Settings > Authentication), with redirect `https://<domain>/api/auth/oidc/callback`.

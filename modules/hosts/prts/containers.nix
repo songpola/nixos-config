@@ -17,6 +17,7 @@
       dataDir = "/tank/v2/services/dockhand";
       user = "songpola";
       domain = "dockhand.songpola.dev";
+      encryption-key.sopsFile = ./secrets/dockhand.secrets.yaml;
     };
 
     services.dozzle = {
@@ -32,6 +33,7 @@
 
     services.caddy-reverse-proxy
     services.dockhand
+    services.dockhand.encryption-key
     services.dozzle
   ];
 }
