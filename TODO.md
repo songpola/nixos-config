@@ -181,6 +181,10 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    `preferred_username`; the manual doesn't say whether it does PKCE). The free
    edition makes every user an admin, so its login only adds audit identity.
    Recommended: OIDC with `OIDC_AUTOLOGIN` + `DISABLE_LOCAL_LOGIN`.
+   - [~] Done in code: Kanidm client `dockhand` (PKCE S256, scope map for
+     `prts_admins`, secret `dockhand/OIDC_CLIENT_SECRET` in
+     `secrets/auth.secrets.yaml`) and the `services.dockhand.sso-login`
+     sub-aspect. Left: add the provider in Dockhand's UI.
    - [x] Matched to the infra (from the manual): `ORIGIN`,
      `TRUST_FORWARDED_HEADERS` (only without a published port),
      `HOST_DOCKER_SOCKET` for scanner containers, and `dockhand.update=false`

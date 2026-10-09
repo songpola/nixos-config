@@ -13,6 +13,8 @@ let
   clientSecret = den.aspects.services.oauth2-proxy.meta.clientSecret;
   # Groups as Kanidm sends them (SPN), for `import auth <group>`
   adminGroup = "prts_admins@${idmDomain}";
+  # Dockhand's own OIDC client; the same secret goes into Dockhand's UI
+  dockhandSecret = "kanidm/dockhand-client-secret";
 in
 {
   den.hosts."x86_64-linux"."prts".settings.services = {
@@ -47,10 +49,20 @@ in
 
       services.dozzle.forward-auth
       services.dockhand.forward-auth
+      services.dockhand.sso-login
     ];
 
     nixos =
-      { config, ... }:
+      { config, host, ... }:
+      let
+        dockhandDomain = host.settings.services.dockhand.domain;
+        scopes = [
+          "openid"
+          "email"
+          "profile"
+          "groups"
+        ];
+      in
       {
         services.kanidm.provision = {
           groups = {
@@ -76,19 +88,34 @@ in
             # preferred_username as the plain name, not the SPN
             preferShortUsername = true;
             # Only members of these groups can sign in at all; the gate then checks the group per site
-            scopeMaps = lib.genAttrs [ "prts_admins" "prts_media" ] (_: [
-              "openid"
-              "email"
-              "profile"
-              "groups"
-            ]);
+            scopeMaps = lib.genAttrs [ "prts_admins" "prts_media" ] (_: scopes);
+          };
+
+          # Dockhand's own login (services.dockhand.sso-login), behind the gate. In Dockhand's UI:
+          # issuer https://<idm>/oauth2/openid/dockhand, client ID `dockhand`, this secret, scopes
+          # as below, admin claim `groups` with value prts_admins@<idm>. Uses PKCE S256.
+          systems.oauth2.dockhand = {
+            displayName = "Dockhand";
+            originUrl = "https://${dockhandDomain}/api/auth/oidc/callback";
+            originLanding = "https://${dockhandDomain}/";
+            basicSecretFile = config.sops.secrets.${dockhandSecret}.path;
+            preferShortUsername = true;
+            scopeMaps.prts_admins = scopes;
           };
         };
 
-        # Kanidm's copy of the client secret, read by provisioning
-        sops.secrets.${clientSecret} = {
-          owner = "kanidm";
-          restartUnits = [ "kanidm.service" ];
+        # Kanidm's copies of the client secrets, read by provisioning
+        sops.secrets = {
+          ${clientSecret} = {
+            owner = "kanidm";
+            restartUnits = [ "kanidm.service" ];
+          };
+          ${dockhandSecret} = {
+            sopsFile = ./secrets/auth.secrets.yaml;
+            key = "dockhand/OIDC_CLIENT_SECRET";
+            owner = "kanidm";
+            restartUnits = [ "kanidm.service" ];
+          };
         };
       };
   };

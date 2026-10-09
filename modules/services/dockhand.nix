@@ -164,5 +164,13 @@ in
             "auth ${cfg.forward-auth.group}";
         };
     };
+
+    # Sign in only through the one OIDC provider: skip the login form and hide local logins
+    # (still reachable at /login?local=1 for recovery). The provider itself is configured in
+    # Dockhand's UI (Settings > Authentication), with redirect `https://<domain>/api/auth/oidc/callback`.
+    _.sso-login.nixos.virtualisation.oci-containers.containers.${name}.environment = {
+      OIDC_AUTOLOGIN = "true";
+      DISABLE_LOCAL_LOGIN = "true";
+    };
   };
 }
