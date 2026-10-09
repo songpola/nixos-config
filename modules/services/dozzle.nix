@@ -1,6 +1,8 @@
 # Dozzle for viewing container logs (https://dozzle.dev)
 # Runs as a NixOS oci-containers unit (podman backend) with access to the rootful podman socket.
 # Exposed through services.caddy-reverse-proxy when settings.domain is set, else on settings.port.
+# The `forward-auth` sub-aspect puts it behind services.oauth2-proxy and makes Dozzle take the
+# user from its headers (Dozzle's forward-proxy mode) instead of its own login.
 { den, lib, ... }:
 let
   name = "dozzle";
@@ -85,5 +87,52 @@ in
           };
         })
       ];
+
+    # Gate the site with `import auth <group>` and trust the identity headers. No roles header is
+    # sent, so every user who passes the gate gets all Dozzle roles (actions included).
+    _.forward-auth = {
+      includes = [ den.aspects.services.oauth2-proxy ];
+
+      settings = {
+        group = lib.mkOption {
+          type = lib.types.str;
+          example = "admins@idm.example.com";
+          description = "Group a user needs, as the identity provider sends it";
+        };
+        logoutUrl = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "https://auth.example.com/oauth2/sign_out";
+          description = "Where Dozzle's logout button goes (oauth2-proxy's sign_out ends the session)";
+        };
+      };
+
+      nixos =
+        { host, ... }:
+        let
+          cfg = host.settings.services.${name};
+          auth = cfg.forward-auth;
+          headers = den.aspects.services.oauth2-proxy.meta.headers;
+        in
+        {
+          assertions = [
+            {
+              assertion = cfg.domain != null && cfg.port == null;
+              message = "services.dozzle.forward-auth needs services.dozzle.domain, and no port (it would skip the gate).";
+            }
+          ];
+
+          virtualisation.oci-containers.containers.${name} = {
+            labels."caddy.import" = "auth ${auth.group}";
+            environment = {
+              DOZZLE_AUTH_PROVIDER = "forward-proxy";
+              DOZZLE_AUTH_HEADER_USER = headers.preferredUsername;
+              DOZZLE_AUTH_HEADER_EMAIL = headers.email;
+              DOZZLE_AUTH_HEADER_NAME = headers.preferredUsername;
+            }
+            // lib.optionalAttrs (auth.logoutUrl != null) { DOZZLE_AUTH_LOGOUT_URL = auth.logoutUrl; };
+          };
+        };
+    };
   };
 }

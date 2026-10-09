@@ -62,8 +62,8 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 ## 4. Central auth (Kanidm + oauth2-proxy)
 
-Status (2026-10-09): steps 1-5 are written and committed, not deployed
-or tested on prts yet; steps 6 and 7 are still planned (plan saved
+Status (2026-10-09): steps 1-6 are written (1-5 pushed to `main`), not deployed
+or tested on prts yet; step 7 is still planned (plan saved
 2026-10-06, reviewed against the current setup the same day).
 
 Next: deploy prts (merge to `main`, or `nh os switch` on prts), then check that
@@ -167,11 +167,17 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    `oauth2-proxy` came with step 4. Not added to built-in groups. After
    deploying: `kanidm person credential create-reset-token songpola -D idm_admin`
    and enroll the passkey.
-6. [ ] **Apps (only these for now).** Dozzle: `import auth <admin group>`; new
-   `settings.auth` option sets `DOZZLE_AUTH_PROVIDER=forward-proxy` and
-   `DOZZLE_AUTH_HEADER_*` to `X-Auth-Request-*`. Dockhand: `import auth <admin
-   group>`; check whether it supports OIDC and whether its own login can be
-   turned off or kept as a second layer.
+6. [x] **Apps (only these for now).** `forward-auth` sub-aspects on
+   `services.dozzle` and `services.dockhand` (group from settings; they assert
+   a domain and no published port). Dozzle runs in forward-proxy mode with
+   user/name from `X-Auth-Request-Preferred-Username`, email from
+   `X-Auth-Request-Email`, logout to oauth2-proxy's `sign_out`; no roles header,
+   so it grants all roles. Dockhand is only gated: it supports OIDC in the free
+   edition, but configured in its UI (stored in its database), and its local
+   login can be hidden with `DISABLE_LOCAL_LOGIN` (still at `/login?local=1`).
+   Decide after testing: leave Dockhand's own auth as a second layer, turn it
+   off, or add a Kanidm client `dockhand` (redirect
+   `/api/auth/oidc/callback`, PKCE S256).
 7. [ ] **Version-bump workflow** `.github/workflows/bump-kanidm.yml`, weekly
    after `update-flake-lock`: if the locked nixpkgs has `kanidm_1_<n+1>`, open a
    PR that changes only the version setting. CI builds prts, merging deploys via

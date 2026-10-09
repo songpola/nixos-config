@@ -12,8 +12,9 @@
 #     caddy: app.example.com
 #     caddy.import: auth admins@idm.example.com
 #     caddy.reverse_proxy: "{{upstreams 8080}}"
-# Gated apps get the user from the X-Auth-Request-{User,Email,Groups,Preferred-Username} headers;
-# client-supplied ones are replaced.
+# Gated apps get the user from the X-Auth-Request-{User,Email,Groups,Preferred-Username} headers
+# (`meta.headers`); client-supplied ones are replaced. Never publish a gated app's port: that
+# skips the gate.
 { den, lib, ... }:
 let
   name = "oauth2-proxy";
@@ -22,12 +23,13 @@ let
   containerPort = 4180;
   clientSecret = "${name}/client-secret";
   cookieSecret = "${name}/cookie-secret";
-  identityHeaders = [
-    "X-Auth-Request-User"
-    "X-Auth-Request-Email"
-    "X-Auth-Request-Groups"
-    "X-Auth-Request-Preferred-Username"
-  ];
+  # Identity headers Caddy passes on to gated apps (`--set-xauthrequest`)
+  headers = {
+    user = "X-Auth-Request-User"; # the OIDC `sub` (a UUID with Kanidm)
+    email = "X-Auth-Request-Email";
+    groups = "X-Auth-Request-Groups"; # comma-separated
+    preferredUsername = "X-Auth-Request-Preferred-Username";
+  };
 in
 {
   den.aspects.services.${name} = {
@@ -38,6 +40,8 @@ in
 
     # For the identity provider's copy of the client secret (e.g. Kanidm's `basicSecretFile`)
     meta.clientSecret = clientSecret;
+    # For gated apps that read the user from headers (e.g. services.dozzle.forward-auth)
+    meta.headers = headers;
 
     settings = {
       domain = lib.mkOption {
@@ -161,7 +165,7 @@ in
         (auth) {
           forward_auth ${name}:${toString containerPort} {
             uri /oauth2/auth?allowed_groups={args[0]}
-            copy_headers ${lib.concatStringsSep " " identityHeaders}
+            copy_headers ${lib.concatStringsSep " " (lib.attrValues headers)}
             @unauthenticated status 401
             handle_response @unauthenticated {
               redir * https://${cfg.domain}/oauth2/start?rd={scheme}://{host}{uri}

@@ -11,6 +11,8 @@ let
   authDomain = "auth.songpola.dev";
   clientId = "oauth2-proxy";
   clientSecret = den.aspects.services.oauth2-proxy.meta.clientSecret;
+  # Groups as Kanidm sends them (SPN), for `import auth <group>`
+  adminGroup = "prts_admins@${idmDomain}";
 in
 {
   den.hosts."x86_64-linux"."prts".settings.services = {
@@ -29,12 +31,22 @@ in
       inherit clientId;
       sopsFile = ./secrets/auth.secrets.yaml;
     };
+
+    # Gated sites (the services themselves are in containers.nix)
+    dozzle.forward-auth = {
+      group = adminGroup;
+      logoutUrl = "https://${authDomain}/oauth2/sign_out";
+    };
+    dockhand.forward-auth.group = adminGroup;
   };
 
   den.aspects."prts" = {
     includes = with den.aspects; [
       services.kanidm
       services.oauth2-proxy
+
+      services.dozzle.forward-auth
+      services.dockhand.forward-auth
     ];
 
     nixos =
@@ -57,7 +69,7 @@ in
           };
 
           systems.oauth2.${clientId} = {
-            displayName = "prts";
+            displayName = "PRTS";
             originUrl = "https://${authDomain}/oauth2/callback";
             originLanding = "https://${authDomain}/oauth2/start";
             basicSecretFile = config.sops.secrets.${clientSecret}.path;

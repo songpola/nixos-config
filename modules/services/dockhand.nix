@@ -1,6 +1,8 @@
 # Dockhand for managing containers and compose stacks (https://dockhand.pro)
 # Runs as a NixOS oci-containers unit (podman backend) with access to the rootful podman socket.
 # Exposed through services.caddy-reverse-proxy when settings.domain is set, else on settings.port.
+# The `forward-auth` sub-aspect puts it behind services.oauth2-proxy. Dockhand's own
+# authentication (local users or OIDC) is configured in its UI and stays independent of the gate.
 { den, lib, ... }:
 let
   name = "dockhand";
@@ -122,5 +124,33 @@ in
           };
         })
       ];
+
+    # Gate the site with `import auth <group>` (Dockhand ignores the identity headers)
+    _.forward-auth = {
+      includes = [ den.aspects.services.oauth2-proxy ];
+
+      settings.group = lib.mkOption {
+        type = lib.types.str;
+        example = "admins@idm.example.com";
+        description = "Group a user needs, as the identity provider sends it";
+      };
+
+      nixos =
+        { host, ... }:
+        let
+          cfg = host.settings.services.${name};
+        in
+        {
+          assertions = [
+            {
+              assertion = cfg.domain != null && cfg.port == null;
+              message = "services.dockhand.forward-auth needs services.dockhand.domain, and no port (it would skip the gate).";
+            }
+          ];
+
+          virtualisation.oci-containers.containers.${name}.labels."caddy.import" =
+            "auth ${cfg.forward-auth.group}";
+        };
+    };
   };
 }
