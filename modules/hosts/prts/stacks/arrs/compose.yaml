@@ -39,19 +39,19 @@ services:
       - caddy
       - default
     labels:
-      caddy_1: starrs-qbittorrent.songpola.dev
+      caddy_1: qbit.songpola.dev
       caddy_1.reverse_proxy: "{{upstreams 8080}}"
-      caddy_2: starrs-clonarr.songpola.dev
+      caddy_2: clonarr.songpola.dev
       caddy_2.reverse_proxy: "{{upstreams 6060}}"
-      caddy_3: starrs-prowlarr.songpola.dev
+      caddy_3: prowlarr.songpola.dev
       caddy_3.reverse_proxy: "{{upstreams 9696}}"
-      caddy_4: starrs-radarr.songpola.dev
+      caddy_4: radarr.songpola.dev
       caddy_4.reverse_proxy: "{{upstreams 7878}}"
-      caddy_5: starrs-radarr-anime.songpola.dev
+      caddy_5: radarr-anime.songpola.dev
       caddy_5.reverse_proxy: "{{upstreams 7879}}"
-      caddy_6: starrs-sonarr.songpola.dev
+      caddy_6: sonarr.songpola.dev
       caddy_6.reverse_proxy: "{{upstreams 8989}}"
-      caddy_7: starrs-sonarr-anime.songpola.dev
+      caddy_7: sonarr-anime.songpola.dev
       caddy_7.reverse_proxy: "{{upstreams 8990}}"
     # arrs-prowlarr: a little hack for bypassing Cloudflare
     extra_hosts:

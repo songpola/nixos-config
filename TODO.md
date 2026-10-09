@@ -19,22 +19,20 @@ Stacks live in `/tank/v2/services/dockhand/stacks`; deploy them from Dockhand.
 - [ ] New stacks from `modules/hosts/prts/stacks/`: `protonmail-bridge`,
       `arrs` (formerly "starrs"; includes qui), `jellyfin` (check the GPU is
       visible: `nvidia-smi` in the container). `arrs` and `jellyfin` take their
-      host paths from `.env` (copy it into Dockhand with the compose file); first
-      move the data to the paths they name (nothing may be running from them):
-  ```nu
-  # Datasets: mountpoints are inherited, so they follow the rename
-  sudo zfs rename tank/v2/starrs-stack tank/v2/services/arrs
-  sudo zfs rename tank/v2/services/qui tank/v2/services/arrs/qui
-  sudo zfs rename tank/v2/starrs-data tank/v2/arrs-data
-  # Per-app config directories lose the starrs- prefix
-  cd /tank/v2/services/arrs
-  for app in [qbittorrent clonarr prowlarr radarr radarr-anime sonarr sonarr-anime] {
-    sudo mv $"starrs-($app)" $app
-  }
-  # starrs-recyclarr is unused since Clonarr: keep or delete
-  ```
-  Container paths stay `/mnt/starrs-data` on purpose (the apps store them in
-  their databases), and so do the `starrs-*.songpola.dev` domains for now.
+      host paths from `.env` (copy it into Dockhand with the compose file). Data
+      moved 2026-10-10 (`tank/v2/arrs-data`, `tank/v2/services/arrs/<app>`,
+      `@migrate` snapshots kept; qui is a plain directory now, not a dataset).
+      Containers are `arrs-*`, the namespace holder `arrs`, and domains drop
+      the prefix (`sonarr.songpola.dev`, `qbit.songpola.dev`, ...). Before the
+      first start, the apps' stored links must stop using the old container
+      names (`tank/v2/services/arrs@pre-localhost` is the undo):
+      - [ ] Sonarr/Radarr indexers (`starrs-prowlarr:9696`) and download
+        clients (`starrs-qbittorrent`), Prowlarr's apps, download client and
+        Byparr proxy, `clonarr.json`: `localhost:<port>` (shared namespace)
+      - [ ] qui's qBittorrent and Prowlarr hosts (`starrs:8080`, `starrs:9696`):
+        `arrs:<port>` (qui isn't in the namespace)
+      Container paths stay `/mnt/starrs-data` on purpose (the apps store them in
+      their databases).
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack`
       (databases in named volumes; create, import, then start):
   ```nu
@@ -282,7 +280,7 @@ resolves to Caddy), 2 and 3 (requests with a session pass
   LunaSea, calendar feeds) would need an `auth-arr` variant that skips `/api/*`
   and `/feed/*` (the apps check API keys there). Check "Real client IPs behind
   Caddy" first: every client counts as local. Renamed from "starrs" except
-  container paths and domains (`starrs-*.songpola.dev`).
+  the container path (`/mnt/starrs-data`).
 - **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
   POSIX password, passkeys don't work there), optional SSO plugin. Its LAN
   networks see every client as local, see "Real client IPs behind Caddy".
