@@ -23,6 +23,8 @@ in
       # update-flake-lock workflow (it edits this exact line).
       version = "1_11";
       domain = idmDomain;
+      # LDAPS for Jellyfin's LDAP plugin
+      ldapPort = 636;
       backupDir = "/tank/v2/services/kanidm/backups";
       sopsFile = ./secrets/auth.secrets.yaml;
     };

@@ -45,6 +45,18 @@ in
         default = 8443;
         description = "Port Kanidm listens on (HTTPS)";
       };
+      ldapPort = lib.mkOption {
+        type = lib.types.nullOr lib.types.port;
+        default = null;
+        example = 636;
+        description = ''
+          Serve read-only LDAPS on this port (same certificate), for apps without OIDC; null keeps
+          LDAP off. Opened to podman bridges like the HTTPS port; containers on the proxy network
+          must map the domain to the host (`extra_hosts: <domain>:host-gateway`), since there it
+          resolves to the proxy, which doesn't carry LDAP. LDAP binds use a person's POSIX
+          password, never passkeys.
+        '';
+      };
       backupDir = lib.mkOption {
         type = lib.types.str;
         default = "/var/lib/kanidm/backups";
@@ -81,6 +93,7 @@ in
       let
         cfg = host.settings.services.${name};
         port = toString cfg.port;
+        ports = [ cfg.port ] ++ lib.optional (cfg.ldapPort != null) cfg.ldapPort;
         certDir = config.security.acme.certs.${cfg.domain}.directory;
         hasZfs = config.boot.zfs.enabled;
       in
@@ -100,6 +113,8 @@ in
               inherit (cfg) domain;
               origin = "https://${cfg.domain}";
               bindaddress = "0.0.0.0:${port}";
+              # The module grants CAP_NET_BIND_SERVICE, so a port below 1024 works
+              ldapbindaddress = lib.mkIf (cfg.ldapPort != null) "0.0.0.0:${toString cfg.ldapPort}";
               tls_chain = "${certDir}/fullchain.pem";
               tls_key = "${certDir}/key.pem";
               online_backup = {
@@ -149,14 +164,18 @@ in
           after = wants ++ lib.optional hasZfs "zfs-mount.service";
         };
 
-        # The proxy container reaches Kanidm through the bridge gateway (host.containers.internal);
-        # the bridge names are dynamic (podman0, podman1, ...).
+        # The proxy container (and LDAP clients) reach Kanidm through the bridge gateway
+        # (host.containers.internal); the bridge names are dynamic (podman0, podman1, ...).
         networking.firewall.extraInputRules = lib.mkIf config.networking.nftables.enable ''
-          iifname "podman*" tcp dport ${port} accept comment "kanidm from podman bridges"
+          iifname "podman*" tcp dport { ${
+            lib.concatMapStringsSep ", " toString ports
+          } } accept comment "kanidm from podman bridges"
         '';
-        networking.firewall.extraCommands = lib.mkIf (!config.networking.nftables.enable) ''
-          iptables -A nixos-fw -i podman+ -p tcp --dport ${port} -j nixos-fw-accept
-        '';
+        networking.firewall.extraCommands = lib.mkIf (!config.networking.nftables.enable) (
+          lib.concatMapStrings (p: ''
+            iptables -A nixos-fw -i podman+ -p tcp --dport ${toString p} -j nixos-fw-accept
+          '') ports
+        );
       };
 
     # The proxy serves Kanidm's domain, and containers on the proxy network reach it through

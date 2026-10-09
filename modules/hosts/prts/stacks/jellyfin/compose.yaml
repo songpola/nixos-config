@@ -18,9 +18,14 @@ services:
       # as in that stack, so the paths the arrs report match Jellyfin's libraries; fixed,
       # because Jellyfin stores it per library and item (watch state is keyed by path)
       - ${ARRS_DATA:?set in .env}/media:/mnt/starrs-data/media
-    # NVIDIA GPU via CDI (hardware.nvidia-container-toolkit); untested through compose
+    # NVIDIA GPU via CDI (hardware.nvidia-container-toolkit)
     devices:
       - nvidia.com/gpu=all
+    # The LDAP plugin talks LDAPS to Kanidm on the host (port 636). On the caddy network this
+    # domain resolves to Caddy (a network alias), which doesn't carry LDAP; mapping it to the
+    # host keeps certificate verification on the real name
+    extra_hosts:
+      - "idm.songpola.dev:host-gateway"
     networks:
       - caddy
     labels:
