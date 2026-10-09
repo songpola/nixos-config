@@ -33,8 +33,12 @@
     # NOTE: Lingering did not work well on WSL (v3); untested since.
     # _.user-linger.user.linger = true;
 
-    # Labels that opt a container into the `auto-update` sub-aspect's updates
-    meta.autoUpdateLabels."io.containers.autoupdate" = "registry";
+    # Labels that opt a container into the `auto-update` sub-aspect's updates, and keep other
+    # updaters away: Dockhand (services.dockhand) would recreate it outside its systemd unit.
+    meta.autoUpdateLabels = {
+      "io.containers.autoupdate" = "registry";
+      "dockhand.update" = "false";
+    };
 
     # Daily `podman auto-update` (the timer ships with podman): pulls newer images for containers
     # labelled with `meta.autoUpdateLabels` and restarts their systemd unit, rolling back to the old

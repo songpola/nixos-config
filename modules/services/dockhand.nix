@@ -8,6 +8,8 @@ let
   name = "dockhand";
   # Dockhand's web UI port inside the container
   containerPort = 3000;
+  # The host's rootful podman socket; there is no /var/run/docker.sock on the host
+  podmanSocket = "/run/podman/podman.sock";
 in
 {
   den.aspects.services.${name} = {
@@ -89,7 +91,7 @@ in
           virtualisation.oci-containers.containers.${name} = {
             inherit (cfg) image;
             volumes = [
-              "/run/podman/podman.sock:/var/run/docker.sock"
+              "${podmanSocket}:/var/run/docker.sock"
               # Same path inside and outside so stacks with relative bind mounts work
               "${cfg.dataDir}:${cfg.dataDir}"
             ]
@@ -99,6 +101,9 @@ in
               TZ = if config.time.timeZone == null then "UTC" else config.time.timeZone;
               DATA_DIR = cfg.dataDir;
               STACKS_DIR = stacksDir;
+              # Host-side socket that vulnerability scanner containers bind-mount (auto-detection
+              # would pick the in-container path, which doesn't exist on the host)
+              HOST_DOCKER_SOCKET = podmanSocket;
             }
             // lib.optionalAttrs (cfg.user != null) {
               PUID = toString config.users.users.${cfg.user}.uid;
@@ -122,6 +127,12 @@ in
               "caddy" = cfg.domain;
               "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
             };
+            environment = {
+              # Public address (needed for passkeys and behind a proxy)
+              ORIGIN = "https://${cfg.domain}";
+            }
+            # Client IPs from Caddy's X-Forwarded-For; only when the proxy is the sole way in
+            // lib.optionalAttrs (cfg.port == null) { TRUST_FORWARDED_HEADERS = "true"; };
           };
         })
       ];

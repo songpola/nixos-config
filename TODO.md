@@ -177,7 +177,20 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    login can be hidden with `DISABLE_LOCAL_LOGIN` (still at `/login?local=1`).
    Decide after testing: leave Dockhand's own auth as a second layer, turn it
    off, or add a Kanidm client `dockhand` (redirect
-   `/api/auth/oidc/callback`, PKCE S256).
+   `/api/auth/oidc/callback`, scopes `openid profile email`, username from
+   `preferred_username`; the manual doesn't say whether it does PKCE). The free
+   edition makes every user an admin, so its login only adds audit identity.
+   Recommended: OIDC with `OIDC_AUTOLOGIN` + `DISABLE_LOCAL_LOGIN`.
+   - [x] Matched to the infra (from the manual): `ORIGIN`,
+     `TRUST_FORWARDED_HEADERS` (only without a published port),
+     `HOST_DOCKER_SOCKET` for scanner containers, and `dockhand.update=false`
+     on the Nix-managed containers (`programs.podman.meta.autoUpdateLabels`;
+     the label is documented for Hawser, check the Updates view skips them).
+   - [ ] `ENCRYPTION_KEY` from sops: copy `$DATA_DIR/.encryption_key` into
+     sops first (Dockhand deletes the file on the first start with a matching
+     key; a wrong key makes stored credentials unreadable).
+   - [ ] Stack updates in Dockhand (per-environment schedule) with
+     `MINIMUM_RELEASE_AGE_HOURS` (e.g. 48), after the skip label is confirmed.
 7. [ ] **Version-bump workflow** `.github/workflows/bump-kanidm.yml`, weekly
    after `update-flake-lock`: if the locked nixpkgs has `kanidm_1_<n+1>`, open a
    PR that changes only the version setting. CI builds prts, merging deploys via
