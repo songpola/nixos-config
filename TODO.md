@@ -227,8 +227,10 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
      Dockhand logged "Using ENCRYPTION_KEY from environment, removed key file".
      (Dockhand reads it as base64 of 32 bytes; a different key re-encrypts the
      stored credentials instead of losing them.)
-   - [x] Scheduled update check in Dockhand, daily at 04:00. No minimum image
-     age (`MINIMUM_RELEASE_AGE_HOURS`, decided not to use it).
+   - [x] Scheduled update check in Dockhand (PRTS environment → Updates), daily
+     at 05:30: after the 04:00 NixOS auto-upgrade (which may restart Dockhand
+     or reboot) and the 05:00 Git stack sync. No minimum image age
+     (`MINIMUM_RELEASE_AGE_HOURS`, decided not to use it).
 7. [x] **Version bump**, in `update-flake-lock.yml` instead of a separate
    workflow: when the updated nixpkgs has `kanidmWithSecretProvisioning_1_<n+1>`,
    the same PR bumps `version` in `modules/hosts/prts/auth.nix` (one release per
