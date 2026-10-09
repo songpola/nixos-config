@@ -26,8 +26,9 @@ the source of truth, see CLAUDE.md); the others live in
         (public, no credentials).
       - New Git stack: branch `main`, compose path
         `modules/hosts/prts/stacks/<stack>/compose.yaml` (its `.env` is picked
-        up automatically), auto-sync on a schedule (e.g. every 15 minutes; no
-        webhook, Dockhand is Tailscale-only).
+        up automatically; leave the env panel empty, no "Populate"), scheduled
+        sync daily at 05:00 (after the 04:00 NixOS auto-upgrade, which a
+        stack's change may depend on; no webhook, Dockhand is Tailscale-only).
       - `arrs` is already deployed as an internal stack: delete that one first
         (container names are fixed; data is in bind mounts, nothing is lost),
         then add it as a Git stack.
