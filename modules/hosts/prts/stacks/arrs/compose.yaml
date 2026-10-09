@@ -1,8 +1,8 @@
 # Arrs stack for media automation. Setup guide: ./arrs.md
 #
-# Like the former podman pod: every app shares the network namespace of the `arrs`
-# container (network_mode: service:arrs), so they reach each other on localhost, and
-# `arrs` holds the published ports, the Caddy labels and the extra hosts.
+# Every app is its own container on the stack's default network and reaches the others by
+# service name (prowlarr:9696, qbittorrent:8080, ...); the apps store those links, so keep the
+# service names. Apps with a web UI also join `caddy`, each with its own labels.
 #
 # Host paths come from .env, so the data and config can move (another dataset or pool) by
 # changing .env alone:
@@ -21,43 +21,11 @@ x-common-env: &common-env
 
 x-app: &app
   restart: unless-stopped
-  network_mode: service:arrs
-  depends_on:
-    - arrs
+  networks:
+    - default
+    - caddy
 
 services:
-  # Network namespace holder (the pod's infra container)
-  arrs:
-    image: registry.k8s.io/pause:3.10
-    container_name: arrs
-    restart: unless-stopped
-    ports:
-      # arrs-qbittorrent torrenting port
-      - "6882:6882"
-      - "6882:6882/udp"
-    networks:
-      - caddy
-      - default
-    labels:
-      caddy_1: qbit.songpola.dev
-      caddy_1.reverse_proxy: "{{upstreams 8080}}"
-      caddy_2: clonarr.songpola.dev
-      caddy_2.reverse_proxy: "{{upstreams 6060}}"
-      caddy_3: prowlarr.songpola.dev
-      caddy_3.reverse_proxy: "{{upstreams 9696}}"
-      caddy_4: radarr.songpola.dev
-      caddy_4.reverse_proxy: "{{upstreams 7878}}"
-      caddy_5: radarr-anime.songpola.dev
-      caddy_5.reverse_proxy: "{{upstreams 7879}}"
-      caddy_6: sonarr.songpola.dev
-      caddy_6.reverse_proxy: "{{upstreams 8989}}"
-      caddy_7: sonarr-anime.songpola.dev
-      caddy_7.reverse_proxy: "{{upstreams 8990}}"
-    # arrs-prowlarr: a little hack for bypassing Cloudflare
-    extra_hosts:
-      - "bearbit.org:128.1.35.170"
-      - "www.bearbit.org:128.1.35.170"
-
   # Downloader: qBittorrent (will be used by Radarr/Sonarr)
   # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./arrs.md
   qbittorrent:
@@ -67,10 +35,17 @@ services:
     environment:
       <<: *common-env
       TORRENTING_PORT: "6882"
+    ports:
+      # Torrenting port
+      - "6882:6882"
+      - "6882:6882/udp"
     volumes:
       - ${ARRS_CONFIG:?set in .env}/qbittorrent/config:/config
       - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
     mem_limit: 2g
+    labels:
+      caddy: qbit.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8080}}"
 
   # Guide Sync (configuration management)
   clonarr:
@@ -80,12 +55,15 @@ services:
     environment: *common-env
     volumes:
       - ${ARRS_CONFIG:?set in .env}/clonarr/config:/config
+    labels:
+      caddy: clonarr.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 6060}}"
 
-  # Indexer Proxies (for bypassing Cloudflare blocks on indexers)
+  # Indexer Proxies (for bypassing Cloudflare blocks on indexers); only Prowlarr uses it
   byparr:
-    <<: *app
     image: ghcr.io/thephaseless/byparr:latest
     container_name: arrs-byparr
+    restart: unless-stopped
 
   # Indexer
   prowlarr:
@@ -95,6 +73,13 @@ services:
     environment: *common-env
     volumes:
       - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
+    # A little hack for bypassing Cloudflare
+    extra_hosts:
+      - "bearbit.org:128.1.35.170"
+      - "www.bearbit.org:128.1.35.170"
+    labels:
+      caddy: prowlarr.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 9696}}"
 
   # Movies (Main)
   radarr:
@@ -107,8 +92,12 @@ services:
     volumes:
       - ${ARRS_CONFIG:?set in .env}/radarr/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
+    labels:
+      caddy: radarr.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 7878}}"
 
-  # Movies (Anime)
+  # Movies (Anime); the port differs from the default only because Prowlarr and Clonarr
+  # store it (it dates from the shared network namespace)
   radarr-anime:
     <<: *app
     image: lscr.io/linuxserver/radarr:version-6.1.1.10360
@@ -119,6 +108,9 @@ services:
     volumes:
       - ${ARRS_CONFIG:?set in .env}/radarr-anime/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
+    labels:
+      caddy: radarr-anime.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 7879}}"
 
   # TV Series (Main)
   sonarr:
@@ -131,8 +123,11 @@ services:
     volumes:
       - ${ARRS_CONFIG:?set in .env}/sonarr/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
+    labels:
+      caddy: sonarr.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8989}}"
 
-  # TV Series (Anime)
+  # TV Series (Anime); port as for radarr-anime
   sonarr-anime:
     <<: *app
     image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
@@ -143,20 +138,20 @@ services:
     volumes:
       - ${ARRS_CONFIG:?set in .env}/sonarr-anime/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
+    labels:
+      caddy: sonarr-anime.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8990}}"
 
-  # qui for managing qBittorrent (reaches it at arrs:8080 on the default network)
+  # qui for managing qBittorrent (qbittorrent:8080) and searching through Prowlarr
   # https://getqui.com/docs/getting-started/docker#local-filesystem-access
   qui:
+    <<: *app
     image: ghcr.io/hotio/qui:latest
     container_name: qui
-    restart: unless-stopped
     environment: *common-env
     volumes:
       - ${ARRS_CONFIG:?set in .env}/qui/config:/config
       - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
-    networks:
-      - caddy
-      - default
     labels:
       caddy: qui.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7476}}"

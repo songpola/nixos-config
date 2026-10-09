@@ -22,15 +22,17 @@ Stacks live in `/tank/v2/services/dockhand/stacks`; deploy them from Dockhand.
       host paths from `.env` (copy it into Dockhand with the compose file). Data
       moved 2026-10-10 (`tank/v2/arrs-data`, `tank/v2/services/arrs/<app>`,
       `@migrate` snapshots kept; qui is a plain directory now, not a dataset).
-      Containers are `arrs-*`, the namespace holder `arrs`, and domains drop
-      the prefix (`sonarr.songpola.dev`, `qbit.songpola.dev`, ...). Before the
-      first start, the apps' stored links must stop using the old container
-      names (`tank/v2/services/arrs@pre-localhost` is the undo):
-      - [ ] Sonarr/Radarr indexers (`starrs-prowlarr:9696`) and download
-        clients (`starrs-qbittorrent`), Prowlarr's apps, download client and
-        Byparr proxy, `clonarr.json`: `localhost:<port>` (shared namespace)
-      - [ ] qui's qBittorrent and Prowlarr hosts (`starrs:8080`, `starrs:9696`):
-        `arrs:<port>` (qui isn't in the namespace)
+      The stack no longer shares one network namespace (the pod-style `arrs`
+      pause container is gone): every app is its own container on the stack's
+      network, containers are `arrs-*`, and domains drop the prefix
+      (`sonarr.songpola.dev`, `qbit.songpola.dev`, ...).
+      - [ ] Before the first start, point the apps' stored links at service
+        names instead of the old container names (`starrs-prowlarr:9696` →
+        `prowlarr:9696`, `starrs-qbittorrent` → `qbittorrent`, qui's
+        `starrs:8080` → `qbittorrent:8080`, ...): Sonarr/Radarr indexers and
+        download clients, Prowlarr's apps, download client and Byparr proxy,
+        qui, `clonarr.json`. Script written and dry-run on copies (2026-10-10);
+        undo: `tank/v2/services/arrs@pre-localhost`.
       Container paths stay `/mnt/starrs-data` on purpose (the apps store them in
       their databases).
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack`
