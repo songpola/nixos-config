@@ -276,14 +276,19 @@ resolves to Caddy), 2 and 3 (requests with a session pass
 - **Dashboard at `home.songpola.dev`**, behind `import auth`; the `.songpola.dev`
   cookie already covers it. It could read `X-Auth-Request-Groups` to show links
   per group; Kanidm's own app list is at `idm.songpola.dev/ui/apps`.
-- **arrs stack**: gate the apps with `import auth`, plus
-  `AuthenticationMethod=External` in each app so they skip their own login;
-  qBittorrent allows the `caddy` subnet without its login. The apps reach each
-  other on localhost (shared network namespace), never through Caddy, so plain
+- **arrs stack**: every web UI is gated with `import auth prts_admins@…`
+  (written 2026-10-10); Sonarr/Radarr/Prowlarr use `<APP>__AUTH__METHOD=External`
+  (checked in a throwaway Sonarr: UI without login, API still needs its key).
+  - [ ] qBittorrent: Options → Web UI → "Bypass authentication for clients in
+    whitelisted IP subnets": `10.89.1.0/24` (the `caddy` network; not pinned in
+    Nix, so if it is ever recreated with another subnet, qBittorrent just asks
+    for its login again).
+  - qui keeps its own login until it signs in through Kanidm (below). Clonarr
+    has no login of its own; the gate is its only protection.
+  The apps reach each other on the stack network, never through Caddy, so plain
   `auth` is enough. Only API clients from outside (phone apps like nzb360 or
   LunaSea, calendar feeds) would need an `auth-arr` variant that skips `/api/*`
-  and `/feed/*` (the apps check API keys there). Check "Real client IPs behind
-  Caddy" first: every client counts as local. Renamed from "starrs" except
+  and `/feed/*` (the apps check API keys there). Renamed from "starrs" except
   the container path (`/mnt/starrs-data`).
 - **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
   POSIX password, passkeys don't work there), optional SSO plugin. Its LAN

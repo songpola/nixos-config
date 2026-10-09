@@ -25,6 +25,13 @@ x-app: &app
     - default
     - caddy
 
+# Kanidm login in front of every web UI (oauth2-proxy's `auth` snippet), so the apps' own
+# logins are off where they allow it (Servarr apps: External; qBittorrent: the caddy subnet
+# skips its login). The apps reach each other on the stack network, never through Caddy.
+# Servarr apps take <APP>__AUTH__METHOD=External; their API keeps requiring the API key.
+x-auth-labels: &auth-labels
+  caddy.import: auth prts_admins@idm.songpola.dev
+
 services:
   # Downloader: qBittorrent (will be used by Radarr/Sonarr)
   # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./arrs.md
@@ -44,6 +51,7 @@ services:
       - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
     mem_limit: 2g
     labels:
+      <<: *auth-labels
       caddy: qbit.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8080}}"
 
@@ -56,6 +64,7 @@ services:
     volumes:
       - ${ARRS_CONFIG:?set in .env}/clonarr/config:/config
     labels:
+      <<: *auth-labels
       caddy: clonarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 6060}}"
 
@@ -70,7 +79,9 @@ services:
     <<: *app
     image: lscr.io/linuxserver/prowlarr:version-2.3.5.5327
     container_name: arrs-prowlarr
-    environment: *common-env
+    environment:
+      <<: *common-env
+      PROWLARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
     # A little hack for bypassing Cloudflare
@@ -78,6 +89,7 @@ services:
       - "bearbit.org:128.1.35.170"
       - "www.bearbit.org:128.1.35.170"
     labels:
+      <<: *auth-labels
       caddy: prowlarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 9696}}"
 
@@ -89,10 +101,12 @@ services:
     environment:
       <<: *common-env
       RADARR__SERVER__PORT: "7878" # Radarr default
+      RADARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/radarr/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
     labels:
+      <<: *auth-labels
       caddy: radarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7878}}"
 
@@ -105,10 +119,12 @@ services:
     environment:
       <<: *common-env
       RADARR__SERVER__PORT: "7879" # Radarr default + 1
+      RADARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/radarr-anime/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
     labels:
+      <<: *auth-labels
       caddy: radarr-anime.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7879}}"
 
@@ -120,10 +136,12 @@ services:
     environment:
       <<: *common-env
       SONARR__SERVER__PORT: "8989" # Sonarr default
+      SONARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/sonarr/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
     labels:
+      <<: *auth-labels
       caddy: sonarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8989}}"
 
@@ -135,10 +153,12 @@ services:
     environment:
       <<: *common-env
       SONARR__SERVER__PORT: "8990" # Sonarr default + 1
+      SONARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/sonarr-anime/config:/config
       - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
     labels:
+      <<: *auth-labels
       caddy: sonarr-anime.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8990}}"
 
@@ -153,6 +173,7 @@ services:
       - ${ARRS_CONFIG:?set in .env}/qui/config:/config
       - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
     labels:
+      <<: *auth-labels
       caddy: qui.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7476}}"
 
