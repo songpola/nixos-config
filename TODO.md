@@ -315,3 +315,9 @@ resolves to Caddy), 2 and 3 (requests with a session pass
       `KillMode=process` guard in `modules/programs/podman.nix` and test it.
 - [ ] The pool's special vdev is a single SSD, so losing it loses all of `tank`;
       mirror it with a second SSD of at least 931 GB (`zpool attach`)
+- [ ] Notifications: nothing on prts can alert you yet. `services.smartd` only
+      writes to the journal and wall (no mail). Pick one channel (e.g. ntfy, or
+      mail through msmtp) and route to it: smartd warnings, ZFS events (ZED:
+      pool degraded, scrub results), failed systemd units (auto-upgrade,
+      `podman-auto-update` rollbacks, backups once section 5 exists), and
+      Dockhand's update notifications.
