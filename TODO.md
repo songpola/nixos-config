@@ -62,13 +62,11 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 ## 4. Central auth (Kanidm + oauth2-proxy)
 
-Status (2026-10-09): steps 1-6 are written (1-5 pushed to `main`), not deployed
-or tested on prts yet; step 7 is still planned (plan saved
-2026-10-06, reviewed against the current setup the same day).
+Status (2026-10-09): steps 1-6 are deployed on prts and verified (Kanidm's
+Let's Encrypt certificate, `idm` / `auth` through Caddy, the gate on Dockhand and
+Dozzle for `prts_admins`, "Verify" 1-3); step 7 is still planned.
 
-Next: deploy prts (merge to `main`, or `nh os switch` on prts), then check that
-both ACME certificates are issued, `https://idm.songpola.dev` works through
-Caddy, and "Verify" 1 (alias loop); enroll the passkey; then step 4.
+Next: the Dockhand items left in step 6, then step 7.
 
 Goal: one login (passkeys) for the web services on prts, behind Caddy. Access
 stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
@@ -146,11 +144,10 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    - [x] Kanidm's site block and the `idm.songpola.dev` network alias come from
      its `caddy-sites` entry, so containers on `caddy` resolve it to Caddy
      directly instead of looping through the host's Tailscale IP (see "Verify" 1).
-3. [~] **`services.kanidm`** (new aspect, native): done in code (settings
-   `version`, `domain`, `port`, `backupDir`, `backupVersions`; ACME
-   certificate; firewall rule; `caddy-sites` entry for `idm.songpola.dev`).
-   LDAP is left out until needed. After deploying: enroll your passkey in the
-   web UI.
+3. [x] **`services.kanidm`** (new aspect, native): settings `version`,
+   `domain`, `port`, `backupDir`, `backupVersions`; ACME certificate; firewall
+   rule; `caddy-sites` entry for `idm.songpola.dev`. LDAP is left out until
+   needed. Deployed, passkey enrolled.
 4. [x] **`services.oauth2-proxy`** (`modules/services/oauth2-proxy.nix`, container
    on `caddy`): Kanidm OIDC with PKCE S256, cookie and redirect whitelist
    `.songpola.dev`, `--set-xauthrequest`, `static://202` upstream. Secrets
@@ -190,9 +187,12 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
      `HOST_DOCKER_SOCKET` for scanner containers, and `dockhand.update=false`
      on the Nix-managed containers (`programs.podman.meta.autoUpdateLabels`;
      the label is documented for Hawser, check the Updates view skips them).
-   - [ ] `ENCRYPTION_KEY` from sops: copy `$DATA_DIR/.encryption_key` into
-     sops first (Dockhand deletes the file on the first start with a matching
-     key; a wrong key makes stored credentials unreadable).
+   - [~] `ENCRYPTION_KEY` from sops: done in code (`services.dockhand.encryption-key`,
+     key `dockhand/ENCRYPTION_KEY` in `secrets/dockhand.secrets.yaml`, checked
+     to decrypt on prts to the current `.encryption_key`). After deploying,
+     Dockhand's log should say "Using ENCRYPTION_KEY from environment" and the
+     file should be gone. (Dockhand reads it as base64 of 32 bytes; a different
+     key re-encrypts the stored credentials instead of losing them.)
    - [ ] Stack updates in Dockhand (per-environment schedule) with
      `MINIMUM_RELEASE_AGE_HOURS` (e.g. 48), after the skip label is confirmed.
 7. [ ] **Version-bump workflow** `.github/workflows/bump-kanidm.yml`, weekly
@@ -222,8 +222,22 @@ nixpkgs has `kanidmWithSecretProvisioning_1_11`, `services.kanidm.provision` and
 3. caddy-docker-proxy's `import` with arguments through labels works with the
    snippet.
 4. Caddy's access log shows `100.x` client IPs, not a Podman gateway address
-   (only matters if IP-based rules are added later).
+   (only matters if IP-based rules are added later). **Fails**: every request,
+   from the browser too, shows `10.89.1.1` (the `caddy` network's gateway).
+   Cause (checked): netavark DNATs ports 80/443 to Caddy, so the packets are
+   forwarded, not input; Tailscale's `ts-forward` marks everything forwarded
+   from `tailscale0` (`0x40000`) and `ts-postrouting` masquerades it to the
+   outgoing interface's address, the bridge's `10.89.1.1`. Not
+   `--snat-subnet-routes=false`: it drops that masquerade for the subnet route
+   (`10.0.0.0/16`) and exit-node traffic too, which would break both. Possible
+   fix: an nftables `postrouting` chain at `srcnat - 1` that clears the mark
+   for `oifname "podman*"`, so only traffic into containers keeps its source.
 5. Whether Dockhand supports OIDC.
+
+Checked on prts (2026-10-09): 1 (from the `caddy` network, `idm.songpola.dev`
+resolves to Caddy), 2 and 3 (requests with a session pass
+`allowed_groups=prts_admins@idm.songpola.dev`, others get the login redirect),
+5 (yes, step 6).
 
 ### Later
 
