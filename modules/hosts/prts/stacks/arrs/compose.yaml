@@ -91,10 +91,6 @@ services:
       PROWLARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
-    # A little hack for bypassing Cloudflare
-    extra_hosts:
-      - "bearbit.org:128.1.35.170"
-      - "www.bearbit.org:128.1.35.170"
     labels:
       <<: *auth-labels
       caddy: prowlarr.songpola.dev
