@@ -62,8 +62,8 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 ## 4. Central auth (Kanidm + oauth2-proxy)
 
-Status (2026-10-09): steps 1-3 and 5 are written and committed, but not
-deployed or tested on prts yet; steps 4, 6 and 7 are still planned (plan saved
+Status (2026-10-09): steps 1-5 are written and committed, not deployed
+or tested on prts yet; steps 6 and 7 are still planned (plan saved
 2026-10-06, reviewed against the current setup the same day).
 
 Next: deploy prts (merge to `main`, or `nh os switch` on prts), then check that
@@ -137,12 +137,12 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    `caddy-sites` (sites for upstreams outside the network; each domain also
    becomes a network alias of the proxy). Not settings: those are only set by the
    host, so other aspects can't add to them.
-   - The `(auth)` snippet is part of step 4 (emit it as `caddy-snippets` from
-     the oauth2-proxy aspect):
-     strip client-supplied `X-Auth-Request-*`, `forward_auth` to
-     `oauth2-proxy:4180` at `/oauth2/auth?allowed_groups={args[0]}`, redirect 401
-     to `https://auth.songpola.dev/oauth2/start?rd=...`. Apps opt in with the
-     label `caddy.import: auth <group>`.
+   - [x] The `(auth)` snippet comes from the oauth2-proxy aspect (step 4) as
+     `caddy-snippets`: `forward_auth` to `oauth2-proxy:4180` at
+     `/oauth2/auth?allowed_groups={args[0]}`, 401 redirects to
+     `https://auth.songpola.dev/oauth2/start?rd=...`; `copy_headers` replaces
+     client-supplied `X-Auth-Request-*` (no `request_header`: it runs after
+     `forward_auth`). Apps opt in with `caddy.import: auth <group>`.
    - [x] Kanidm's site block and the `idm.songpola.dev` network alias come from
      its `caddy-sites` entry, so containers on `caddy` resolve it to Caddy
      directly instead of looping through the host's Tailscale IP (see "Verify" 1).
@@ -151,17 +151,20 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    certificate; firewall rule; `caddy-sites` entry for `idm.songpola.dev`).
    LDAP is left out until needed. After deploying: enroll your passkey in the
    web UI.
-4. [ ] **`services.oauth2-proxy`** (new aspect, container): Kanidm OIDC with PKCE
-   S256, `--cookie-domain=.songpola.dev`, `--whitelist-domain=.songpola.dev`,
-   `--set-xauthrequest`, username from `preferred_username` (Kanidm's `sub` is a
-   UUID). Secrets via an env file from sops (new `secrets/auth.secrets.yaml`).
-   Site `auth.songpola.dev` through the container's own labels; the `(auth)`
-   snippet (step 2) as `caddy-snippets`.
-5. [x] **Kanidm provisioning** (`modules/hosts/prts/kanidm.nix`): person
+4. [x] **`services.oauth2-proxy`** (`modules/services/oauth2-proxy.nix`, container
+   on `caddy`): Kanidm OIDC with PKCE S256, cookie and redirect whitelist
+   `.songpola.dev`, `--set-xauthrequest`, `static://202` upstream. Secrets
+   (`oauth2-proxy/CLIENT_SECRET`, `oauth2-proxy/COOKIE_SECRET`) from
+   `secrets/auth.secrets.yaml` through a sops env template. prts wires it with
+   Kanidm in `modules/hosts/prts/auth.nix`: OIDC client `oauth2-proxy`
+   (`preferShortUsername`, scope maps for both prts groups, same client secret
+   as `basicSecretFile`). The landing page of `auth.songpola.dev` is an empty
+   202 until a site is gated (or the dashboard exists).
+5. [x] **Kanidm provisioning** (`modules/hosts/prts/auth.nix`): person
    `songpola` (in `prts_admins` and `prts_media`), both groups; the
    `admin` / `idm_admin` passwords come from `secrets/auth.secrets.yaml` (without
    them provisioning resets idm_admin on every start). The OIDC client
-   `oauth2-proxy` is added with step 4. Not added to built-in groups. After
+   `oauth2-proxy` came with step 4. Not added to built-in groups. After
    deploying: `kanidm person credential create-reset-token songpola -D idm_admin`
    and enroll the passkey.
 6. [ ] **Apps (only these for now).** Dozzle: `import auth <admin group>`; new

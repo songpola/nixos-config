@@ -1,5 +1,6 @@
 # prts: home server. Host facts, profiles and system basics; the rest is split by concern:
-# hardware.nix (GPU, ZFS, boot), disks.nix (layout), network.nix, containers.nix, kanidm.nix.
+# hardware.nix (GPU, ZFS, boot), disks.nix (layout), network.nix, containers.nix,
+# auth.nix (Kanidm, oauth2-proxy).
 { den, ... }:
 {
   den.hosts."x86_64-linux"."prts" = {
