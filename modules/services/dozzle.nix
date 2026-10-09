@@ -69,6 +69,15 @@ in
             }
             // lib.optionalAttrs cfg.enableActions { DOZZLE_ENABLE_ACTIONS = "true"; };
             ports = lib.optional (cfg.port != null) "${toString cfg.port}:${toString containerPort}";
+            labels = den.aspects.programs.podman.meta.autoUpdateLabels;
+            # Dozzle's built-in check (not wired into the image). Exec form (JSON array): the image
+            # has no shell. The unit is ready only once it passes, so a bad auto-update rolls back.
+            extraOptions = [
+              ''--health-cmd=["/dozzle","healthcheck"]''
+              "--health-interval=10s"
+              "--health-start-period=30s"
+            ];
+            podman.sdnotify = "healthy";
           };
         }
 

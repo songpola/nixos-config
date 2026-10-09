@@ -145,7 +145,7 @@ in
             # Identity headers on /oauth2/auth responses, for Caddy to copy to the app
             OAUTH2_PROXY_SET_XAUTHREQUEST = "true";
           };
-          labels = {
+          labels = den.aspects.programs.podman.meta.autoUpdateLabels // {
             "caddy" = cfg.domain;
             "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
           };

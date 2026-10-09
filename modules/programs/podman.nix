@@ -33,6 +33,18 @@
     # NOTE: Lingering did not work well on WSL (v3); untested since.
     # _.user-linger.user.linger = true;
 
+    # Labels that opt a container into the `auto-update` sub-aspect's updates
+    meta.autoUpdateLabels."io.containers.autoupdate" = "registry";
+
+    # Daily `podman auto-update` (the timer ships with podman): pulls newer images for containers
+    # labelled with `meta.autoUpdateLabels` and restarts their systemd unit, rolling back to the old
+    # image if the unit fails to start. Only for containers in a systemd unit (PODMAN_SYSTEMD_UNIT,
+    # set by podman, e.g. oci-containers) with a fully qualified image name.
+    # What "started" means is the unit's readiness (oci-containers `podman.sdnotify`): `conmon`
+    # (default) only catches an image that can't start; `container` waits for the app's own
+    # sd_notify, `healthy` for its health check, so they also catch one that starts but isn't ready.
+    _.auto-update.nixos.systemd.timers.podman-auto-update.wantedBy = [ "timers.target" ];
+
     # Keeps named volumes (which are real data) apart from images and layers in the
     # graph root, e.g. on a dataset with snapshots and scrubs.
     _.volume-path = {

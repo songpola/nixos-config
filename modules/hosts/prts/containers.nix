@@ -28,6 +28,7 @@
   den.aspects."prts".includes = with den.aspects; [
     programs.podman
     programs.podman.volume-path
+    programs.podman.auto-update
 
     services.caddy-reverse-proxy
     services.dockhand

@@ -135,7 +135,10 @@ in
             )
           ];
           # caddy-docker-proxy also reads the proxy's own labels
-          labels = siteLabels;
+          labels = den.aspects.programs.podman.meta.autoUpdateLabels // siteLabels;
+          # The image has no HEALTHCHECK, but Caddy speaks sd_notify: the unit is ready only once
+          # Caddy has loaded its config, so an auto-update to a Caddy that can't is rolled back.
+          podman.sdnotify = "container";
           environment = {
             CADDY_INGRESS_NETWORKS = cfg.network;
             CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility

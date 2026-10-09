@@ -106,6 +106,7 @@ in
             };
             extraOptions = [ "--group-add=${toString cfg.podmanGid}" ];
             ports = lib.optional (cfg.port != null) "${toString cfg.port}:${toString containerPort}";
+            labels = den.aspects.programs.podman.meta.autoUpdateLabels;
           };
         }
 
