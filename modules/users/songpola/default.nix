@@ -101,6 +101,13 @@ in
       - Shell: my interactive shell is nushell. Commands, snippets and
         scripts meant for me to run should be nushell syntax. (Your own
         Bash tool still runs bash; that's fine.)
+      - File edits: use the Edit tool (or Write for new files), not sed,
+        python or heredocs through Bash. Edit shows me a reviewable diff in
+        the IDE and fails loudly when the old text doesn't match; scripted
+        replacements can silently do nothing. For several changes in one
+        file, make several Edit calls. Bash is only for truly mechanical
+        bulk edits (the same replacement across many files, or changes
+        computed from command output).
     '';
 
     # Personal Claude Code skills. Linked one by one, so ~/.claude/skills itself
