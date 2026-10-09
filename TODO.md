@@ -26,13 +26,15 @@ Stacks live in `/tank/v2/services/dockhand/stacks`; deploy them from Dockhand.
       pause container is gone): every app is its own container on the stack's
       network, containers are `arrs-*`, and domains drop the prefix
       (`sonarr.songpola.dev`, `qbit.songpola.dev`, ...).
-      - [ ] Before the first start, point the apps' stored links at service
-        names instead of the old container names (`starrs-prowlarr:9696` →
-        `prowlarr:9696`, `starrs-qbittorrent` → `qbittorrent`, qui's
-        `starrs:8080` → `qbittorrent:8080`, ...): Sonarr/Radarr indexers and
-        download clients, Prowlarr's apps, download client and Byparr proxy,
-        qui, `clonarr.json`. Script written and dry-run on copies (2026-10-10);
-        undo: `tank/v2/services/arrs@pre-localhost`.
+      - [x] The apps' stored links point at service names instead of the old
+        container names (`starrs-prowlarr:9696` → `prowlarr:9696`,
+        `starrs-qbittorrent` → `qbittorrent`, qui's `starrs:8080` →
+        `qbittorrent:8080`, ...): Sonarr/Radarr indexers and download clients
+        (renamed `qbittorrent`), Prowlarr's apps, download client and Byparr
+        proxy, qui, `clonarr.json` (done 2026-10-10). Delete the
+        `tank/v2/services/arrs@pre-localhost` snapshot once the stack works.
+      - [ ] After the first start, test Prowlarr's apps and the
+        indexers/download clients in each app (all should be green).
       Container paths stay `/mnt/starrs-data` on purpose (the apps store them in
       their databases).
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack`
