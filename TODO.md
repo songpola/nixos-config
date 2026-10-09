@@ -248,11 +248,21 @@ resolves to Caddy), 2 and 3 (requests with a session pass
   yet). Gate it with an `auth-arr` variant that skips `/api/*` (API-key clients),
   plus `AuthenticationMethod=External` in each app; qBittorrent allows the `caddy`
   subnet without its login. Possibly rename the `starrs` paths, containers and
-  domains to `arrs` (`/tank/v2/starrs-*` data would have to move).
+  domains to `arrs` (`/tank/v2/starrs-*` data would have to move). Check
+  "Real client IPs behind Caddy" first: every client counts as local.
 - **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
-  POSIX password, passkeys don't work there), optional SSO plugin.
+  POSIX password, passkeys don't work there), optional SSO plugin. Its LAN
+  networks see every client as local, see "Real client IPs behind Caddy".
 - **qui**: OIDC with Kanidm (and Dockhand, if it supports it).
-- **Tailnet auto-allow** via tsidp / Tailscale whois.
+- **Tailnet auto-allow** via tsidp / Tailscale whois (needs real client IPs,
+  see below).
+- **Real client IPs behind Caddy** (deferred on purpose, 2026-10-09): Caddy and
+  everything behind it see every client as `10.89.1.1`, Tailscale's masquerade
+  (cause and proposed fix in "Verify" 4). Harmless while access is
+  identity-based; fix it before anything that relies on the client IP: tailnet
+  auto-allow (whois), IP rules or allowlists in Caddy, fail2ban/CrowdSec, per-IP
+  rate limits, or apps' "local network" settings (arrs' "disabled for local
+  addresses", Jellyfin's LAN networks: today every client counts as local).
 - **Header spoofing**: any container on the `caddy` network can reach a gated app
   directly and send `X-Auth-Request-User`. Acceptable while all stacks are yours;
   otherwise give gated apps a network shared only with Caddy.
