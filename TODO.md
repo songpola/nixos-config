@@ -62,9 +62,9 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 ## 4. Central auth (Kanidm + oauth2-proxy)
 
-Status (2026-10-08): steps 1-3 are written and committed, but not deployed or
-tested on prts yet; steps 4-7 are still planned (plan saved 2026-10-06, reviewed
-against the current setup the same day).
+Status (2026-10-09): steps 1-3 and 5 are written and committed, but not
+deployed or tested on prts yet; steps 4, 6 and 7 are still planned (plan saved
+2026-10-06, reviewed against the current setup the same day).
 
 Next: deploy prts (merge to `main`, or `nh os switch` on prts), then check that
 both ACME certificates are issued, `https://idm.songpola.dev` works through
@@ -157,10 +157,13 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    UUID). Secrets via an env file from sops (new `secrets/auth.secrets.yaml`).
    Site `auth.songpola.dev` through the container's own labels; the `(auth)`
    snippet (step 2) as `caddy-snippets`.
-5. [ ] **Kanidm provisioning** (in `modules/hosts/prts/`): person `songpola`,
-   groups `prts_admins` / `prts_media`, OIDC client `oauth2-proxy`. Likely
-   needs the `admin` and `idm_admin` password files; check whether `provision`
-   can add members to built-in groups like `idm_admins`, else do it by hand.
+5. [x] **Kanidm provisioning** (`modules/hosts/prts/kanidm.nix`): person
+   `songpola` (in `prts_admins` and `prts_media`), both groups; the
+   `admin` / `idm_admin` passwords come from `secrets/auth.secrets.yaml` (without
+   them provisioning resets idm_admin on every start). The OIDC client
+   `oauth2-proxy` is added with step 4. Not added to built-in groups. After
+   deploying: `kanidm person credential create-reset-token songpola -D idm_admin`
+   and enroll the passkey.
 6. [ ] **Apps (only these for now).** Dozzle: `import auth <admin group>`; new
    `settings.auth` option sets `DOZZLE_AUTH_PROVIDER=forward-proxy` and
    `DOZZLE_AUTH_HEADER_*` to `X-Auth-Request-*`. Dockhand: `import auth <admin

@@ -4,13 +4,19 @@
 # Exposed through services.caddy-reverse-proxy (a `caddy-sites` entry), which verifies that
 # certificate; the proxy reaches the host through host.containers.internal, so the firewall opens
 # the port to podman bridges. The certificate uses the `security.acme-cloudflare` account.
+# Provisioning is always on: the host declares persons, groups and OAuth2 clients in
+# `services.kanidm.provision`, and the `admin` / `idm_admin` passwords come from sops (without
+# them, provisioning resets the idm_admin password on every start).
 { den, lib, ... }:
 let
   name = "kanidm";
+  adminSecret = "${name}/admin-password";
+  idmAdminSecret = "${name}/idm-admin-password";
 in
 {
   den.aspects.services.${name} = {
     includes = [
+      den.aspects.programs.sops
       den.aspects.services.caddy-reverse-proxy
       den.aspects.security.acme-cloudflare
     ];
@@ -48,6 +54,20 @@ in
         type = lib.types.ints.unsigned;
         default = 7;
         description = "Number of daily online backups to keep (0 disables them)";
+      };
+      sopsFile = lib.mkOption {
+        type = lib.types.path;
+        description = "sops-encrypted file holding the `admin` and `idm_admin` passwords";
+      };
+      adminPasswordKey = lib.mkOption {
+        type = lib.types.str;
+        default = "kanidm/ADMIN_PASSWORD";
+        description = "Key of the `admin` password inside `sopsFile`";
+      };
+      idmAdminPasswordKey = lib.mkOption {
+        type = lib.types.str;
+        default = "kanidm/IDM_ADMIN_PASSWORD";
+        description = "Key of the `idm_admin` password inside `sopsFile`";
       };
     };
 
@@ -88,7 +108,32 @@ in
               };
             };
           };
+          # Runs after each start (as `kanidm`), against https://localhost:<port>
+          provision = {
+            enable = true;
+            adminPasswordFile = config.sops.secrets.${adminSecret}.path;
+            idmAdminPasswordFile = config.sops.secrets.${idmAdminSecret}.path;
+          };
+          # `kanidm` CLI on PATH, talking to this server by default
+          client = {
+            enable = true;
+            settings.uri = "https://${cfg.domain}";
+          };
         };
+
+        # Provisioning sets the accounts to these passwords on every start
+        sops.secrets =
+          lib.mapAttrs
+            (_: key: {
+              inherit (cfg) sopsFile;
+              inherit key;
+              owner = "kanidm";
+              restartUnits = [ "kanidm.service" ];
+            })
+            {
+              ${adminSecret} = cfg.adminPasswordKey;
+              ${idmAdminSecret} = cfg.idmAdminPasswordKey;
+            };
 
         # DNS provider, credentials and email come from `security.acme.defaults`
         security.acme.certs.${cfg.domain} = {
