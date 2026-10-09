@@ -91,6 +91,8 @@ services:
       PROWLARR__AUTH__METHOD: External
     volumes:
       - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
+      # BearBIT with its download ad gate handled (see the file)
+      - ./prowlarr-bearbit.yml:/config/Definitions/Custom/bearbit.yml:ro
     labels:
       <<: *auth-labels
       caddy: prowlarr.songpola.dev
