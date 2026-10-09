@@ -185,16 +185,16 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    - [x] Matched to the infra (from the manual): `ORIGIN`,
      `TRUST_FORWARDED_HEADERS` (only without a published port),
      `HOST_DOCKER_SOCKET` for scanner containers, and `dockhand.update=false`
-     on the Nix-managed containers (`programs.podman.meta.autoUpdateLabels`;
-     the label is documented for Hawser, check the Updates view skips them).
-   - [~] `ENCRYPTION_KEY` from sops: done in code (`services.dockhand.encryption-key`,
-     key `dockhand/ENCRYPTION_KEY` in `secrets/dockhand.secrets.yaml`, checked
-     to decrypt on prts to the current `.encryption_key`). After deploying,
-     Dockhand's log should say "Using ENCRYPTION_KEY from environment" and the
-     file should be gone. (Dockhand reads it as base64 of 32 bytes; a different
-     key re-encrypts the stored credentials instead of losing them.)
-   - [ ] Stack updates in Dockhand (per-environment schedule) with
-     `MINIMUM_RELEASE_AGE_HOURS` (e.g. 48), after the skip label is confirmed.
+     on the Nix-managed containers (`programs.podman.meta.autoUpdateLabels`).
+     Confirmed in Dockhand 1.0.51's code: both container auto-update and the
+     scheduled update check skip containers with the label.
+   - [x] `ENCRYPTION_KEY` from sops (`services.dockhand.encryption-key`, key
+     `dockhand/ENCRYPTION_KEY` in `secrets/dockhand.secrets.yaml`). Deployed:
+     Dockhand logged "Using ENCRYPTION_KEY from environment, removed key file".
+     (Dockhand reads it as base64 of 32 bytes; a different key re-encrypts the
+     stored credentials instead of losing them.)
+   - [x] Scheduled update check in Dockhand, daily at 04:00. No minimum image
+     age (`MINIMUM_RELEASE_AGE_HOURS`, decided not to use it).
 7. [ ] **Version-bump workflow** `.github/workflows/bump-kanidm.yml`, weekly
    after `update-flake-lock`: if the locked nixpkgs has `kanidm_1_<n+1>`, open a
    PR that changes only the version setting. CI builds prts, merging deploys via
