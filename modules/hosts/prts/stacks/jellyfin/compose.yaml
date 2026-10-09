@@ -1,4 +1,6 @@
 # Jellyfin for media streaming (with NVIDIA GPU)
+name: jellyfin
+
 services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:version-10.11.8ubu2404

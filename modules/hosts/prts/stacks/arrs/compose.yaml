@@ -14,6 +14,9 @@
 # keeps its old name. It is the same in every container (and in the jellyfin stack) to enable
 # the "Atomic Move" technique (hardlinking instead of copying files).
 
+# Stack name in Dockhand and compose project name (network: arrs_default)
+name: arrs
+
 x-common-env: &common-env
   TZ: Asia/Bangkok
   PUID: "1000"

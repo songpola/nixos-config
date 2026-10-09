@@ -9,17 +9,33 @@ Volume exports are in `/tank/v2/backups/podman-volumes-2026-10-04/`.
 
 ## 1. Bring the stacks back
 
-Stacks live in `/tank/v2/services/dockhand/stacks`; deploy them from Dockhand.
+Stacks in `modules/hosts/prts/stacks/` are Git stacks in Dockhand (the repo is
+the source of truth, see CLAUDE.md); the others live in
+`/tank/v2/services/dockhand/stacks`. Deploy both from Dockhand.
 
 - [ ] Stacks without named volumes: `cwa`, `forgejo`, `kay-chan-discord-bot`,
       `mc-all-the-mons`, `unturned-server`, `speedtest` (images are pulled again,
       so the first start is slow)
 - [ ] Remove the `dozzle` stack in Dockhand (Dozzle now runs from Nix:
       `services.dozzle`; its old volume `dozzle_dozzle-data` is empty)
-- [ ] New stacks from `modules/hosts/prts/stacks/`: `protonmail-bridge`,
-      `arrs` (formerly "starrs"; includes qui), `jellyfin` (check the GPU is
-      visible: `nvidia-smi` in the container). `arrs` and `jellyfin` take their
-      host paths from `.env` (copy it into Dockhand with the compose file). Data
+- [ ] Git stacks from `modules/hosts/prts/stacks/`: `arrs` (formerly
+      "starrs"; includes qui), `jellyfin` (check the GPU is visible:
+      `nvidia-smi` in the container), `protonmail-bridge`. Push `main` first:
+      Dockhand deploys what is there. In Dockhand, per stack:
+      - Settings → Git: add `https://github.com/songpola/nixos-config` once
+        (public, no credentials).
+      - New Git stack: branch `main`, compose path
+        `modules/hosts/prts/stacks/<stack>/compose.yaml` (its `.env` is picked
+        up automatically), auto-sync on a schedule (e.g. every 15 minutes; no
+        webhook, Dockhand is Tailscale-only).
+      - `arrs` is already deployed as an internal stack: delete that one first
+        (container names are fixed; data is in bind mounts, nothing is lost),
+        then add it as a Git stack.
+      Later: optionally move the other stacks into the repo too, with their
+      secrets out of `.env` (Dockhand secret variables, or 1Password `op://`
+      references: provider in Settings → Secrets, a read-only service account
+      on a dedicated vault, `${VAR:?}` in compose so a missing secret stops the
+      deploy). Data
       moved 2026-10-10 (`tank/v2/arrs-data`, `tank/v2/services/arrs/<app>`,
       `@migrate` snapshots kept; qui is a plain directory now, not a dataset).
       The stack no longer shares one network namespace (the pod-style `arrs`
