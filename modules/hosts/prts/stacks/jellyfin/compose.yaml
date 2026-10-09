@@ -8,8 +8,9 @@ services:
     restart: unless-stopped
     environment:
       TZ: Asia/Bangkok
+      # songpola:users on the host
       PUID: "1000"
-      PGID: "1000"
+      PGID: "100"
       # JELLYFIN_PublishedServerUrl:
     volumes:
       - /tank/v2/services/jellyfin/config:/config

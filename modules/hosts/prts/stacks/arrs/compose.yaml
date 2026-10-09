@@ -19,8 +19,9 @@ name: arrs
 
 x-common-env: &common-env
   TZ: Asia/Bangkok
+  # songpola:users on the host
   PUID: "1000"
-  PGID: "1000"
+  PGID: "100"
 
 x-app: &app
   restart: unless-stopped
