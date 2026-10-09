@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NixOS configuration for three hosts (`prts` home server, `spla-desktop-wsl`, `spla-laptop-wsl`), built on [den](https://den.denful.dev) (dendritic aspects on flake-parts). `README.md` is leftover template boilerplate and does not describe this repo (no `hosts.nix`, `vm.nix` or `igloo` exist).
 
+The home server's name is **PRTS**: write it that way in prose and in any displayed text (e.g. Kanidm display names). Lowercase `prts` is only for identifiers: the hostname, `den.hosts` / aspect names, paths like `modules/hosts/prts/`, group names like `prts_admins`.
+
 ## Commands
 
 ```console
