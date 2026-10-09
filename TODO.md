@@ -178,10 +178,10 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
    `preferred_username`; the manual doesn't say whether it does PKCE). The free
    edition makes every user an admin, so its login only adds audit identity.
    Recommended: OIDC with `OIDC_AUTOLOGIN` + `DISABLE_LOCAL_LOGIN`.
-   - [~] Done in code: Kanidm client `dockhand` (PKCE S256, scope map for
-     `prts_admins`, secret `dockhand/OIDC_CLIENT_SECRET` in
-     `secrets/auth.secrets.yaml`) and the `services.dockhand.sso-login`
-     sub-aspect. Left: add the provider in Dockhand's UI.
+   - [x] Kanidm client `dockhand` (PKCE S256, scope map for `prts_admins`,
+     secret `dockhand/OIDC_CLIENT_SECRET` in `secrets/auth.secrets.yaml`), the
+     `services.dockhand.sso-login` sub-aspect, and the provider in Dockhand's
+     UI. Sign-in through Kanidm confirmed working (2026-10-09).
    - [x] Matched to the infra (from the manual): `ORIGIN`,
      `TRUST_FORWARDED_HEADERS` (only without a published port),
      `HOST_DOCKER_SOCKET` for scanner containers, and `dockhand.update=false`
@@ -229,9 +229,22 @@ nixpkgs has `kanidmWithSecretProvisioning_1_11`, `services.kanidm.provision` and
    from `tailscale0` (`0x40000`) and `ts-postrouting` masquerades it to the
    outgoing interface's address, the bridge's `10.89.1.1`. Not
    `--snat-subnet-routes=false`: it drops that masquerade for the subnet route
-   (`10.0.0.0/16`) and exit-node traffic too, which would break both. Possible
-   fix: an nftables `postrouting` chain at `srcnat - 1` that clears the mark
-   for `oifname "podman*"`, so only traffic into containers keeps its source.
+   (`10.0.0.0/16`) and exit-node traffic too, which would break both. Proposed
+   fix (untested), e.g. in `modules/programs/podman.nix` when Tailscale routes:
+   clear Tailscale's mark on traffic into Podman bridges before its masquerade
+   runs, so only that traffic keeps its source; subnet-route and exit-node
+   traffic leaves on `eno1` and is still masqueraded.
+   ```nft
+   table inet tailscale-podman {
+     chain postrouting {
+       type filter hook postrouting priority srcnat - 1;
+       oifname "podman*" meta mark set meta mark & 0xff00ffff
+     }
+   }
+   ```
+   Replies need nothing extra: the container's default route is the host, which
+   routes `100.x` out `tailscale0`, and conntrack undoes the DNAT. Afterwards
+   every container on `caddy` sees real `100.x` addresses.
 5. Whether Dockhand supports OIDC.
 
 Checked on prts (2026-10-09): 1 (from the `caddy` network, `idm.songpola.dev`
