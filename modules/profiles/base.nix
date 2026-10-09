@@ -57,6 +57,7 @@
       # Sysadmin tools
       btop
       isd
+      sysadmin-tools
     ];
 
     nixos =
