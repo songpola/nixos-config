@@ -17,8 +17,24 @@ Stacks live in `/tank/v2/services/dockhand/stacks`; deploy them from Dockhand.
 - [ ] Remove the `dozzle` stack in Dockhand (Dozzle now runs from Nix:
       `services.dozzle`; its old volume `dozzle_dozzle-data` is empty)
 - [ ] New stacks from `modules/hosts/prts/stacks/`: `protonmail-bridge`,
-      `starrs` (includes qui; to be renamed `arrs`, see section 4 "Later"),
-      `jellyfin` (check the GPU is visible: `nvidia-smi` in the container)
+      `arrs` (formerly "starrs"; includes qui), `jellyfin` (check the GPU is
+      visible: `nvidia-smi` in the container). `arrs` and `jellyfin` take their
+      host paths from `.env` (copy it into Dockhand with the compose file); first
+      move the data to the paths they name (nothing may be running from them):
+  ```nu
+  # Datasets: mountpoints are inherited, so they follow the rename
+  sudo zfs rename tank/v2/starrs-stack tank/v2/services/arrs
+  sudo zfs rename tank/v2/services/qui tank/v2/services/arrs/qui
+  sudo zfs rename tank/v2/starrs-data tank/v2/arrs-data
+  # Per-app config directories lose the starrs- prefix
+  cd /tank/v2/services/arrs
+  for app in [qbittorrent clonarr prowlarr radarr radarr-anime sonarr sonarr-anime] {
+    sudo mv $"starrs-($app)" $app
+  }
+  # starrs-recyclarr is unused since Clonarr: keep or delete
+  ```
+  Container paths stay `/mnt/starrs-data` on purpose (the apps store them in
+  their databases), and so do the `starrs-*.songpola.dev` domains for now.
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack`
       (databases in named volumes; create, import, then start):
   ```nu
@@ -258,12 +274,15 @@ resolves to Caddy), 2 and 3 (requests with a session pass
 - **Dashboard at `home.songpola.dev`**, behind `import auth`; the `.songpola.dev`
   cookie already covers it. It could read `X-Auth-Request-Groups` to show links
   per group; Kanidm's own app list is at `idm.songpola.dev/ui/apps`.
-- **arrs stack**: the "starrs" stack is now called "arrs" (not renamed in the repo
-  yet). Gate it with an `auth-arr` variant that skips `/api/*` (API-key clients),
-  plus `AuthenticationMethod=External` in each app; qBittorrent allows the `caddy`
-  subnet without its login. Possibly rename the `starrs` paths, containers and
-  domains to `arrs` (`/tank/v2/starrs-*` data would have to move). Check
-  "Real client IPs behind Caddy" first: every client counts as local.
+- **arrs stack**: gate the apps with `import auth`, plus
+  `AuthenticationMethod=External` in each app so they skip their own login;
+  qBittorrent allows the `caddy` subnet without its login. The apps reach each
+  other on localhost (shared network namespace), never through Caddy, so plain
+  `auth` is enough. Only API clients from outside (phone apps like nzb360 or
+  LunaSea, calendar feeds) would need an `auth-arr` variant that skips `/api/*`
+  and `/feed/*` (the apps check API keys there). Check "Real client IPs behind
+  Caddy" first: every client counts as local. Renamed from "starrs" except
+  container paths and domains (`starrs-*.songpola.dev`).
 - **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
   POSIX password, passkeys don't work there), optional SSO plugin. Its LAN
   networks see every client as local, see "Real client IPs behind Caddy".
@@ -289,7 +308,7 @@ resolves to Caddy), 2 and 3 (requests with a session pass
   ```
 - [ ] Create a `backup` pool on sda
 - [ ] Replicate snapshots with sanoid + syncoid (`services.sanoid`,
-      `services.syncoid`); exclude `tank/v2/starrs-data` and
+      `services.syncoid`); exclude `tank/v2/arrs-data` and
       `tank/qbittorrent-downloads`
 - [ ] Optional: an off-site copy of the irreplaceable data (Immich)
 

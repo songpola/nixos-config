@@ -11,8 +11,10 @@ services:
       # JELLYFIN_PublishedServerUrl:
     volumes:
       - /tank/v2/services/jellyfin/config:/config
-      # Same container path as in the starrs stack, so hardlinks ("Atomic Move") work
-      - /tank/v2/starrs-data/media:/mnt/starrs-data/media
+      # The arrs stack's media (host path from .env, same value as there). Same container path
+      # as in that stack, so the paths the arrs report match Jellyfin's libraries; fixed,
+      # because Jellyfin stores it per library and item (watch state is keyed by path)
+      - ${ARRS_DATA:?set in .env}/media:/mnt/starrs-data/media
     # NVIDIA GPU via CDI (hardware.nvidia-container-toolkit); untested through compose
     devices:
       - nvidia.com/gpu=all

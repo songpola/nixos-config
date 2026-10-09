@@ -10,7 +10,7 @@ https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/
   - Relocate on Default Save Path Change: **ENABLED**
   - Relocate on Category Save Path Change: **ENABLED**
   - Default Save Path: (same as `$containerTorrentsDataDir`)
-    - For example: `/mnt/starrs-data/torrents` (see the module implementation for the actual value)
+    - For example: `/mnt/starrs-data/torrents` (see `compose.yaml` for the actual value)
     - NOTE: This is **NOT** the path on the host, but the path *inside the container* where qBittorrent will store torrent files and data.
   - Default Content Layout: **Original**
 - **Connect** (Connection Settings)
@@ -88,7 +88,8 @@ https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/
 
 - Let `$baseDataDir` =  `/mnt/starrs-data`:
   - **Mount the the host's data directory to this path in the Radarr container**
-  - For example: the Docker volume mapping would be `-v /path/to/host/starrs-data:/mnt/starrs-data`
+  - For example: the Docker volume mapping would be `-v ${ARRS_DATA}:/mnt/starrs-data` (`ARRS_DATA` in `.env`)
+  - Never change this container path: the apps store it in their databases (root folders, every item's path)
 - Let `$mediaDataDir` = `$baseDataDir/media`:
   - Use the ***subdirectory*** of this path as the Root Folder in Radarr for your media library.
     - For example: `$mediaDataDir/movies`, `$mediaDataDir/movies-anime`, `$mediaDataDir/tv`, etc.

@@ -1,11 +1,18 @@
-# Starrs stack for media automation. Setup guide: ./starrs.md
+# Arrs stack for media automation. Setup guide: ./arrs.md
 #
-# Like the former podman pod: every app shares the network namespace of the `starrs`
-# container (network_mode: service:starrs), so they reach each other on localhost, and
-# `starrs` holds the published ports, the Caddy labels and the extra hosts.
+# Like the former podman pod: every app shares the network namespace of the `arrs`
+# container (network_mode: service:arrs), so they reach each other on localhost, and
+# `arrs` holds the published ports, the Caddy labels and the extra hosts.
 #
-# Same container data path everywhere (/mnt/starrs-data) to enable the "Atomic Move"
-# technique (hardlinking instead of copying files).
+# Host paths come from .env, so the data and config can move (another dataset or pool) by
+# changing .env alone:
+#   ARRS_DATA    media library and torrents (one filesystem, for hardlinks)
+#   ARRS_CONFIG  one <app>/config directory per app
+#
+# Container paths are fixed. The apps store them in their databases (root folders, every
+# series and movie path, qBittorrent's save path, Jellyfin's libraries), so /mnt/starrs-data
+# keeps its old name. It is the same in every container (and in the jellyfin stack) to enable
+# the "Atomic Move" technique (hardlinking instead of copying files).
 
 x-common-env: &common-env
   TZ: Asia/Bangkok
@@ -14,18 +21,18 @@ x-common-env: &common-env
 
 x-app: &app
   restart: unless-stopped
-  network_mode: service:starrs
+  network_mode: service:arrs
   depends_on:
-    - starrs
+    - arrs
 
 services:
   # Network namespace holder (the pod's infra container)
-  starrs:
+  arrs:
     image: registry.k8s.io/pause:3.10
-    container_name: starrs
+    container_name: arrs
     restart: unless-stopped
     ports:
-      # starrs-qbittorrent torrenting port
+      # arrs-qbittorrent torrenting port
       - "6882:6882"
       - "6882:6882/udp"
     networks:
@@ -46,98 +53,98 @@ services:
       caddy_6.reverse_proxy: "{{upstreams 8989}}"
       caddy_7: starrs-sonarr-anime.songpola.dev
       caddy_7.reverse_proxy: "{{upstreams 8990}}"
-    # starrs-prowlarr: a little hack for bypassing Cloudflare
+    # arrs-prowlarr: a little hack for bypassing Cloudflare
     extra_hosts:
       - "bearbit.org:128.1.35.170"
       - "www.bearbit.org:128.1.35.170"
 
   # Downloader: qBittorrent (will be used by Radarr/Sonarr)
-  # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./starrs.md
+  # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./arrs.md
   qbittorrent:
     <<: *app
     image: lscr.io/linuxserver/qbittorrent:version-5.1.4-r3
-    container_name: starrs-qbittorrent
+    container_name: arrs-qbittorrent
     environment:
       <<: *common-env
       TORRENTING_PORT: "6882"
     volumes:
-      - /tank/v2/starrs-stack/starrs-qbittorrent/config:/config
-      - /tank/v2/starrs-data/torrents:/mnt/starrs-data/torrents
+      - ${ARRS_CONFIG:?set in .env}/qbittorrent/config:/config
+      - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
     mem_limit: 2g
 
   # Guide Sync (configuration management)
   clonarr:
     <<: *app
     image: ghcr.io/prophetse7en/clonarr:latest
-    container_name: starrs-clonarr
+    container_name: arrs-clonarr
     environment: *common-env
     volumes:
-      - /tank/v2/starrs-stack/starrs-clonarr/config:/config
+      - ${ARRS_CONFIG:?set in .env}/clonarr/config:/config
 
   # Indexer Proxies (for bypassing Cloudflare blocks on indexers)
   byparr:
     <<: *app
     image: ghcr.io/thephaseless/byparr:latest
-    container_name: starrs-byparr
+    container_name: arrs-byparr
 
   # Indexer
   prowlarr:
     <<: *app
     image: lscr.io/linuxserver/prowlarr:version-2.3.5.5327
-    container_name: starrs-prowlarr
+    container_name: arrs-prowlarr
     environment: *common-env
     volumes:
-      - /tank/v2/starrs-stack/starrs-prowlarr/config:/config
+      - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
 
   # Movies (Main)
   radarr:
     <<: *app
     image: lscr.io/linuxserver/radarr:version-6.1.1.10360
-    container_name: starrs-radarr
+    container_name: arrs-radarr
     environment:
       <<: *common-env
       RADARR__SERVER__PORT: "7878" # Radarr default
     volumes:
-      - /tank/v2/starrs-stack/starrs-radarr/config:/config
-      - /tank/v2/starrs-data:/mnt/starrs-data
+      - ${ARRS_CONFIG:?set in .env}/radarr/config:/config
+      - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
 
   # Movies (Anime)
   radarr-anime:
     <<: *app
     image: lscr.io/linuxserver/radarr:version-6.1.1.10360
-    container_name: starrs-radarr-anime
+    container_name: arrs-radarr-anime
     environment:
       <<: *common-env
       RADARR__SERVER__PORT: "7879" # Radarr default + 1
     volumes:
-      - /tank/v2/starrs-stack/starrs-radarr-anime/config:/config
-      - /tank/v2/starrs-data:/mnt/starrs-data
+      - ${ARRS_CONFIG:?set in .env}/radarr-anime/config:/config
+      - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
 
   # TV Series (Main)
   sonarr:
     <<: *app
     image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
-    container_name: starrs-sonarr
+    container_name: arrs-sonarr
     environment:
       <<: *common-env
       SONARR__SERVER__PORT: "8989" # Sonarr default
     volumes:
-      - /tank/v2/starrs-stack/starrs-sonarr/config:/config
-      - /tank/v2/starrs-data:/mnt/starrs-data
+      - ${ARRS_CONFIG:?set in .env}/sonarr/config:/config
+      - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
 
   # TV Series (Anime)
   sonarr-anime:
     <<: *app
     image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
-    container_name: starrs-sonarr-anime
+    container_name: arrs-sonarr-anime
     environment:
       <<: *common-env
       SONARR__SERVER__PORT: "8990" # Sonarr default + 1
     volumes:
-      - /tank/v2/starrs-stack/starrs-sonarr-anime/config:/config
-      - /tank/v2/starrs-data:/mnt/starrs-data
+      - ${ARRS_CONFIG:?set in .env}/sonarr-anime/config:/config
+      - ${ARRS_DATA:?set in .env}:/mnt/starrs-data
 
-  # qui for managing qBittorrent (reaches it at starrs:8080 on the default network)
+  # qui for managing qBittorrent (reaches it at arrs:8080 on the default network)
   # https://getqui.com/docs/getting-started/docker#local-filesystem-access
   qui:
     image: ghcr.io/hotio/qui:latest
@@ -145,8 +152,8 @@ services:
     restart: unless-stopped
     environment: *common-env
     volumes:
-      - /tank/v2/services/qui/config:/config
-      - /tank/v2/starrs-data/torrents:/mnt/starrs-data/torrents
+      - ${ARRS_CONFIG:?set in .env}/qui/config:/config
+      - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents
     networks:
       - caddy
       - default
