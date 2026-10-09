@@ -144,6 +144,9 @@ in
 
             # Identity headers on /oauth2/auth responses, for Caddy to copy to the app
             OAUTH2_PROXY_SET_XAUTHREQUEST = "true";
+            # Caddy checks every request to a gated site there (polling UIs log a line every few
+            # seconds); sign-in/out stays logged, denials (403 without the group) don't
+            OAUTH2_PROXY_EXCLUDE_LOGGING_PATHS = "/oauth2/auth";
           };
           labels = den.aspects.programs.podman.meta.autoUpdateLabels // {
             "caddy" = cfg.domain;
