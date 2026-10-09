@@ -30,8 +30,11 @@ x-app: &app
     - caddy
 
 # Kanidm login in front of every web UI (oauth2-proxy's `auth` snippet), so the apps' own
-# logins are off where they allow it (Servarr apps: External; qBittorrent: the caddy subnet
-# skips its login). The apps reach each other on the stack network, never through Caddy.
+# logins are off where they allow it (Servarr apps: External; qui: auth disabled for the
+# caddy subnet; qBittorrent: the caddy subnet skips its login, set in its UI as no env var
+# exists). The apps reach each other on the stack network, never through Caddy, and log in
+# to qBittorrent with its password. The caddy subnet (10.89.1.0/24) isn't pinned in Nix:
+# if it changes, qui refuses and qBittorrent asks for its login (fails closed).
 # Servarr apps take <APP>__AUTH__METHOD=External; their API keeps requiring the API key.
 x-auth-labels: &auth-labels
   caddy.import: auth prts_admins@idm.songpola.dev
@@ -172,7 +175,14 @@ services:
     <<: *app
     image: ghcr.io/hotio/qui:latest
     container_name: qui
-    environment: *common-env
+    environment:
+      <<: *common-env
+      # Login handled by the Kanidm gate: qui's own login is off, and it only accepts
+      # requests from the caddy network (refuses everything else) for its own domain
+      QUI__AUTH_DISABLED: "true"
+      QUI__I_ACKNOWLEDGE_THIS_IS_A_BAD_IDEA: "true"
+      QUI__AUTH_DISABLED_ALLOWED_CIDRS: 10.89.1.0/24
+      QUI__ALLOWED_HOSTS: qui.songpola.dev
     volumes:
       - ${ARRS_CONFIG:?set in .env}/qui/config:/config
       - ${ARRS_DATA:?set in .env}/torrents:/mnt/starrs-data/torrents

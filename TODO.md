@@ -296,14 +296,22 @@ resolves to Caddy), 2 and 3 (requests with a session pass
   cookie already covers it. It could read `X-Auth-Request-Groups` to show links
   per group; Kanidm's own app list is at `idm.songpola.dev/ui/apps`.
 - **arrs stack**: every web UI is gated with `import auth prts_admins@…`
-  (written 2026-10-10); Sonarr/Radarr/Prowlarr use `<APP>__AUTH__METHOD=External`
-  (checked in a throwaway Sonarr: UI without login, API still needs its key).
-  - [ ] qBittorrent: Options → Web UI → "Bypass authentication for clients in
-    whitelisted IP subnets": `10.89.1.0/24` (the `caddy` network; not pinned in
-    Nix, so if it is ever recreated with another subnet, qBittorrent just asks
-    for its login again).
-  - qui keeps its own login until it signs in through Kanidm (below). Clonarr
-    has no login of its own; the gate is its only protection.
+  (deployed and checked 2026-10-10), so the Kanidm login is the only one:
+  - Sonarr/Radarr/Prowlarr: `<APP>__AUTH__METHOD=External` (UI without
+    login, API still needs its key).
+  - [x] qBittorrent: "Bypass authentication for clients in whitelisted IP
+    subnets" `10.89.1.0/24` (set in its UI, no env var exists). The apps still
+    log in with its password (keep it in 1Password); its API keys (5.2+) only
+    help once the apps support them (Sonarr v5; Radarr: Radarr#11454). Leave
+    "reverse proxy support" off: the bypass must see Caddy's address, not the
+    forwarded client.
+  - [ ] qui: `QUI__AUTH_DISABLED` for the `caddy` subnet only, with
+    `QUI__ALLOWED_HOSTS` (written; tested in a throwaway qui). Chosen over
+    OIDC: the gate already checks identity, and OIDC would need a client
+    secret outside the public repo.
+  - Clonarr has no login of its own; the gate is its only protection.
+  - The `caddy` subnet isn't pinned in Nix: if it changes, qui refuses and
+    qBittorrent asks for its login (fails closed).
   The apps reach each other on the stack network, never through Caddy, so plain
   `auth` is enough. Only API clients from outside (phone apps like nzb360 or
   LunaSea, calendar feeds) would need an `auth-arr` variant that skips `/api/*`
@@ -312,7 +320,6 @@ resolves to Caddy), 2 and 3 (requests with a session pass
 - **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
   POSIX password, passkeys don't work there), optional SSO plugin. Its LAN
   networks see every client as local, see "Real client IPs behind Caddy".
-- **qui**: OIDC with Kanidm (and Dockhand, if it supports it).
 - **Tailnet auto-allow** via tsidp / Tailscale whois (needs real client IPs,
   see below).
 - **Real client IPs behind Caddy** (deferred on purpose, 2026-10-09): Caddy and
