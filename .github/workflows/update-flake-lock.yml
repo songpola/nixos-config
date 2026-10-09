@@ -19,13 +19,40 @@ jobs:
       - name: Update inputs
         run: nix flake update 2>&1 | tee update.log
 
+      # Kanidm only upgrades to the adjacent release, and nixpkgs marks a release vulnerable
+      # 30 days after its successor ships: bump one release in the same PR as soon as the updated
+      # nixpkgs has the next one (a separate PR off main couldn't see it while this one is open).
+      - name: Bump Kanidm
+        id: kanidm
+        env:
+          FILE: modules/hosts/prts/auth.nix
+        run: |
+          current=$(sed -n 's/^ *version = "\(1_[0-9]*\)";.*/\1/p' "$FILE")
+          if [ "$(printf '%s\n' "$current" | grep -c .)" != 1 ]; then
+            echo "::error file=$FILE::expected exactly one 'version = \"1_<n>\";' line"
+            exit 1
+          fi
+          next="1_$(( ${current#1_} + 1 ))"
+          has_next=$(nix eval .#nixosConfigurations.prts.pkgs --apply "p: p ? kanidmWithSecretProvisioning_$next")
+          if [ "$has_next" = true ]; then
+            sed -i "s/version = \"$current\";/version = \"$next\";/" "$FILE"
+            grep -q "version = \"$next\";" "$FILE"
+            echo "title=flake.lock: update, Kanidm ${next/_/.}" >> "$GITHUB_OUTPUT"
+            echo "note=Bumps Kanidm ${current/_/.} → ${next/_/.} (\`services.kanidm.version\`). Merging deploys it and migrates its database; don't merge another Kanidm bump before prts has run this one." >> "$GITHUB_OUTPUT"
+          else
+            echo "title=flake.lock: update" >> "$GITHUB_OUTPUT"
+          fi
+
       # PRs opened with GITHUB_TOKEN don't trigger the CI workflow, so verify here.
       - run: nix flake check
       - run: nix build --print-build-logs .#nixosConfigurations.prts.config.system.build.toplevel
 
       - name: PR body
+        env:
+          KANIDM_NOTE: ${{ steps.kanidm.outputs.note }}
         run: |
           {
+            if [ -n "$KANIDM_NOTE" ]; then printf '%s\n\n' "$KANIDM_NOTE"; fi
             echo '```'
             sed -n '/Updated input/,$p' update.log
             echo '```'
@@ -34,8 +61,10 @@ jobs:
       - uses: peter-evans/create-pull-request@v7
         with:
           branch: update-flake-lock
-          commit-message: "flake.lock: update"
-          title: "flake.lock: update"
+          commit-message: ${{ steps.kanidm.outputs.title }}
+          title: ${{ steps.kanidm.outputs.title }}
           body-path: pr-body.md
-          add-paths: flake.lock
+          add-paths: |
+            flake.lock
+            modules/hosts/prts/auth.nix
           delete-branch: true

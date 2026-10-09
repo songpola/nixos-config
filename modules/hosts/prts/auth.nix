@@ -19,7 +19,8 @@ in
 {
   den.hosts."x86_64-linux"."prts".settings.services = {
     kanidm = {
-      # Upgrade one release at a time, see the option's description
+      # Upgrade one release at a time, see the option's description. Bumped by the
+      # update-flake-lock workflow (it edits this exact line).
       version = "1_11";
       domain = idmDomain;
       backupDir = "/tank/v2/services/kanidm/backups";
