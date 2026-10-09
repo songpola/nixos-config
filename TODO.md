@@ -64,9 +64,8 @@ restoring `caddy-reverse-proxy-data.tar` is not needed (keep it as an archive).
 
 Status (2026-10-09): steps 1-6 are deployed on prts and verified (Kanidm's
 Let's Encrypt certificate, `idm` / `auth` through Caddy, the gate on Dockhand and
-Dozzle for `prts_admins`, "Verify" 1-3); step 7 is still planned.
-
-Next: the Dockhand items left in step 6, then step 7.
+Dozzle for `prts_admins`, "Verify" 1-3, Dockhand SSO); step 7 is written. What's
+left is under "Later".
 
 Goal: one login (passkeys) for the web services on prts, behind Caddy. Access
 stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
@@ -195,11 +194,13 @@ stays Tailscale-only (`*.songpola.dev A <Tailscale IP>`).
      stored credentials instead of losing them.)
    - [x] Scheduled update check in Dockhand, daily at 04:00. No minimum image
      age (`MINIMUM_RELEASE_AGE_HOURS`, decided not to use it).
-7. [ ] **Version-bump workflow** `.github/workflows/bump-kanidm.yml`, weekly
-   after `update-flake-lock`: if the locked nixpkgs has `kanidm_1_<n+1>`, open a
-   PR that changes only the version setting. CI builds prts, merging deploys via
-   the nightly auto-upgrade. If a version goes EOL first, CI on the flake.lock PR
-   fails, which says to merge the Kanidm bump first.
+7. [x] **Version bump**, in `update-flake-lock.yml` instead of a separate
+   workflow: when the updated nixpkgs has `kanidmWithSecretProvisioning_1_<n+1>`,
+   the same PR bumps `version` in `modules/hosts/prts/auth.nix` (one release per
+   run; title "flake.lock: update, Kanidm 1.<n+1>"); the workflow builds prts
+   with both. A separate PR off `main` couldn't see the new release while the
+   flake.lock PR is open, so an unmerged lock PR past the 30-day EOL would have
+   left both stuck. Dry-run checked locally (1_10 → 1_11; 1_11 stays).
 
 ### Open questions
 
