@@ -41,7 +41,7 @@ services:
   # IMPORTANT: See "qBittorrent - Basic Setup (TRaSH Guides)" in ./arrs.md
   qbittorrent:
     <<: *app
-    image: lscr.io/linuxserver/qbittorrent:version-5.1.4-r3
+    image: lscr.io/linuxserver/qbittorrent:latest
     container_name: arrs-qbittorrent
     environment:
       <<: *common-env
@@ -81,7 +81,7 @@ services:
   # Indexer
   prowlarr:
     <<: *app
-    image: lscr.io/linuxserver/prowlarr:version-2.3.5.5327
+    image: lscr.io/linuxserver/prowlarr:latest
     container_name: arrs-prowlarr
     environment:
       <<: *common-env
@@ -100,7 +100,7 @@ services:
   # Movies (Main)
   radarr:
     <<: *app
-    image: lscr.io/linuxserver/radarr:version-6.1.1.10360
+    image: lscr.io/linuxserver/radarr:latest
     container_name: arrs-radarr
     environment:
       <<: *common-env
@@ -118,7 +118,7 @@ services:
   # store it (it dates from the shared network namespace)
   radarr-anime:
     <<: *app
-    image: lscr.io/linuxserver/radarr:version-6.1.1.10360
+    image: lscr.io/linuxserver/radarr:latest
     container_name: arrs-radarr-anime
     environment:
       <<: *common-env
@@ -135,7 +135,7 @@ services:
   # TV Series (Main)
   sonarr:
     <<: *app
-    image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: arrs-sonarr
     environment:
       <<: *common-env
@@ -152,7 +152,7 @@ services:
   # TV Series (Anime); port as for radarr-anime
   sonarr-anime:
     <<: *app
-    image: lscr.io/linuxserver/sonarr:version-4.0.17.2952
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: arrs-sonarr-anime
     environment:
       <<: *common-env
