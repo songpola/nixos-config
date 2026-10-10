@@ -1,0 +1,21 @@
+# iroh-dns-server configuration (see compose.yaml), HTTPS pkarr path only. Caddy terminates
+# TLS, so the server listens on plain HTTP.
+
+pkarr_put_rate_limit = "smart"
+data_dir = "/data"
+
+[http]
+port = 8080
+bind_addr = "0.0.0.0"
+
+# Required by the config schema but unused: no port 53, no NS delegation
+[dns]
+port = 5300
+bind_addr = "127.0.0.1"
+default_soa = "dashbeam-dns.songpola.dev hostmaster.songpola.dev 0 10800 3600 604800 3600"
+default_ttl = 30
+origins = ["dashbeam-dns.songpola.dev", "."]
+
+# Don't fall back to the BitTorrent mainline DHT: a private, self-contained server
+[mainline]
+enabled = false

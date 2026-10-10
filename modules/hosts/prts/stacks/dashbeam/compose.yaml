@@ -1,0 +1,57 @@
+# Self-hosted DashBeam infrastructure (https://github.com/tonyantony300/dashbeam): an iroh
+# relay and a discovery (pkarr) server. DashBeam itself is a native app with no server part;
+# the apps use these once set in Settings -> Infra on every device (native apps only):
+#   Relay      https://dashbeam-relay.songpola.dev  (+ the auth token below)
+#   Discovery  https://dashbeam-dns.songpola.dev/pkarr
+#
+# Caddy owns 80/443 on the host and terminates TLS, so both run plain HTTP behind it. The
+# relay loses QUIC address discovery (UDP 7842, needs its own TLS), so it only relays and
+# helps less with hole punching; direct connections still work.
+#
+# The relay is open to the internet (the apps can't sit behind forward-auth), so it requires
+# a shared token. Set IROH_RELAY_ACCESS_TOKEN in Dockhand's encrypted stack variables (not in
+# this public repo), e.g. from `openssl rand -hex 32`, and enter the same value in the apps.
+# Discovery needs no secret: every record is signed by its device key.
+
+# Stack name in Dockhand and compose project name
+name: dashbeam
+
+services:
+  relay:
+    image: n0computer/iroh-relay:v1.0.0
+    container_name: dashbeam-relay
+    restart: unless-stopped
+    command: ["--config-path", "/config/iroh-relay.conf"]
+    environment:
+      # Replaces the placeholder token in iroh-relay.conf. Bare passthrough on purpose: an
+      # empty value would make the relay fail at startup
+      IROH_RELAY_ACCESS_TOKEN: ${IROH_RELAY_ACCESS_TOKEN:?set in Dockhand stack variables}
+    volumes:
+      - ./iroh-relay.conf:/config/iroh-relay.conf:ro
+    networks:
+      - caddy
+    labels:
+      caddy: dashbeam-relay.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 3340}}"
+
+  discovery:
+    image: n0computer/iroh-dns-server:v1.0.0
+    container_name: dashbeam-dns
+    restart: unless-stopped
+    command: ["-c", "/config/config.toml"]
+    volumes:
+      - ./dns-config.toml:/config/config.toml:ro
+      # Signed-packet store
+      - discovery-data:/data
+    networks:
+      - caddy
+    labels:
+      caddy: dashbeam-dns.songpola.dev
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
+volumes:
+  discovery-data:
+
+networks:
+  caddy:
+    external: true
