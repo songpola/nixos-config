@@ -151,6 +151,8 @@ in
           labels = den.aspects.programs.podman.meta.autoUpdateLabels // {
             "caddy" = cfg.domain;
             "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
+            # Not bundled with Dozzle; selfh.st icon (CC BY 4.0, https://selfh.st/icons)
+            "dev.dozzle.icon" = "data:image/svg+xml," + lib.escapeURL (builtins.readFile ./oauth2-proxy.svg);
           };
         };
       };

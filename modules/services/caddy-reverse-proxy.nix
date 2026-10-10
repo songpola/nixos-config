@@ -135,7 +135,13 @@ in
             )
           ];
           # caddy-docker-proxy also reads the proxy's own labels
-          labels = den.aspects.programs.podman.meta.autoUpdateLabels // siteLabels;
+          labels =
+            den.aspects.programs.podman.meta.autoUpdateLabels
+            // siteLabels
+            // {
+              # Dozzle's bundled icon, which it doesn't match to this image on its own
+              "dev.dozzle.icon" = "caddy";
+            };
           # The image has no HEALTHCHECK, but Caddy speaks sd_notify: the unit is ready only once
           # Caddy has loaded its config, so an auto-update to a Caddy that can't is rolled back.
           podman.sdnotify = "container";
