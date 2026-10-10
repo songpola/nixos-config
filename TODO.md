@@ -140,6 +140,11 @@ commands can't be undone.
       route to it: smartd warnings, ZFS events (ZED: pool degraded, scrub results),
       failed systemd units (auto-upgrade, `podman-auto-update` rollbacks, backups once
       section 3 exists), and Dockhand's update notifications.
+      Auto-upgrade first (`OnFailure=` on `nixos-upgrade.service`): a failed build
+      leaves prts on the old generation silently, so later merges (and security
+      updates) stop deploying unnoticed, and a stalled Kanidm bump plus the next
+      weekly one would skip a release, which Kanidm can't migrate. It also catches
+      activation and runtime failures, which CI's build can't see.
 - [ ] `podman-restart` is fragile: one failing container fails the unit, and systemd
       kills the conmon of the containers it just started. Try a `KillMode=process`
       guard in `modules/programs/podman.nix` and test it.
