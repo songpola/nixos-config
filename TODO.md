@@ -18,8 +18,6 @@ daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
 - [ ] Add `protonmail-bridge` as a Git stack (data in
       `/tank/v2/services/protonmail-bridge/root`; if empty, log the bridge in once
       through its CLI in the container).
-- [ ] arrs: test Prowlarr's apps and each app's indexers and download client
-      (all should be green).
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack` (databases
       in named volumes; create, import, then start):
   ```nu
@@ -42,8 +40,6 @@ daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
 
 ## 2. Verify
 
-- [ ] Dockhand is responsive (turn off "Disk space warnings" in the environment's
-      Activity tab if it is slow)
 - [ ] Restart on boot works: reboot, or `sudo systemctl restart podman-restart`
       (briefly stops every container); expect `active (exited)` and every
       container back in `sudo podman ps`
