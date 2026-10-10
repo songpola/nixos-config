@@ -1,0 +1,165 @@
+---
+# Custom Prowlarr definition for SeFree's Trackarr Torznab API, modelled on the official
+# `c411` definition (definitions/v11/c411.yml in github.com/Prowlarr/Indexers). Mounted at
+# /config/Definitions/Custom/sefree.yml by compose.yaml.
+#
+# Why not Prowlarr's generic Torznab indexer: SeFree files anime under its own 90XX
+# categories (Anime 9000, Anime/MOVIES 9010, Anime/TV 9020), which no standard category
+# covers, and Trackarr allows one ID per category, so the site can't also send TV/Anime
+# (5070). Apps that only ask for standard categories never see the anime: qui searches TV
+# as 5000, for its Search page and for cross-seed. Here the categorymappings add the
+# standard categories, as Prowlarr's Nyaa definition does. Anime/MOVIES also maps to
+# TV/Anime, so Sonarr still finds the movies that it keeps as specials.
+#
+# Every search goes out as t=search: Trackarr's t=tvsearch leaves the 90XX categories out
+# even when asked for them. Cardigann adds the episode (S01E09) to the keywords itself.
+id: sefree
+name: SeFree
+description: "SeFree (Trackarr) Torznab API with anime mapped to the standard categories"
+language: th-TH
+type: private
+encoding: UTF-8
+links:
+  - https://sefree-media.net/
+
+caps:
+  categorymappings:
+    # from https://sefree-media.net/api/torznab?t=caps
+    - {id: 9000, cat: TV/Anime, desc: "Anime"}
+    - {id: 9010, cat: Movies, desc: "Anime/MOVIES"}
+    - {id: 9010, cat: TV/Anime, desc: "Anime/MOVIES"}
+    - {id: 9020, cat: TV/Anime, desc: "Anime/TV"}
+    - {id: 2000, cat: Movies, desc: "Movies"}
+    - {id: 2030, cat: Movies/SD, desc: "Movies/SD"}
+    - {id: 2040, cat: Movies/HD, desc: "Movies/HD"}
+    - {id: 2045, cat: Movies/UHD, desc: "Movies/UHD/4K"}
+    - {id: 2050, cat: Movies/BluRay, desc: "Movies/Blu-Ray"}
+    - {id: 5000, cat: TV, desc: "TV"}
+    - {id: 5030, cat: TV/SD, desc: "TV/SD"}
+    - {id: 5040, cat: TV/HD, desc: "TV/HD"}
+    - {id: 5045, cat: TV/UHD, desc: "TV/UHD/4K"}
+    - {id: 5080, cat: TV/Documentary, desc: "TV/Documentary"}
+    - {id: 7000, cat: Books, desc: "Books"}
+    - {id: 7010, cat: Books/Mags, desc: "Books/Magazines"}
+    - {id: 7020, cat: Books/EBook, desc: "Books/Ebooks"}
+    - {id: 7030, cat: Books/Comics, desc: "Books/Comics"}
+    - {id: 6000, cat: XXX, desc: "XXX"}
+
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+
+settings:
+  - name: apikey
+    type: text
+    label: Passkey
+  - name: info_key
+    type: info
+    label: About your passkey
+    default: "The 32-character key in the <code>apikey=</code> of any feed on SeFree's RSS feeds page."
+
+login:
+  # t=caps answers without a key, so test it with a search; a bad key returns
+  # <error code="100" description="Invalid API key format. ..."/>
+  path: api/torznab
+  method: get
+  inputs:
+    apikey: "{{ .Config.apikey }}"
+    t: search
+    limit: 1
+  error:
+    - selector: error
+      message:
+        selector: error
+        attribute: description
+
+search:
+  paths:
+    - path: api/torznab
+      response:
+        type: xml
+
+  inputs:
+    apikey: "{{ .Config.apikey }}"
+    t: search
+    q: "{{ .Keywords }}"
+    cat: "{{ join .Categories \",\" }}"
+    limit: 100
+
+  rows:
+    selector: rss > channel > item
+
+  fields:
+    category:
+      selector: "[name=category]"
+      attribute: value
+    # SeFree's titles, e.g.
+    #   [SeFree] Title | S01E09 | AV1 MAIN | AAC stereo | 1080p | Audio : JPN,THA | Sub : THA,ENG |
+    # don't parse: the pipes end up in the title and as the release group, so qui
+    # rejects them for cross-seed. Rewrite them into the style of SeFree's torrent names
+    # (Title.2026.S01E09.<episode>.NF.WEBDL-1080P.AV1.AAC.[JA+TH].[TH+EN].[SeFree]):
+    #   Title S01E09 1080p AV1 AAC [JA+TH] [TH+EN] [SeFree]
+    # qui's parser reads the second bracket as the group and [SeFree] as the site, the
+    # same as the torrent names, so the two match. Titles in other shapes pass unchanged.
+    title:
+      selector: title
+      filters:
+        - name: re_replace
+          args: ["^\\[SeFree\\]\\s*(.+?)\\s*\\|\\s*(S\\d+(?:E\\d+)*)\\s*\\|\\s*(\\S+)[^|]*\\|\\s*(\\S+)[^|]*\\|\\s*(\\d{3,4}[pi])\\s*\\|\\s*Audio\\s*:\\s*([^|]*?)\\s*\\|\\s*Sub\\s*:\\s*([^|]*?)\\s*\\|?\\s*$", "${1} ${2} ${5} ${3} ${4} [A:${6}] [S:${7}] [SeFree]"]
+        # Language codes inside the [A:...] and [S:...] markers, as the torrent names
+        # write them
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\]]*?)\\bJPN\\b", "${1}JA"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\]]*?)\\bTHA\\b", "${1}TH"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\]]*?)\\bENG\\b", "${1}EN"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\]]*?)\\bKOR\\b", "${1}KO"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\]]*?)\\b(?:CHI|CHN|ZHO)\\b", "${1}ZH"]
+        # Comma lists to plus lists, one comma per marker each pass
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\],]*?)\\s*,\\s*", "${1}+"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\],]*?)\\s*,\\s*", "${1}+"]
+        - name: re_replace
+          args: ["(\\[[AS]:[^\\],]*?)\\s*,\\s*", "${1}+"]
+        - name: re_replace
+          args: ["\\[[AS]:", "["]
+    details:
+      selector: comments
+      optional: true
+    download:
+      selector: enclosure
+      attribute: url
+    infohash:
+      selector: "[name=infohash]"
+      attribute: value
+      optional: true
+    date:
+      selector: pubDate
+    size:
+      selector: enclosure
+      attribute: length
+    seeders:
+      selector: "[name=seeders]"
+      attribute: value
+    leechers:
+      selector: "[name=peers]"
+      attribute: value
+      optional: true
+    grabs:
+      selector: "[name=grabs]"
+      attribute: value
+      optional: true
+    downloadvolumefactor:
+      selector: "[name=downloadvolumefactor]"
+      attribute: value
+      optional: true
+    uploadvolumefactor:
+      selector: "[name=uploadvolumefactor]"
+      attribute: value
+      optional: true
+# torznab xml

@@ -98,6 +98,8 @@ services:
       - ${ARRS_CONFIG:?set in .env}/prowlarr/config:/config
       # BearBIT with its download ad gate handled (see the file)
       - ./prowlarr-bearbit.yml:/config/Definitions/Custom/bearbit.yml:ro
+      # SeFree with its 90XX anime categories mapped to standard ones (see the file)
+      - ./prowlarr-sefree.yml:/config/Definitions/Custom/sefree.yml:ro
     labels:
       <<: *auth-labels
       caddy: prowlarr.songpola.dev
