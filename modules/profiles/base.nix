@@ -73,6 +73,7 @@
           # Sysadmin tools
           lsof
           fastfetch
+          openssl
 
           # Modern drop-in replacement tools
           ripgrep # replace grep
