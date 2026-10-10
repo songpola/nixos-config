@@ -1,9 +1,11 @@
 name: CI
 
+# Disabled: prts builds on its own and keeps the old generation if the build fails;
+# update-flake-lock.yml still builds prts before opening its PR. Manual runs only.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # push:
+  #   branches: [main]
+  # pull_request:
   workflow_dispatch:
 
 jobs:

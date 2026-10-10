@@ -61,6 +61,6 @@ sops-nix with age; recipients in the root `.sops.yaml` (local dev key + each hos
 
 ## Deployment / CI
 
-`prts` auto-upgrades nightly from `github:songpola/nixos-config#prts` on `main` (`modules/services/auto-upgrade.nix`) — whatever is merged to `main` gets deployed. `flake.lock` is only bumped by the weekly `update-flake-lock` workflow (opens a PR), never on the host; when the new nixpkgs has the next Kanidm release, the same PR bumps `services.kanidm.version` in `modules/hosts/prts/auth.nix` by one (Kanidm only upgrades to the adjacent release). CI (`.github/workflows/ci.yml`) runs `nix flake check` and builds prts.
+`prts` auto-upgrades nightly from `github:songpola/nixos-config#prts` on `main` (`modules/services/auto-upgrade.nix`) — whatever is merged to `main` gets deployed. `flake.lock` is only bumped by the weekly `update-flake-lock` workflow (opens a PR), never on the host; when the new nixpkgs has the next Kanidm release, the same PR bumps `services.kanidm.version` in `modules/hosts/prts/auth.nix` by one (Kanidm only upgrades to the adjacent release). CI (`.github/workflows/ci.yml`, `nix flake check` and a prts build) is disabled (manual runs only): a failed build on prts keeps the old generation, and `update-flake-lock` already builds prts before opening its PR.
 
 The repo is a colocated jujutsu (`jj`) + git repo.
