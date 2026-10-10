@@ -61,6 +61,7 @@ services:
       <<: *auth-labels
       caddy: qbit.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8080}}"
+      dev.dozzle.url: https://qbit.songpola.dev
 
   # Guide Sync (configuration management)
   clonarr:
@@ -74,6 +75,7 @@ services:
       <<: *auth-labels
       caddy: clonarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 6060}}"
+      dev.dozzle.url: https://clonarr.songpola.dev
 
   # Indexer Proxies (for bypassing Cloudflare blocks on indexers); only Prowlarr uses it
   byparr:
@@ -97,6 +99,7 @@ services:
       <<: *auth-labels
       caddy: prowlarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 9696}}"
+      dev.dozzle.url: https://prowlarr.songpola.dev
 
   # Movies (Main)
   radarr:
@@ -114,6 +117,7 @@ services:
       <<: *auth-labels
       caddy: radarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7878}}"
+      dev.dozzle.url: https://radarr.songpola.dev
 
   # Movies (Anime); the port differs from the default only because Prowlarr and Clonarr
   # store it (it dates from the shared network namespace)
@@ -132,6 +136,7 @@ services:
       <<: *auth-labels
       caddy: radarr-anime.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7879}}"
+      dev.dozzle.url: https://radarr-anime.songpola.dev
 
   # TV Series (Main)
   sonarr:
@@ -149,6 +154,7 @@ services:
       <<: *auth-labels
       caddy: sonarr.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8989}}"
+      dev.dozzle.url: https://sonarr.songpola.dev
 
   # TV Series (Anime); port as for radarr-anime
   sonarr-anime:
@@ -166,6 +172,7 @@ services:
       <<: *auth-labels
       caddy: sonarr-anime.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8990}}"
+      dev.dozzle.url: https://sonarr-anime.songpola.dev
 
   # qui for managing qBittorrent (qbittorrent:8080) and searching through Prowlarr
   # https://getqui.com/docs/getting-started/docker#local-filesystem-access
@@ -188,6 +195,7 @@ services:
       <<: *auth-labels
       caddy: qui.songpola.dev
       caddy.reverse_proxy: "{{upstreams 7476}}"
+      dev.dozzle.url: https://qui.songpola.dev
 
 networks:
   caddy:

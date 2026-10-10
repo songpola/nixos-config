@@ -31,6 +31,7 @@ services:
     labels:
       caddy: jf.songpola.dev
       caddy.reverse_proxy: "{{upstreams 8096}}"
+      dev.dozzle.url: https://jf.songpola.dev
 
 networks:
   caddy:
