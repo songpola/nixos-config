@@ -53,6 +53,13 @@ about 29,600 power-on hours).
 - [ ] Snapshots and replication with sanoid + syncoid (`services.sanoid`,
       `services.syncoid`); exclude `tank/v2/arrs-data` and `tank/qbittorrent-downloads`
 - [ ] Optional: an off-site copy of the irreplaceable data (Immich)
+- [ ] Once backups run: upgrade Jellyfin from the pinned 10.11.8 to 12.x (`latest` is
+      12.x now: Jellyfin dropped the "10."). One-way database migrations, so keep a
+      pin, never `latest`. Steps: snapshot `/tank/v2/services/jellyfin`, uninstall
+      the LDAP Authentication plugin (log in as the local `admin`), bump the image
+      tag in `stacks/jellyfin/compose.yaml`, reinstall the plugin (24.0.0.0 targets
+      12.0), test a Kanidm login, then run a full library scan (required: alternate
+      versions are dropped until it runs). Read the 12.x release notes first.
 
 ## 4. Cleanup (after about a week of stability)
 
