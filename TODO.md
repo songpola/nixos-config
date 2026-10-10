@@ -317,9 +317,36 @@ resolves to Caddy), 2 and 3 (requests with a session pass
   LunaSea, calendar feeds) would need an `auth-arr` variant that skips `/api/*`
   and `/feed/*` (the apps check API keys there). Renamed from "starrs" except
   the container path (`/mnt/starrs-data`).
-- **Jellyfin**: LDAP plugin (enable Kanidm LDAPS then; users log in with their
-  POSIX password, passkeys don't work there), optional SSO plugin. Its LAN
-  networks see every client as local, see "Real client IPs behind Caddy".
+- **Jellyfin**: logins through Kanidm LDAP (done 2026-10-10). Not behind the
+  gate: TV and phone apps can't do a browser login.
+  - Kanidm serves LDAPS on 636 (`services.kanidm.ldapPort`); Jellyfin maps
+    `idm.songpola.dev` to the host (`extra_hosts: host-gateway`), since on the
+    `caddy` network the name resolves to Caddy.
+  - Official "LDAP Authentication" plugin: `idm.songpola.dev:636`, secure LDAP,
+    TLS verified, base `dc=idm,dc=songpola,dc=dev`, filter
+    `(&(class=person)(memberof=spn=prts_media@idm.songpola.dev,dc=idm,dc=songpola,dc=dev))`,
+    admin filter the same with `prts_admins`, search/username attribute `name`,
+    uid attribute `uuid`, user creation on. It searches **anonymously** (empty
+    bind user): Kanidm lets anonymous read name, memberof and uuid, while an
+    API token's service account sees no people unless added to a group (the
+    only one that helps, `idm_people_pii_read`, grants more than needed).
+  - Users log in with their Kanidm name and POSIX password (never passkeys):
+    `kanidm person posix set <name>`, then
+    `kanidm person posix set-password <name>` (both `-D idm_admin`); test with
+    `ldapwhoami -H ldaps://idm.songpola.dev -x -D name=<name> -w <password>`.
+    POSIX attributes aren't provisionable from Nix.
+  - Break-glass: local Jellyfin admin `admin` (password in 1Password).
+  - SSO plugin rejected: the original (9p4) is archived, no successor yet.
+  - [ ] Delete the unused service account:
+    `kanidm service-account delete jellyfin_ldap -D idm_admin`.
+  - Its LAN networks see every client as local, see "Real client IPs behind
+    Caddy".
+- **Sharing PRTS with a friend**: Tailscale node sharing, not public access.
+  New Kanidm person in `prts_media` only (`auth.nix`), POSIX password via a
+  reset link, then Jellyfin creates their account on first login. Before
+  sharing, limit shared users (`autogroup:shared`) to port 443 in the Tailscale
+  ACL: Kanidm listens on 8443 and 636 on all addresses, and Tailscale accepts
+  everything arriving on `tailscale0`.
 - **Tailnet auto-allow** via tsidp / Tailscale whois (needs real client IPs,
   see below).
 - **Real client IPs behind Caddy** (deferred on purpose, 2026-10-09): Caddy and
