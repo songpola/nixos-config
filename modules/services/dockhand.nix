@@ -126,6 +126,8 @@ in
             labels = {
               "caddy" = cfg.domain;
               "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
+              # Dozzle links the container to its web UI
+              "dev.dozzle.url" = "https://${cfg.domain}";
             };
             environment = {
               # Public address (needed for passkeys and behind a proxy)
