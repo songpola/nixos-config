@@ -6,6 +6,10 @@
       {
         virtualisation.podman.enable = true;
 
+        # `docker` CLI alias for podman. Not `dockerSocket`: containers mount
+        # /run/podman/podman.sock directly, and no host tool needs /run/docker.sock.
+        virtualisation.podman.dockerCompat = true;
+
         # Containers on user-created networks resolve names through aardvark-dns on the
         # bridge gateway, which the host firewall drops (nixpkgs only opens it for the default
         # network). Allow DNS from every podman bridge (podman0, podman1, ...).
