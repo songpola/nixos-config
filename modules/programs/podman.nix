@@ -25,9 +25,26 @@
         environment.systemPackages = [ pkgs.docker-compose ];
         virtualisation.containers.containersConf.settings.engine.compose_warning_logs = false;
 
-        # Start containers with a restart policy (e.g. `unless-stopped`) on boot.
-        # The unit ships with podman but is not enabled by default.
-        systemd.services.podman-restart.wantedBy = [ "multi-user.target" ];
+        systemd.services = lib.mkMerge [
+          {
+            # Start containers with a restart policy (e.g. `unless-stopped`) on boot.
+            # The unit ships with podman but is not enabled by default.
+            podman-restart.wantedBy = [ "multi-user.target" ];
+          }
+
+          # Container data (named volumes, bind mounts) may live on ZFS datasets, which
+          # zfs-mount.service mounts without mount units, so RequiresMountsFor can't wait for
+          # them. Ordered only, like services.kanidm: a failed pool import shouldn't stop every
+          # container.
+          (lib.mkIf config.boot.zfs.enabled (
+            {
+              podman-restart.after = [ "zfs-mount.service" ];
+            }
+            // lib.mapAttrs' (
+              _: container: lib.nameValuePair container.serviceName { after = [ "zfs-mount.service" ]; }
+            ) config.virtualisation.oci-containers.containers
+          ))
+        ];
       };
 
     user.extraGroups = [ "podman" ];

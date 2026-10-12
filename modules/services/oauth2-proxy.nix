@@ -113,9 +113,18 @@ in
           restartUnits = [ unit ];
         };
 
+        # oauth2-proxy exits when OIDC discovery fails. Discovery goes through Caddy to the
+        # provider, so start after both (Caddy's unit is ready once its config is loaded), and
+        # keep retrying instead of hitting the start limit while either isn't serving yet.
         systemd.services."podman-${name}" = rec {
-          wants = [ "podman-network-${caddy.network}.service" ];
+          wants = [
+            "podman-network-${caddy.network}.service"
+            "podman-caddy-reverse-proxy.service"
+          ]
+          ++ lib.optional config.services.kanidm.server.enable "kanidm.service";
           after = wants;
+          serviceConfig.RestartSec = "5s";
+          unitConfig.StartLimitIntervalSec = 0;
         };
 
         virtualisation.oci-containers.containers.${name} = {

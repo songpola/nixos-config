@@ -118,6 +118,11 @@ in
           requiredBy = [ unit ];
           before = [ unit ];
         };
+        # Compose stacks join the network as `external`; podman-restart starts them at boot
+        systemd.services.podman-restart = rec {
+          wants = [ "podman-network-${cfg.network}.service" ];
+          after = wants;
+        };
 
         virtualisation.oci-containers.containers.${name} = {
           inherit (cfg) image;
