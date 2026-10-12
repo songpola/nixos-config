@@ -98,6 +98,14 @@ in
         jj + git. Use `jj` for status, diff, log, commits, bookmarks and
         pushing; read-only `git` commands are fine only when jj has no
         equivalent. Don't create git branches or commits directly.
+      - Never build PRTS (`nixosConfigurations.prts`) locally on
+        `spla-laptop-wsl`; it's too weak for that. Evaluate only (`nix eval`
+        of a unit or `...toplevel.drvPath`) and leave full builds to CI or
+        PRTS itself.
+      - `~/.claude/CLAUDE.md` (this file) is a read-only home-manager
+        symlink: edit its source in my NixOS config repo instead
+        (`modules/users/songpola/default.nix`). If you can't find the
+        source, ask me.
       - Shell: my interactive shell is nushell. Commands, snippets and
         scripts meant for me to run should be nushell syntax. (Your own
         Bash tool still runs bash; that's fine.)
