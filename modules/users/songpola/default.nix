@@ -158,7 +158,6 @@ in
       {
         homeManager.programs.jujutsu.settings = {
           signing = {
-            behavior = "own";
             backend = "ssh";
             backends.ssh.program = opSshSignPath;
             key = sshPublicKey;
