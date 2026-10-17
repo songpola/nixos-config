@@ -18,6 +18,10 @@ sops_age_key_ref := env("SOPS_AGE_KEY_REF", "op://nixos-config/SOPS_AGE_KEY/cred
 sops-edit file:
     SOPS_AGE_KEY="$(op.exe read '{{ sops_age_key_ref }}')" nix shell nixpkgs#sops -c sops edit '{{ file }}'
 
+# Cross-seed BearBIT torrents to SeFree through qui on prts, e.g. `just cross-seed-sefree "Saga of Tanya the Evil" --dry-run`
+cross-seed-sefree query *args:
+    nu modules/hosts/prts/scripts/cross-seed-sefree.nu '{{ query }}' {{ args }}
+
 # Run an nh os action on prts remotely, e.g. `just prts switch` or `just prts boot`
 prts action="switch":
     nh os {{ action }} . --hostname=prts --target-host=prts --build-host=prts --elevation-strategy=passwordless --show-activation-logs --ask
