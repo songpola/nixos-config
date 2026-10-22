@@ -122,6 +122,7 @@ in
     # stays writable (Claude Code keeps synced skills there too).
     homeManager.programs.claude-code.skills = {
       jj-commit = ./claude-skills/jj-commit;
+      flow-icons-match = ./claude-skills/flow-icons-match;
     };
 
     homeManager.programs.jujutsu.settings = {
