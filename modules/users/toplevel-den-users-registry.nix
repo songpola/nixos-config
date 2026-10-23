@@ -27,11 +27,11 @@ in
 {
   options.den.users = lib.mkOption {
     type = lib.types.attrsOf (
-      den.lib.schema.mkInstanceType den.schema.user {
+      den.lib.schema.mkInstanceType {
         strict = false;
         # Not on any host; also tells the module below not to apply here.
         extraModules = [ { _module.args.host = null; } ];
-      }
+      } den.schema.user
     );
     default = { };
     description = "Host-independent user definitions, applied to host users of the same name.";
