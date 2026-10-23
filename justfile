@@ -8,6 +8,10 @@ write-flake:
 check:
     nix flake check
 
+# Update all flake inputs in flake.lock
+update:
+    nix flake update
+
 switch:
     nh os switch .
 
