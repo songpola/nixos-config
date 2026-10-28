@@ -27,9 +27,24 @@
 
         systemd.services = lib.mkMerge [
           {
-            # Start containers with a restart policy (e.g. `unless-stopped`) on boot.
-            # The unit ships with podman but is not enabled by default.
+            # Start containers with a restart policy (e.g. `unless-stopped`) on boot:
+            # daemonless Podman has nothing else that applies them after a reboot.
+            # Podman ships the unit but leaves it disabled, and NixOS ignores the
+            # `[Install]` sections of packaged units, so enable it via `wantedBy`.
             podman-restart.wantedBy = [ "multi-user.target" ];
+
+            # Under a systemd unit ($INVOCATION_ID set), podman leaves each container's conmon in
+            # the unit's cgroup instead of its own libpod-conmon scope. When one container fails to
+            # start, the unit fails and systemd SIGKILLs every conmon it started: the containers
+            # keep running unmonitored (no logs, health checks or exit codes, `Exited (-1)` on
+            # stop). An empty value makes podman give conmon its own scope, as from a shell; the
+            # API service (podman.service) unsets it the same way. Upstream: podman#26008, and
+            # podman#29582 (maintainer: unset INVOCATION_ID when running podman from a service).
+            podman-restart.environment.INVOCATION_ID = "";
+
+            # The unit only matters at boot. Restarting it on switch (a changed unit, e.g. a podman
+            # update) runs its ExecStop, `podman stop --all`, which stops every container.
+            podman-restart.restartIfChanged = false;
           }
 
           # Container data (named volumes, bind mounts) may live on ZFS datasets, which
