@@ -23,11 +23,12 @@ projects only. Downtime during the work is fine (single user).
 - quadlet-nix for everything in the repo: arrs, jellyfin (with Jikan), and the
   infrastructure now on `virtualisation.oci-containers` (caddy-reverse-proxy,
   oauth2-proxy, dozzle, and Arcane itself).
-- Arcane manages a lab area only (`/tank/v2/labs`), for temporary projects not in this
+- Arcane manages a lab area only (`/tank/v2/services/arcane/projects`), for temporary projects not in this
   repo. Labs come back after a reboot, so podman-restart and its fix stay. Deploy labs
   at the project level only, never with a container's Redeploy/Update/Edit button.
-- Arcane image pinned to a release with the Podman fixes (`cdd81797`: v2.17.4 or later),
-  no D-Bus socket mounted (keeps it away from the Nix-managed units and auto-update).
+- Arcane image pinned to v2.17.3 (the next major release renames its env vars to
+  `ARCANE_*`, see `modules/services/arcane.nix`), no D-Bus socket mounted (keeps it away
+  from the Nix-managed units and auto-update).
 - dashbeam, protonmail-bridge and radicale are dropped (none were deployed); their
   compose files stay in `stacks/` as references.
 
@@ -106,13 +107,21 @@ projects only. Downtime during the work is fine (single user).
 
 ### 5. Arcane for labs, replacing Dockhand
 
-- [ ] `services.arcane` aspect on quadlet-nix: pinned image, Podman socket (no D-Bus),
-      `/app/data`, labs directory at the same path inside and out, forward-auth, sops
-      encryption key (`ARCANE_ENCRYPTION_KEY_FILE`), Kanidm OIDC client (verify the
-      callback path), `ARCANE_APP_URL`, `ARCANE_TRUSTED_PROXIES`.
-- [ ] Move or drop the Dockhand-only stacks (cwa, forgejo, ite-310-wordpress,
-      ite-444-full-stack, kay-chan-discord-bot, mc-all-the-mons, netnow, speedtest,
-      unturned-server).
+- [x] `services.arcane` (`modules/services/arcane.nix`), next to Dockhand for now: image
+      pinned to v2.17.3, Podman socket only, data in `/tank/v2/services/arcane`, projects in
+      its `projects/`, runs as songpola.
+      Sub-aspects: `forward-auth`, `encryption-key` and `sso-login` (OIDC fully from env:
+      auto-redirect to Kanidm, `prts_admins` → Admin role, callback `/auth/oidc/callback`,
+      PKCE). Secrets in `secrets/arcane.secrets.yaml`. Upgrading past v2.17 means renaming
+      every Arcane env var to `ARCANE_*` (#4540, no fallback; noted in the aspect).
+- [x] Copied the plain Dockhand stacks to `/tank/v2/services/arcane/projects/` (2026-11-10,
+      without `compose.yaml.bak`; same directory names, so the compose project names and
+      named volumes match): cwa, forgejo, ite-310-wordpress, ite-444-full-stack,
+      kay-chan-discord-bot, mc-all-the-mons, speedtest, unturned-server. None were running.
+- [ ] netnow: a Dockhand git stack (`github.com/songpola/ite-444-fullstack-project-netnow`,
+      compose `deploy/compose.yaml`, which builds from `..`; the root `compose.yaml` is for
+      local development) with three Dockhand variables (APP_DB_PWD, BETTER_AUTH_SECRET,
+      ROOT_PWD). Recreate it as an Arcane Git project with that compose path and variables.
 - [ ] Remove Dockhand: aspect, Kanidm client and secrets, `dockhand.update` label;
       archive `/tank/v2/services/dockhand` after a few weeks.
 

@@ -15,6 +15,9 @@ let
   adminGroup = "prts_admins@${idmDomain}";
   # Dockhand's own OIDC client; the same secret goes into Dockhand's UI
   dockhandSecret = "kanidm/dockhand-client-secret";
+  # Arcane's own OIDC client (services.arcane.sso-login); Arcane reads the same key
+  arcaneSecretsFile = ./secrets/arcane.secrets.yaml;
+  arcaneSecret = "kanidm/arcane-client-secret";
 in
 {
   den.hosts."x86_64-linux"."prts".settings.services = {
@@ -43,6 +46,14 @@ in
       logoutUrl = "https://${authDomain}/oauth2/sign_out";
     };
     dockhand.forward-auth.group = adminGroup;
+
+    arcane.forward-auth.group = adminGroup;
+    arcane.sso-login = {
+      issuerUrl = "https://${idmDomain}/oauth2/openid/arcane";
+      providerName = "Kanidm";
+      inherit adminGroup;
+      sopsFile = arcaneSecretsFile;
+    };
   };
 
   den.aspects."prts" = {
@@ -53,12 +64,15 @@ in
       services.dozzle.forward-auth
       services.dockhand.forward-auth
       services.dockhand.sso-login
+      services.arcane.forward-auth
+      services.arcane.sso-login
     ];
 
     nixos =
       { config, host, ... }:
       let
         dockhandDomain = host.settings.services.dockhand.domain;
+        arcaneDomain = host.settings.services.arcane.domain;
         scopes = [
           "openid"
           "email"
@@ -105,6 +119,17 @@ in
             preferShortUsername = true;
             scopeMaps.prts_admins = scopes;
           };
+
+          # Arcane's own login (services.arcane.sso-login, configured from Nix), behind the gate.
+          # Uses PKCE S256.
+          systems.oauth2.arcane = {
+            displayName = "Arcane";
+            originUrl = "https://${arcaneDomain}/auth/oidc/callback";
+            originLanding = "https://${arcaneDomain}/";
+            basicSecretFile = config.sops.secrets.${arcaneSecret}.path;
+            preferShortUsername = true;
+            scopeMaps.prts_admins = scopes;
+          };
         };
 
         # Kanidm's copies of the client secrets, read by provisioning
@@ -116,6 +141,12 @@ in
           ${dockhandSecret} = {
             sopsFile = ./secrets/auth.secrets.yaml;
             key = "dockhand/OIDC_CLIENT_SECRET";
+            owner = "kanidm";
+            restartUnits = [ "kanidm.service" ];
+          };
+          ${arcaneSecret} = {
+            sopsFile = arcaneSecretsFile;
+            key = "arcane/OIDC_CLIENT_SECRET";
             owner = "kanidm";
             restartUnits = [ "kanidm.service" ];
           };

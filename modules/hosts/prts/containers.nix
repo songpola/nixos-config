@@ -24,6 +24,14 @@
       enableActions = true;
       domain = "dozzle.songpola.dev";
     };
+
+    # Lab projects only (not in this repo), in <dataDir>/projects; see ./quadlet-migration.md
+    services.arcane = {
+      dataDir = "/tank/v2/services/arcane";
+      user = "songpola";
+      domain = "arcane.songpola.dev";
+      encryption-key.sopsFile = ./secrets/arcane.secrets.yaml;
+    };
   };
 
   den.aspects."prts".includes = with den.aspects; [
@@ -35,5 +43,7 @@
     services.dockhand
     services.dockhand.encryption-key
     services.dozzle
+    services.arcane
+    services.arcane.encryption-key
   ];
 }
