@@ -1,5 +1,5 @@
 # oauth2-proxy as the forward-auth gate for services.caddy-reverse-proxy (https://oauth2-proxy.github.io)
-# Runs as a NixOS oci-containers unit on the proxy network, serving its login flow at
+# Runs as a quadlet (`quadlet-oauth2-proxy.service`) on the proxy network, serving its login flow at
 # settings.domain; Caddy asks it about every request to a gated site (`/oauth2/auth`).
 # Sign-in is OIDC (authorization code + PKCE S256) against a provider such as services.kanidm,
 # where the client is registered separately; the client secret is shared with it through
@@ -18,7 +18,7 @@
 { den, lib, ... }:
 let
   name = "oauth2-proxy";
-  unit = "podman-${name}.service";
+  unit = "quadlet-${name}.service";
   # oauth2-proxy's HTTP port inside the container
   containerPort = 4180;
   clientSecret = "${name}/client-secret";
@@ -116,10 +116,9 @@ in
         # oauth2-proxy exits when OIDC discovery fails. Discovery goes through Caddy to the
         # provider, so start after both (Caddy's unit is ready once its config is loaded), and
         # keep retrying instead of hitting the start limit while either isn't serving yet.
-        systemd.services."podman-${name}" = rec {
+        systemd.services."quadlet-${name}" = rec {
           wants = [
-            "${caddy.network}-network.service"
-            "podman-caddy-reverse-proxy.service"
+            "quadlet-caddy-reverse-proxy.service"
           ]
           ++ lib.optional config.services.kanidm.server.enable "kanidm.service";
           after = wants;
@@ -127,11 +126,12 @@ in
           unitConfig.StartLimitIntervalSec = 0;
         };
 
-        virtualisation.oci-containers.containers.${name} = {
+        virtualisation.quadlet.containers."quadlet-${name}".containerConfig = {
+          inherit name;
           inherit (cfg) image;
-          networks = [ caddy.network ];
+          networks = [ config.virtualisation.quadlet.networks."quadlet-${caddy.network}".ref ];
           environmentFiles = [ config.sops.templates."${name}.env".path ];
-          environment = {
+          environments = {
             OAUTH2_PROXY_HTTP_ADDRESS = "0.0.0.0:${toString containerPort}";
             # Behind Caddy: trust X-Forwarded-*; answer /oauth2/auth only, no upstream to proxy
             OAUTH2_PROXY_REVERSE_PROXY = "true";

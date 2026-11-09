@@ -1,5 +1,5 @@
 # Dozzle for viewing container logs (https://dozzle.dev)
-# Runs as a NixOS oci-containers unit (podman backend) with access to the rootful podman socket.
+# Runs as a quadlet (`quadlet-dozzle.service`) with access to the rootful podman socket.
 # Exposed through services.caddy-reverse-proxy when settings.domain is set, else on settings.port.
 # The `forward-auth` sub-aspect puts it behind services.oauth2-proxy and makes Dozzle take the
 # user from its headers (Dozzle's forward-proxy mode) instead of its own login.
@@ -11,7 +11,7 @@ let
 in
 {
   den.aspects.services.${name} = {
-    includes = [ den.aspects.programs.podman ];
+    includes = [ den.aspects.programs.quadlet ];
 
     settings = {
       enableActions = lib.mkOption {
@@ -47,7 +47,9 @@ in
       let
         cfg = host.settings.services.${name};
         caddy = host.settings.services.caddy-reverse-proxy;
-        hasCaddy = config.virtualisation.oci-containers.containers ? caddy-reverse-proxy;
+        caddyNetwork = "quadlet-${caddy.network}";
+        hasCaddy = config.virtualisation.quadlet.networks ? ${caddyNetwork};
+        container = "quadlet-${name}";
       in
       lib.mkMerge [
         {
@@ -58,37 +60,31 @@ in
             }
           ];
 
-          virtualisation.oci-containers.containers.${name} = {
+          virtualisation.quadlet.containers.${container}.containerConfig = {
+            inherit name;
             inherit (cfg) image;
             volumes = [
               "/run/podman/podman.sock:/var/run/docker.sock"
               "${cfg.dataVolume}:/data"
             ];
-            environment = {
+            environments = {
               TZ = if config.time.timeZone == null then "UTC" else config.time.timeZone;
             }
             // lib.optionalAttrs cfg.enableActions { DOZZLE_ENABLE_ACTIONS = "true"; };
-            ports = lib.optional (cfg.port != null) "${toString cfg.port}:${toString containerPort}";
+            publishPorts = lib.optional (cfg.port != null) "${toString cfg.port}:${toString containerPort}";
             labels = den.aspects.programs.podman.meta.autoUpdateLabels;
             # Dozzle's built-in check (not wired into the image). Exec form (JSON array): the image
             # has no shell. The unit is ready only once it passes, so a bad auto-update rolls back.
-            extraOptions = [
-              ''--health-cmd=["/dozzle","healthcheck"]''
-              "--health-interval=10s"
-              "--health-start-period=30s"
-            ];
-            podman.sdnotify = "healthy";
+            healthCmd = ''["/dozzle","healthcheck"]'';
+            healthInterval = "10s";
+            healthStartPeriod = "30s";
+            notify = "healthy";
           };
         }
 
         (lib.mkIf (cfg.domain != null) {
-          systemd.services."podman-${name}" = rec {
-            wants = [ "${caddy.network}-network.service" ];
-            after = wants;
-          };
-
-          virtualisation.oci-containers.containers.${name} = {
-            networks = [ caddy.network ];
+          virtualisation.quadlet.containers.${container}.containerConfig = {
+            networks = [ config.virtualisation.quadlet.networks.${caddyNetwork}.ref ];
             labels = {
               "caddy" = cfg.domain;
               "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
@@ -133,9 +129,9 @@ in
             }
           ];
 
-          virtualisation.oci-containers.containers.${name} = {
+          virtualisation.quadlet.containers."quadlet-${name}".containerConfig = {
             labels."caddy.import" = "auth ${auth.group}";
-            environment = {
+            environments = {
               DOZZLE_AUTH_PROVIDER = "forward-proxy";
               DOZZLE_AUTH_HEADER_USER = headers.preferredUsername;
               DOZZLE_AUTH_HEADER_EMAIL = headers.email;

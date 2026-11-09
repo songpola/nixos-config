@@ -61,8 +61,8 @@ projects only. Downtime during the work is fine (single user).
       `podman-network-caddy.service`; the oci-containers and podman-restart order after
       `caddy-network.service`. Quadlet creates it with `--ignore`, so the live network is kept.
 - [x] `zfs-mount` ordering for quadlet containers lives in `programs.quadlet`.
-- [ ] Deploy and check: `caddy-network.service` active, `podman network inspect caddy`
-      unchanged, every container on it still reachable.
+- [x] Deploy and check (2026-11-10): `caddy-network.service` active, the network kept
+      (created 2026-10-05, same subnet), every site behind Caddy answering.
 
 ### 2. Infrastructure to quadlet-nix
 

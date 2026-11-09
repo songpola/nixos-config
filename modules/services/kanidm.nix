@@ -100,7 +100,7 @@ in
       {
         assertions = [
           {
-            assertion = config.virtualisation.oci-containers.containers ? caddy-reverse-proxy;
+            assertion = config.virtualisation.quadlet.containers ? quadlet-caddy-reverse-proxy;
             message = "services.kanidm needs the services.caddy-reverse-proxy aspect.";
           }
         ];

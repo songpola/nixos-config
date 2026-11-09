@@ -1,10 +1,12 @@
 # Caddy as reverse proxy for web services, configured from container labels (caddy-docker-proxy).
 # Certificates via ACME DNS-01 with Cloudflare, from the `security.acme-cloudflare` account.
-# Includes the `programs.podman` and `security.acme-cloudflare` aspects it needs.
+# Runs as a quadlet (`quadlet-caddy-reverse-proxy.service`), and owns the ingress network as the
+# quadlet `quadlet-<network>` (Podman name: settings.network). Includes the `programs.quadlet`
+# and `security.acme-cloudflare` aspects it needs.
 #
-# Containers opt in by joining the ingress network (settings.network), e.g. in a compose stack:
-#   networks: [ caddy ]   (external: true)
-#   labels:
+# Containers opt in by joining the ingress network: a quadlet with
+#   networks = [ config.virtualisation.quadlet.networks."quadlet-<network>".ref ];
+# or a compose stack with `networks: [ caddy ]` (external: true), and labels:
 #     caddy: app.example.com
 #     caddy.reverse_proxy: "{{upstreams 8080}}"
 #
@@ -14,7 +16,7 @@
 { den, lib, ... }:
 let
   name = "caddy-reverse-proxy";
-  unit = "podman-${name}.service";
+  unit = "quadlet-${name}.service";
 in
 {
   den.quirks.caddy-sites.description = ''
@@ -27,7 +29,6 @@ in
 
   den.aspects.services.${name} = {
     includes = [
-      den.aspects.programs.podman
       den.aspects.programs.quadlet
       den.aspects.security.acme-cloudflare
     ];
@@ -36,7 +37,7 @@ in
       network = lib.mkOption {
         type = lib.types.str;
         default = "caddy";
-        description = "Podman network shared with the proxied containers (a quadlet network, unit `<network>-network.service`)";
+        description = "Podman network shared with the proxied containers (quadlet `quadlet-<network>`)";
       };
       subnet = lib.mkOption {
         type = lib.types.str;
@@ -107,20 +108,20 @@ in
           ) sites
         );
         aliases = map (site: site.domain) sites;
-        networkUnit = "${cfg.network}-network.service";
+        network = config.virtualisation.quadlet.networks."quadlet-${cfg.network}";
+        networkUnit = "quadlet-${cfg.network}-network.service";
       in
       {
         sops.secrets.${tokenSecret}.restartUnits = [ unit ];
 
         systemd.tmpfiles.rules = [ "d ${cfg.configDir} 0755 root root -" ];
 
-        # The shared network, as a quadlet: quadlet containers join it by `.ref`, others order
-        # after its unit. The subnet is pinned so it survives the network being recreated (its
-        # unit removes the network when stopped, if no container uses it).
-        virtualisation.quadlet.networks.${cfg.network}.networkConfig.subnets = [ cfg.subnet ];
-        systemd.services."podman-${name}" = rec {
-          requires = [ networkUnit ];
-          after = requires;
+        # The shared network: quadlets join it by `.ref` (Quadlet adds the dependency), others
+        # order after its unit. The subnet is pinned so it survives the network being recreated
+        # (its unit removes the network when stopped, if no container uses it).
+        virtualisation.quadlet.networks."quadlet-${cfg.network}".networkConfig = {
+          name = cfg.network;
+          subnets = [ cfg.subnet ];
         };
         # Compose stacks join the network as `external`; podman-restart starts them at boot
         systemd.services.podman-restart = rec {
@@ -128,21 +129,16 @@ in
           after = wants;
         };
 
-        virtualisation.oci-containers.containers.${name} = {
+        virtualisation.quadlet.containers."quadlet-${name}".containerConfig = {
+          inherit name;
           inherit (cfg) image;
-          ports = [
+          publishPorts = [
             "80:80" # HTTP
             "443:443" # HTTPS
             "443:443/udp" # HTTP3
           ];
-          networks = [
-            (
-              cfg.network
-              + lib.optionalString (aliases != [ ]) (
-                ":" + lib.concatMapStringsSep "," (alias: "alias=${alias}") aliases
-              )
-            )
-          ];
+          networks = [ network.ref ];
+          networkAliases = aliases;
           # caddy-docker-proxy also reads the proxy's own labels
           labels =
             den.aspects.programs.podman.meta.autoUpdateLabels
@@ -153,8 +149,8 @@ in
             };
           # The image has no HEALTHCHECK, but Caddy speaks sd_notify: the unit is ready only once
           # Caddy has loaded its config, so an auto-update to a Caddy that can't is rolled back.
-          podman.sdnotify = "container";
-          environment = {
+          notify = true;
+          environments = {
             CADDY_INGRESS_NETWORKS = cfg.network;
             CADDY_DOCKER_NO_SCOPE = "true"; # for podman compatibility
             # Ref: https://github.com/lucaslorentz/caddy-docker-proxy/blob/master/tests/caddyfile%2Bconfig/compose.yaml

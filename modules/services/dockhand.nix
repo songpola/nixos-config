@@ -67,7 +67,7 @@ in
         cfg = host.settings.services.${name};
         stacksDir = if cfg.stacksDir == null then "${cfg.dataDir}/stacks" else cfg.stacksDir;
         caddy = host.settings.services.caddy-reverse-proxy;
-        hasCaddy = config.virtualisation.oci-containers.containers ? caddy-reverse-proxy;
+        hasCaddy = config.virtualisation.quadlet.containers ? quadlet-caddy-reverse-proxy;
 
         owner = if cfg.user == null then "root" else cfg.user;
         group = if cfg.user == null then "root" else config.users.users.${cfg.user}.group;
@@ -117,7 +117,7 @@ in
 
         (lib.mkIf (cfg.domain != null) {
           systemd.services."podman-${name}" = rec {
-            wants = [ "${caddy.network}-network.service" ];
+            wants = [ "quadlet-${caddy.network}-network.service" ];
             after = wants;
           };
 
