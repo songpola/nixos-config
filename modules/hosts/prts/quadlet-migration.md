@@ -83,14 +83,22 @@ projects only. Downtime during the work is fine (single user).
       `caddy` behind the gate; same container names, bind mounts and `/mnt/starrs-data`.
       No health checks or `depends_on` existed, so none added; qui's allowed CIDR now comes
       from `services.caddy-reverse-proxy.subnet`.
-- [ ] Cutover: `docker compose down` of the Dockhand stack, switch, check no static IPs,
-      remove the stack from Dockhand, delete `stacks/arrs/`.
+- [x] Cutover (2026-11-10): arrs stack deleted in Dockhand (removed its containers and
+      `arrs_default`), `stacks/arrs/` deleted, switch. All 9 units active, no `static_ips`
+      in the Podman DB, the stored links resolve (prowlarr → byparr:8191, sonarr →
+      qbittorrent:8080, radarr → prowlarr:9696, qui → qbittorrent:8080), every site gated.
 
 ### 4. jellyfin and Jikan to quadlet-nix
 
-- [ ] Same pattern, GPU through CDI (`nvidia.com/gpu=all`), `JIKAN_APP_KEY` and
-      `JIKAN_TYPESENSE_API_KEY` from sops instead of Dockhand stack variables.
-- [ ] Same cutover; delete `stacks/jellyfin/`.
+- [x] `modules/hosts/prts/jellyfin/`: jellyfin, jikan, jikan-mongodb, jikan-typesense
+      (units `quadlet-jellyfin*`), networks `jikan` (internal) and `jikan-egress` (Jikan's
+      internet), GPU through CDI, the compose volumes reused by name
+      (`jellyfin_jikan-mongodb`, `jellyfin_jikan-typesense`, so the index is kept). Keys in
+      `secrets/jellyfin.secrets.yaml` (`jikan/APP_KEY`, `jikan/TYPESENSE_API_KEY`), taken
+      from the old container's environment. `stacks/jellyfin/` deleted. arrs units renamed
+      `quadlet-arrs-<service>`, containers `arrs-<service>` (qui's is now `arrs-qui`; the
+      others reach it by its `qui` alias).
+- [ ] Cutover: delete the jellyfin stack in Dockhand (keep its volumes), switch, check.
 
 ### 5. Arcane for labs, replacing Dockhand
 

@@ -1,6 +1,6 @@
 # arrs for media automation, as quadlets. Setup guide: ./arrs.md
 #
-# Every app is its own container (unit `quadlet-<container>.service`) on the `arrs` network and
+# Every app is its own container (unit `quadlet-arrs-<service>.service`) on the `arrs` network and
 # reaches the others by its old compose service name (prowlarr:9696, qbittorrent:8080, ...),
 # a network alias there: the apps store those links. Apps with a web UI also join Caddy's
 # network, each with its own labels, behind the Kanidm gate (oauth2-proxy's `auth` snippet),
@@ -57,11 +57,13 @@ in
         mkApp =
           {
             service,
-            container ? "arrs-${service}",
             image,
             web ? null,
             containerConfig ? { },
           }:
+          let
+            container = "arrs-${service}";
+          in
           lib.nameValuePair "quadlet-${container}" {
             containerConfig = lib.mkMerge [
               {
@@ -214,7 +216,6 @@ in
           # subnet (refuses everything else) for its own domain. selfh.st icon (CC BY 4.0).
           (mkApp {
             service = "qui";
-            container = "qui";
             image = "ghcr.io/hotio/qui:latest";
             web = {
               port = 7476;
