@@ -15,9 +15,6 @@ daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
       `kay-chan-discord-bot`, `mc-all-the-mons`, `unturned-server`, `speedtest`.
       Auto-update per container: on for stateless ones (speedtest, cwa); check-only
       for forgejo (one-way migrations) and the game servers until backups exist.
-- [ ] Add `protonmail-bridge` as a Git stack (data in
-      `/tank/v2/services/protonmail-bridge/root`; if empty, log the bridge in once
-      through its CLI in the container).
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack` (databases
       in named volumes; create, import, then start):
   ```nu
@@ -30,8 +27,10 @@ daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
   # ite-444-full-stack: same, with ite-444-full-stack_dbdata (also builds an image)
   ```
 - Not restored on purpose: `mystifying_agnesi`, `arcane-data`, `netnow_db-data`,
-  `buildx_buildkit_default_state` (tars kept as archives). Radicale is dropped;
-  `stacks/radicale/compose.yaml` stays as a reference, its data is in `/tank/radicale`.
+  `buildx_buildkit_default_state` (tars kept as archives). dashbeam, protonmail-bridge
+  and radicale are dropped; their compose files stay in `stacks/` as references (see
+  `stacks/README.md`). Data: radicale in `/tank/radicale`, protonmail-bridge in
+  `/tank/v2/services/protonmail-bridge/root`.
 - Later, optionally: move the other stacks into the repo, with their secrets out of
   `.env` (Dockhand secret variables, or 1Password `op://` references: provider in
   Settings → Secrets, a read-only service account on a dedicated vault, `${VAR:?}` in
@@ -145,8 +144,6 @@ commands can't be undone.
       updates) stop deploying unnoticed, and a stalled Kanidm bump plus the next
       weekly one would skip a release, which Kanidm can't migrate. It also catches
       activation and runtime failures, which CI's build can't see.
-- [ ] `podman-restart` is fragile: one failing container fails the unit, and systemd
-      kills the conmon of the containers it just started. Try a `KillMode=process`
-      guard in `modules/programs/podman.nix` and test it.
+- [ ] Quadlet migration and Dockhand → Arcane: `modules/hosts/prts/quadlet-migration.md`.
 - [ ] The pool's special vdev is a single SSD, so losing it loses all of `tank`; mirror
       it with a second SSD of at least 931 GB (`zpool attach`).
