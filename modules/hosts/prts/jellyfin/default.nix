@@ -41,6 +41,8 @@ in
         quadlet = config.virtualisation.quadlet;
         caddy = host.settings.services.caddy-reverse-proxy;
         autoUpdateLabels = den.aspects.programs.podman.meta.autoUpdateLabels;
+        # Dozzle groups by compose project, which quadlets lack
+        groupLabel."dev.dozzle.group" = "jellyfin";
         placeholder = config.sops.placeholder;
       in
       {
@@ -106,11 +108,14 @@ in
               quadlet.networks."quadlet-${caddy.network}".ref
               quadlet.networks.quadlet-jellyfin-jikan.ref
             ];
-            labels = autoUpdateLabels // {
-              "caddy" = "jf.songpola.dev";
-              "caddy.reverse_proxy" = "{{upstreams 8096}}";
-              "dev.dozzle.url" = "https://jf.songpola.dev";
-            };
+            labels =
+              autoUpdateLabels
+              // groupLabel
+              // {
+                "caddy" = "jf.songpola.dev";
+                "caddy.reverse_proxy" = "{{upstreams 8096}}";
+                "dev.dozzle.url" = "https://jf.songpola.dev";
+              };
           };
 
           # Jikan REST API, the plugin author's fork (maintained; the official image dates
@@ -130,6 +135,7 @@ in
               GITHUB_REPORTING = "false";
             };
             environmentFiles = [ config.sops.templates."jikan.env".path ];
+            labels = groupLabel;
             networks = [
               # Jellyfin reaches it here as the plugin's hardcoded primary (port 8080)
               "${quadlet.networks.quadlet-jellyfin-jikan.ref}:alias=jikanapi.freemyip.com"
@@ -149,7 +155,7 @@ in
             # The compose stack's volume, kept by name
             volumes = [ "jellyfin_jikan-mongodb:/data/db" ];
             networks = [ quadlet.networks.quadlet-jellyfin-jikan.ref ];
-            labels = autoUpdateLabels;
+            labels = autoUpdateLabels // groupLabel;
           };
 
           quadlet-jellyfin-jikan-typesense.containerConfig = {
@@ -159,7 +165,7 @@ in
             environmentFiles = [ config.sops.templates."jikan-typesense.env".path ];
             volumes = [ "jellyfin_jikan-typesense:/data" ];
             networks = [ quadlet.networks.quadlet-jellyfin-jikan.ref ];
-            labels = autoUpdateLabels;
+            labels = autoUpdateLabels // groupLabel;
           };
         };
 

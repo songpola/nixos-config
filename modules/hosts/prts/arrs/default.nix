@@ -73,7 +73,10 @@ in
                   "${quadlet.networks.quadlet-arrs.ref}:alias=${service}"
                 ]
                 ++ lib.optional (web != null) quadlet.networks."quadlet-${caddy.network}".ref;
-                labels = den.aspects.programs.podman.meta.autoUpdateLabels;
+                labels = den.aspects.programs.podman.meta.autoUpdateLabels // {
+                  # Dozzle groups by compose project, which quadlets lack
+                  "dev.dozzle.group" = "arrs";
+                };
               }
               (lib.mkIf (web != null) (
                 let

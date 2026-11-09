@@ -98,7 +98,11 @@ projects only. Downtime during the work is fine (single user).
       from the old container's environment. `stacks/jellyfin/` deleted. arrs units renamed
       `quadlet-arrs-<service>`, containers `arrs-<service>` (qui's is now `arrs-qui`; the
       others reach it by its `qui` alias).
-- [ ] Cutover: delete the jellyfin stack in Dockhand (keep its volumes), switch, check.
+- [x] Cutover (2026-11-10): jellyfin stack deleted in Dockhand (volumes kept), switch. All
+      units active; GPU visible in Jellyfin (GTX 1050 Ti); Jellyfin → Jikan as
+      `jikanapi.freemyip.com:8080` 200, search through Typesense works (index kept),
+      `api.jikan.moe` refused at once; `jf.songpola.dev` 200. `host-gateway` now resolves to
+      the `jikan` network's gateway (10.89.3.1), and LDAPS to Kanidm (636) answers there.
 
 ### 5. Arcane for labs, replacing Dockhand
 
