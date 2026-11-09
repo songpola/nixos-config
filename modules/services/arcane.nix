@@ -112,7 +112,8 @@ in
           # reads memory usage from the host's cgroup tree. No real loss of isolation: the podman
           # socket is root-equivalent anyway.
           podmanArgs = [ "--cgroupns=host" ];
-          healthCmd = "./arcane health --timeout 2s";
+          # Exec form (JSON array): the image has no shell. The unit is ready only once it passes
+          healthCmd = ''["/app/arcane","health","--timeout","2s"]'';
           healthInterval = "10s";
           healthStartPeriod = "15s";
           notify = "healthy";
