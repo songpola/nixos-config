@@ -128,8 +128,9 @@ projects only. Downtime during the work is fine (single user).
 
 ### 6. Docs and verification
 
-- [ ] CLAUDE.md (prts: Quadlet for the repo's containers, Arcane for labs, no Git stacks),
-      `auth.md`, TODO.md, `containers.nix` header.
+- [x] CLAUDE.md (prts: Quadlet for the repo's containers, Arcane for labs, no Git stacks),
+      `auth.md`, TODO.md, `containers.nix` header. TODO's cleanup wrongly listed the
+      `dozzle-data` and `caddy-reverse-proxy-data` volumes as orphaned; the quadlets use them.
 - [ ] Reboot test: every quadlet unit active, podman-restart `active (exited)`,
       `systemctl --failed` empty, no `static_ips` in the Podman DB, next nightly upgrade
       passes.

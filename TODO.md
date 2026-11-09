@@ -1,25 +1,25 @@
 # TODO
 
 Open work on prts. Commands are nushell, run on prts unless noted. Design notes live
-elsewhere: CLAUDE.md (repo, stacks), `modules/hosts/prts/auth.md` (central auth, app
-logins, Jellyfin LDAP).
+elsewhere: CLAUDE.md (repo, containers), `modules/hosts/prts/auth.md` (central auth, app
+logins, Jellyfin LDAP), `modules/hosts/prts/quadlet-migration.md` (the move to Quadlet
+and Arcane).
 
-## 1. Stacks
+## 1. Lab projects (Arcane)
 
-Stacks in `modules/hosts/prts/stacks/` are Git stacks in Dockhand (repo
-`https://github.com/songpola/nixos-config`, branch `main`, compose path
-`modules/hosts/prts/stacks/<stack>/compose.yaml`, env panel left empty, scheduled sync
-daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
+Lab projects live in `/tank/v2/services/arcane/projects/<project>/`, run by Arcane
+(`arcane.songpola.dev`). Deploy and update them per project, never per container (that
+pins IPs on Podman).
 
-- [ ] Start the Dockhand-only stacks (none are running): `cwa`, `forgejo`,
-      `kay-chan-discord-bot`, `mc-all-the-mons`, `unturned-server`, `speedtest`.
-      Auto-update per container: on for stateless ones (speedtest, cwa); check-only
-      for forgejo (one-way migrations) and the game servers until backups exist.
+- [ ] Start the copied projects you still want (none are running): `cwa`, `forgejo`,
+      `kay-chan-discord-bot`, `mc-all-the-mons`, `unturned-server`, `speedtest`. Update
+      checks: fine for stateless ones (speedtest, cwa); careful with forgejo (one-way
+      migrations) and the game servers until backups exist.
 - [ ] Only if still wanted, `ite-310-wordpress` and `ite-444-full-stack` (databases
       in named volumes; create, import, then start):
   ```nu
   let b = "/tank/v2/backups/podman-volumes-2026-10-04"
-  cd /tank/v2/services/dockhand/stacks/ite-310-wordpress
+  cd /tank/v2/services/arcane/projects/ite-310-wordpress
   sudo podman compose create
   sudo podman volume import ite-310-wordpress_db-data $"($b)/ite-310-wordpress_db-data.tar"
   sudo podman volume import ite-310-wordpress_wp-data $"($b)/ite-310-wordpress_wp-data.tar"
@@ -27,21 +27,18 @@ daily at 05:00). The others live only in `/tank/v2/services/dockhand/stacks`.
   # ite-444-full-stack: same, with ite-444-full-stack_dbdata (also builds an image)
   ```
 - Not restored on purpose: `mystifying_agnesi`, `arcane-data`, `netnow_db-data`,
-  `buildx_buildkit_default_state` (tars kept as archives). dashbeam, protonmail-bridge
-  and radicale are dropped; their compose files stay in `stacks/` as references (see
-  `stacks/README.md`). Data: radicale in `/tank/radicale`, protonmail-bridge in
-  `/tank/v2/services/protonmail-bridge/root`.
-- Later, optionally: move the other stacks into the repo, with their secrets out of
-  `.env` (Dockhand secret variables, or 1Password `op://` references: provider in
-  Settings → Secrets, a read-only service account on a dedicated vault, `${VAR:?}` in
-  compose so a missing secret stops the deploy). Test once that `op://` references in a
-  Git stack's `.env` resolve.
+  `buildx_buildkit_default_state` (tars kept as archives). netnow is archived.
+  dashbeam, protonmail-bridge and radicale are dropped; their compose files stay in
+  `stacks/` as references (see `stacks/README.md`). Data: radicale in `/tank/radicale`,
+  protonmail-bridge in `/tank/v2/services/protonmail-bridge/root`.
+- A lab that becomes permanent moves into the repo as quadlets (like `arrs/`), with its
+  secrets in sops.
 
 ## 2. Verify
 
-- [ ] Restart on boot works: reboot, or `sudo systemctl restart podman-restart`
-      (briefly stops every container); expect `active (exited)` and every
-      container back in `sudo podman ps`
+- [ ] Reboot test after the Quadlet migration: every `quadlet-*` unit back, podman-restart
+      `active (exited)`, `systemctl --failed` empty, no `static_ips` in the Podman DB, the
+      next nightly upgrade passes (see `quadlet-migration.md`, phase 6)
 
 ## 3. Backup pool on sda (2 TB SMR)
 
@@ -56,7 +53,7 @@ about 29,600 power-on hours).
       12.x now: Jellyfin dropped the "10."). One-way database migrations, so keep a
       pin, never `latest`. Steps: snapshot `/tank/v2/services/jellyfin`, uninstall
       the LDAP Authentication plugin (log in as the local `admin`), bump the image
-      tag in `stacks/jellyfin/compose.yaml`, reinstall the plugin (24.0.0.0 targets
+      tag in `modules/hosts/prts/jellyfin/default.nix`, reinstall the plugin (24.0.0.0 targets
       12.0), test a Kanidm login, then run a full library scan (required: alternate
       versions are dropped until it runs). Read the 12.x release notes first.
 
@@ -72,15 +69,15 @@ commands can't be undone.
   ```
   Then remove the commented-out `zfs-storage-driver` block in
   `modules/programs/podman.nix`.
-- [ ] Leftovers from the old setup: the `caddy-reverse-proxy-ingress` network, the
-      orphaned volumes `dozzle-data` and `caddy-reverse-proxy-data` (Caddy's
-      certificates are reissued by the Nix-managed Caddy), and the
-      `compose.yaml.bak` files in the Dockhand stacks:
+- [ ] Leftovers from the old setup: the `caddy-reverse-proxy-ingress` network. Not the
+      volumes `dozzle-data` and `caddy-reverse-proxy-data`: the quadlets use them (Dozzle's
+      settings, Caddy's certificates).
   ```nu
   sudo podman network rm caddy-reverse-proxy-ingress
-  sudo podman volume rm dozzle-data caddy-reverse-proxy-data
-  sudo rm /tank/v2/services/dockhand/stacks/*/compose.yaml.bak
   ```
+- [ ] Dockhand (off since 2026-11-10; its stacks are copied to Arcane's projects): archive
+      or delete `/tank/v2/services/dockhand`, its image and its sops key in
+      `secrets/auth.secrets.yaml` (`dockhand/OIDC_CLIENT_SECRET`) once nothing is missed.
 - [ ] Snapshots: the `@migrate` snapshots across `tank` (biggest:
       `tank/v2/arrs-data@migrate`, `tank/qbittorrent-downloads@migrate`) and
       `tank/v2/services/arrs@pre-localhost` / `@pre-latest`:
@@ -138,12 +135,11 @@ commands can't be undone.
       to the journal and wall). Pick one channel (e.g. ntfy, or mail through msmtp) and
       route to it: smartd warnings, ZFS events (ZED: pool degraded, scrub results),
       failed systemd units (auto-upgrade, `podman-auto-update` rollbacks, backups once
-      section 3 exists), and Dockhand's update notifications.
+      section 3 exists), and Arcane's update notifications.
       Auto-upgrade first (`OnFailure=` on `nixos-upgrade.service`): a failed build
       leaves prts on the old generation silently, so later merges (and security
       updates) stop deploying unnoticed, and a stalled Kanidm bump plus the next
       weekly one would skip a release, which Kanidm can't migrate. It also catches
       activation and runtime failures, which CI's build can't see.
-- [ ] Quadlet migration and Dockhand → Arcane: `modules/hosts/prts/quadlet-migration.md`.
 - [ ] The pool's special vdev is a single SSD, so losing it loses all of `tank`; mirror
       it with a second SSD of at least 931 GB (`zpool attach`).

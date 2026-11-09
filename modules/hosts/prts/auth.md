@@ -50,7 +50,7 @@ forward-auth checks.
 
 | App | Gate | Own login |
 |---|---|---|
-| Dockhand | `prts_admins` | OIDC client `dockhand` (provider set in its UI), autologin, local login hidden (`/login?local=1`) |
+| Arcane | `prts_admins` | OIDC client `arcane`, configured from Nix (`services.arcane.sso-login`): redirects straight to Kanidm, `prts_admins` gets the Admin role; the local `arcane` account stays for recovery |
 | Dozzle | `prts_admins` | forward-proxy mode, user from the gate's headers |
 | Sonarr, Radarr, Prowlarr | `prts_admins` | `<APP>__AUTH__METHOD=External` (API still needs its key) |
 | qBittorrent | `prts_admins` | bypassed for the `caddy` subnet (set in its UI, no env var); the apps still log in with its password |
@@ -93,8 +93,8 @@ admin filter the same with `prts_admins`, search/username attribute `name`, uid 
 
 ## Break-glass
 
-With Dockhand and Dozzle behind Kanidm and oauth2-proxy, an outage of those two locks you
+With Arcane and Dozzle behind Kanidm and oauth2-proxy, an outage of those two locks you
 out of the tools you would debug it with: use SSH (Tailscale SSH) and isd. Never use the
-`port` option of `services.dockhand` / `services.dozzle` as a way in: a published port
+`port` option of `services.dozzle` as a way in: a published port
 skips the gate for the whole tailnet. Jellyfin has a local admin `admin` (password in
 1Password) for LDAP outages.

@@ -1,5 +1,6 @@
 # prts containers: Podman, the Caddy reverse proxy and its ACME account, and the Nix-managed
-# infrastructure containers. Application stacks are managed by Dockhand (copies in stacks/).
+# infrastructure containers (quadlets). The apps are in ./arrs and ./jellyfin; Arcane runs the
+# lab projects (not in this repo). See ./quadlet-migration.md.
 { den, ... }:
 {
   den.hosts."x86_64-linux"."prts".settings = {
