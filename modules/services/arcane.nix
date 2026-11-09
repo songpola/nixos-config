@@ -114,11 +114,9 @@ in
             # Client IPs from Caddy's X-Forwarded-For
             TRUSTED_PROXIES = caddy.subnet;
           };
-          # The host's cgroup namespace, as in Arcane's Podman example: Arcane finds its own
-          # container from its cgroup path (so bulk actions and self-update leave it alone) and
-          # reads memory usage from the host's cgroup tree. No real loss of isolation: the podman
-          # socket is root-equivalent anyway.
-          podmanArgs = [ "--cgroupns=host" ];
+          # No `--cgroupns=host` (Arcane's Podman example has `cgroup: host`): Arcane's own-container
+          # detection only matches Docker's cgroup and mount paths, so on Podman it finds itself by
+          # its hostname (Podman sets it to the short container ID) either way.
           # Exec form (JSON array): the image has no shell. The unit is ready only once it passes
           healthCmd = ''["./arcane","health","--timeout","2s"]'';
           healthInterval = "10s";
