@@ -161,10 +161,9 @@ in
             "caddy" = cfg.domain;
             "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
             # Not bundled with Dozzle; selfh.st icon (CC BY 4.0, https://selfh.st/icons)
-            # `%%`: systemd reads `%` in the generated unit as a specifier (and fails on `%3C`)
-            "dev.dozzle.icon" =
-              "data:image/svg+xml,"
-              + lib.replaceStrings [ "%" ] [ "%%" ] (lib.escapeURL (builtins.readFile ./oauth2-proxy.svg));
+            "dev.dozzle.icon" = den.aspects.programs.quadlet.meta.escapeSpecifiers (
+              "data:image/svg+xml," + lib.escapeURL (builtins.readFile ./oauth2-proxy.svg)
+            );
           };
         };
       };

@@ -66,17 +66,23 @@ projects only. Downtime during the work is fine (single user).
 
 ### 2. Infrastructure to quadlet-nix
 
-- [ ] caddy-reverse-proxy, oauth2-proxy, dozzle (and its variants), one at a time; the
-      `caddy-sites` quirk and labels move with them.
+- [x] caddy-reverse-proxy, oauth2-proxy, dozzle (deployed 2026-11-10). Naming: the Nix
+      attribute (= Quadlet file) is `quadlet-<name>`, asserted in `programs.quadlet`, so units
+      are `quadlet-<name>[-network|-volume|-pod].service`; Podman names stay plain (`caddy`,
+      `dozzle`), so compose still joins with `networks: [caddy]`. quadlet-nix can't set
+      `ServiceName=`, so the unit prefix needs the attribute prefix.
+      Gotcha: `%` in any value must be `%%` (systemd specifiers), e.g. URL-encoded icons.
 - [ ] Drop the oci-containers branch of the podman.nix ordering once none are left
       (Dockhand stays on oci-containers until phase 5).
 
 ### 3. arrs to quadlet-nix
 
-- [ ] Aspect with the arrs, qBittorrent, qui, clonarr, byparr: an `arrs` network plus
-      `caddy` for exposed apps, same bind mounts and `/mnt/starrs-data` paths, songpola:users,
-      health checks with `Notify=healthy`, `Requires`/`After` for `depends_on`. `arrs.md`
-      and the Prowlarr definitions move next to it.
+- [x] `modules/hosts/prts/arrs/` (with `arrs.md`, the Prowlarr definitions and the Dozzle
+      icons): network `arrs` (quadlet `quadlet-arrs`), each app aliased there by its old
+      compose service name (`Network=quadlet-arrs.network:alias=<service>`), web UIs also on
+      `caddy` behind the gate; same container names, bind mounts and `/mnt/starrs-data`.
+      No health checks or `depends_on` existed, so none added; qui's allowed CIDR now comes
+      from `services.caddy-reverse-proxy.subnet`.
 - [ ] Cutover: `docker compose down` of the Dockhand stack, switch, check no static IPs,
       remove the stack from Dockhand, delete `stacks/arrs/`.
 

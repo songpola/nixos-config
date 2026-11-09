@@ -27,6 +27,11 @@
   den.aspects.programs.quadlet = {
     includes = [ den.aspects.programs.podman ];
 
+    # systemd reads `%` in the generated units as a specifier (`%3C` fails to load the unit):
+    # pass values that may hold one (e.g. URL-encoded icons) through this; systemd turns `%%`
+    # back into `%` before Podman sees it.
+    meta.escapeSpecifiers = lib.replaceStrings [ "%" ] [ "%%" ];
+
     nixos =
       { config, ... }:
       {
