@@ -28,6 +28,7 @@ in
   den.aspects.services.${name} = {
     includes = [
       den.aspects.programs.podman
+      den.aspects.programs.quadlet
       den.aspects.security.acme-cloudflare
     ];
 
@@ -35,7 +36,12 @@ in
       network = lib.mkOption {
         type = lib.types.str;
         default = "caddy";
-        description = "Podman network shared with the proxied containers (created if missing)";
+        description = "Podman network shared with the proxied containers (a quadlet network, unit `<network>-network.service`)";
+      };
+      subnet = lib.mkOption {
+        type = lib.types.str;
+        default = "10.89.1.0/24";
+        description = "Subnet of the shared network";
       };
       configDir = lib.mkOption {
         type = lib.types.str;
@@ -101,26 +107,24 @@ in
           ) sites
         );
         aliases = map (site: site.domain) sites;
+        networkUnit = "${cfg.network}-network.service";
       in
       {
         sops.secrets.${tokenSecret}.restartUnits = [ unit ];
 
         systemd.tmpfiles.rules = [ "d ${cfg.configDir} 0755 root root -" ];
 
-        # oci-containers doesn't manage networks; create the shared one if it's missing
-        systemd.services."podman-network-${cfg.network}" = {
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-          path = [ config.virtualisation.podman.package ];
-          script = "podman network exists ${cfg.network} || podman network create ${cfg.network}";
-          requiredBy = [ unit ];
-          before = [ unit ];
+        # The shared network, as a quadlet: quadlet containers join it by `.ref`, others order
+        # after its unit. The subnet is pinned so it survives the network being recreated (its
+        # unit removes the network when stopped, if no container uses it).
+        virtualisation.quadlet.networks.${cfg.network}.networkConfig.subnets = [ cfg.subnet ];
+        systemd.services."podman-${name}" = rec {
+          requires = [ networkUnit ];
+          after = requires;
         };
         # Compose stacks join the network as `external`; podman-restart starts them at boot
         systemd.services.podman-restart = rec {
-          wants = [ "podman-network-${cfg.network}.service" ];
+          wants = [ networkUnit ];
           after = wants;
         };
 

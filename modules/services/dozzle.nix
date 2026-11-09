@@ -83,7 +83,7 @@ in
 
         (lib.mkIf (cfg.domain != null) {
           systemd.services."podman-${name}" = rec {
-            wants = [ "podman-network-${caddy.network}.service" ];
+            wants = [ "${caddy.network}-network.service" ];
             after = wants;
           };
 

@@ -118,7 +118,7 @@ in
         # keep retrying instead of hitting the start limit while either isn't serving yet.
         systemd.services."podman-${name}" = rec {
           wants = [
-            "podman-network-${caddy.network}.service"
+            "${caddy.network}-network.service"
             "podman-caddy-reverse-proxy.service"
           ]
           ++ lib.optional config.services.kanidm.server.enable "kanidm.service";

@@ -41,21 +41,28 @@ projects only. Downtime during the work is fine (single user).
       stopped them all).
 - [x] Mark dashbeam, protonmail-bridge and radicale as references (`stacks/README.md`),
       drop their TODO entries.
-- [ ] Commit, deploy. The new unit has `X-RestartIfChanged=false`, so the switch leaves
+- [x] Commit, deploy (done 2026-11-10, rebooted: podman-restart `active`, each conmon in
+      its own `libpod-conmon-*` scope, nothing failed). The new unit has `X-RestartIfChanged=false`, so the switch leaves
       podman-restart alone: apply the fix with a reboot (or
       `sudo systemctl restart podman-restart`, which stops every container first).
 
 ### 1. quadlet-nix foundation
 
-- [ ] `flake-file.inputs.quadlet-nix`, `nix run .#write-flake`; a `programs.quadlet`
-      aspect (the removed one in `d6e629ba` is a starting point).
-- [ ] Check: whether quadlet-nix owns `/etc/containers/systemd` (hand-written lab
-      quadlets), its auto-update option, its unit names (for the `zfs-mount` ordering in
-      podman.nix).
-- [ ] `caddy` network as `virtualisation.quadlet.networks.caddy` (same name and subnet
-      `10.89.1.0/24`), exposed by `services.caddy-reverse-proxy`, replacing
-      `podman-network-caddy.service`.
-- [ ] podman.nix: `zfs-mount` ordering and `meta.autoUpdateLabels` for quadlet units.
+- [x] `flake-file.inputs.quadlet-nix`, `nix run .#write-flake`; `programs.quadlet` aspect
+      (`modules/programs/quadlet.nix`).
+- [x] Checked: quadlet-nix writes one `environment.etc` file per unit into
+      `/etc/containers/systemd/`, not the directory, so hand-written lab quadlets can sit
+      next to them. Its `autoUpdate.enable` replaces the `podman-auto-update` timer's
+      schedule: leave it off, keep `programs.podman`'s labels and timer. Unit names:
+      `<name>.service` (container), `<name>-network.service` (network, Podman name = attr
+      name), `<name>-volume.service`.
+- [x] `caddy` network as `virtualisation.quadlet.networks.caddy` (subnet pinned to
+      `10.89.1.0/24`, setting `services.caddy-reverse-proxy.subnet`), replacing
+      `podman-network-caddy.service`; the oci-containers and podman-restart order after
+      `caddy-network.service`. Quadlet creates it with `--ignore`, so the live network is kept.
+- [x] `zfs-mount` ordering for quadlet containers lives in `programs.quadlet`.
+- [ ] Deploy and check: `caddy-network.service` active, `podman network inspect caddy`
+      unchanged, every container on it still reachable.
 
 ### 2. Infrastructure to quadlet-nix
 
