@@ -131,6 +131,7 @@ projects only. Downtime during the work is fine (single user).
 - [x] CLAUDE.md (prts: Quadlet for the repo's containers, Arcane for labs, no Git stacks),
       `auth.md`, TODO.md, `containers.nix` header. TODO's cleanup wrongly listed the
       `dozzle-data` and `caddy-reverse-proxy-data` volumes as orphaned; the quadlets use them.
-- [ ] Reboot test: every quadlet unit active, podman-restart `active (exited)`,
-      `systemctl --failed` empty, no `static_ips` in the Podman DB, next nightly upgrade
-      passes.
+- [x] Reboot test (2026-11-10): system `running`, all 21 quadlet units active,
+      podman-restart `active`/`success`, `systemctl --failed` empty, all 18 containers up
+      (Arcane, Dozzle and clonarr healthy), none with `static_ips`, every site answering.
+- [ ] The next nightly upgrade passes.
