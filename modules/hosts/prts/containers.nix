@@ -13,17 +13,17 @@
 
     services.caddy-reverse-proxy.configDir = "/tank/v2/services/caddy-reverse-proxy/config";
 
-    services.dockhand = {
-      dataDir = "/tank/v2/services/dockhand";
-      user = "songpola";
-      domain = "dockhand.songpola.dev";
-      encryption-key.sopsFile = ./secrets/dockhand.secrets.yaml;
-    };
-
     services.dozzle = {
       enableActions = true;
       domain = "dozzle.songpola.dev";
     };
+
+    # services.dockhand = {
+    #   dataDir = "/tank/v2/services/dockhand";
+    #   user = "songpola";
+    #   domain = "dockhand.songpola.dev";
+    #   encryption-key.sopsFile = ./secrets/dockhand.secrets.yaml;
+    # };
 
     # Lab projects only (not in this repo), in <dataDir>/projects; see ./quadlet-migration.md
     services.arcane = {
@@ -40,9 +40,9 @@
     programs.podman.auto-update
 
     services.caddy-reverse-proxy
-    services.dockhand
-    services.dockhand.encryption-key
     services.dozzle
+    # services.dockhand
+    # services.dockhand.encryption-key
     services.arcane
     services.arcane.encryption-key
   ];

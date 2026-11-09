@@ -124,6 +124,10 @@ in
             "caddy.reverse_proxy" = "{{upstreams ${toString containerPort}}}";
             # Dozzle links the container to its web UI
             "dev.dozzle.url" = "https://${cfg.domain}";
+            # Not bundled with Dozzle; selfh.st icon (CC BY 4.0, https://selfh.st/icons)
+            "dev.dozzle.icon" = den.aspects.programs.quadlet.meta.escapeSpecifiers (
+              "data:image/svg+xml," + lib.escapeURL (builtins.readFile ./arcane.svg)
+            );
           };
         };
       };

@@ -14,7 +14,7 @@ let
   # Groups as Kanidm sends them (SPN), for `import auth <group>`
   adminGroup = "prts_admins@${idmDomain}";
   # Dockhand's own OIDC client; the same secret goes into Dockhand's UI
-  dockhandSecret = "kanidm/dockhand-client-secret";
+  # dockhandSecret = "kanidm/dockhand-client-secret";
   # Arcane's own OIDC client (services.arcane.sso-login); Arcane reads the same key
   arcaneSecretsFile = ./secrets/arcane.secrets.yaml;
   arcaneSecret = "kanidm/arcane-client-secret";
@@ -45,7 +45,7 @@ in
       group = adminGroup;
       logoutUrl = "https://${authDomain}/oauth2/sign_out";
     };
-    dockhand.forward-auth.group = adminGroup;
+    # dockhand.forward-auth.group = adminGroup;
 
     arcane.forward-auth.group = adminGroup;
     arcane.sso-login = {
@@ -62,8 +62,8 @@ in
       services.oauth2-proxy
 
       services.dozzle.forward-auth
-      services.dockhand.forward-auth
-      services.dockhand.sso-login
+      # services.dockhand.forward-auth
+      # services.dockhand.sso-login
       services.arcane.forward-auth
       services.arcane.sso-login
     ];
@@ -71,7 +71,7 @@ in
     nixos =
       { config, host, ... }:
       let
-        dockhandDomain = host.settings.services.dockhand.domain;
+        # dockhandDomain = host.settings.services.dockhand.domain;
         arcaneDomain = host.settings.services.arcane.domain;
         scopes = [
           "openid"
@@ -111,14 +111,14 @@ in
           # Dockhand's own login (services.dockhand.sso-login), behind the gate. In Dockhand's UI:
           # issuer https://<idm>/oauth2/openid/dockhand, client ID `dockhand`, this secret, scopes
           # as below, admin claim `groups` with value prts_admins@<idm>. Uses PKCE S256.
-          systems.oauth2.dockhand = {
-            displayName = "Dockhand";
-            originUrl = "https://${dockhandDomain}/api/auth/oidc/callback";
-            originLanding = "https://${dockhandDomain}/";
-            basicSecretFile = config.sops.secrets.${dockhandSecret}.path;
-            preferShortUsername = true;
-            scopeMaps.prts_admins = scopes;
-          };
+          # systems.oauth2.dockhand = {
+          #   displayName = "Dockhand";
+          #   originUrl = "https://${dockhandDomain}/api/auth/oidc/callback";
+          #   originLanding = "https://${dockhandDomain}/";
+          #   basicSecretFile = config.sops.secrets.${dockhandSecret}.path;
+          #   preferShortUsername = true;
+          #   scopeMaps.prts_admins = scopes;
+          # };
 
           # Arcane's own login (services.arcane.sso-login, configured from Nix), behind the gate.
           # Uses PKCE S256.
@@ -138,12 +138,12 @@ in
             owner = "kanidm";
             restartUnits = [ "kanidm.service" ];
           };
-          ${dockhandSecret} = {
-            sopsFile = ./secrets/auth.secrets.yaml;
-            key = "dockhand/OIDC_CLIENT_SECRET";
-            owner = "kanidm";
-            restartUnits = [ "kanidm.service" ];
-          };
+          # ${dockhandSecret} = {
+          #   sopsFile = ./secrets/auth.secrets.yaml;
+          #   key = "dockhand/OIDC_CLIENT_SECRET";
+          #   owner = "kanidm";
+          #   restartUnits = [ "kanidm.service" ];
+          # };
           ${arcaneSecret} = {
             sopsFile = arcaneSecretsFile;
             key = "arcane/OIDC_CLIENT_SECRET";

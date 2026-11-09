@@ -118,12 +118,13 @@ projects only. Downtime during the work is fine (single user).
       without `compose.yaml.bak`; same directory names, so the compose project names and
       named volumes match): cwa, forgejo, ite-310-wordpress, ite-444-full-stack,
       kay-chan-discord-bot, mc-all-the-mons, speedtest, unturned-server. None were running.
-- [ ] netnow: a Dockhand git stack (`github.com/songpola/ite-444-fullstack-project-netnow`,
-      compose `deploy/compose.yaml`, which builds from `..`; the root `compose.yaml` is for
-      local development) with three Dockhand variables (APP_DB_PWD, BETTER_AUTH_SECRET,
-      ROOT_PWD). Recreate it as an Arcane Git project with that compose path and variables.
-- [ ] Remove Dockhand: aspect, Kanidm client and secrets, `dockhand.update` label;
-      archive `/tank/v2/services/dockhand` after a few weeks.
+- [x] netnow (a Dockhand git stack): archived instead of moved.
+- [x] Dockhand off (2026-11-10): its settings, includes, Kanidm client and secret are
+      commented out in `containers.nix` and `auth.nix`; `modules/services/dockhand.nix` and
+      `secrets/dockhand.secrets.yaml` stay as references. The `dockhand.update=false` label
+      in `programs.podman`'s `autoUpdateLabels` is now inert (Arcane's updater skips
+      quadlets on its own, by `PODMAN_SYSTEMD_UNIT`).
+- [ ] Archive `/tank/v2/services/dockhand` after a few weeks (its stacks are copied).
 
 ### 6. Docs and verification
 
