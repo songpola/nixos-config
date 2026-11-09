@@ -27,8 +27,9 @@ projects only. Downtime during the work is fine (single user).
   repo. Labs come back after a reboot, so podman-restart and its fix stay. Deploy labs
   at the project level only, never with a container's Redeploy/Update/Edit button.
 - Arcane image pinned to v2.17.3 (the next major release renames its env vars to
-  `ARCANE_*`, see `modules/services/arcane.nix`), no D-Bus socket mounted (keeps it away
-  from the Nix-managed units and auto-update).
+  `ARCANE_*`, see `modules/services/arcane.nix`). Runs as root with the system D-Bus
+  (2026-11-10), so it can start, stop and restart the quadlets through systemd and run
+  podman auto-update; keep it to those.
 - dashbeam, protonmail-bridge and radicale are dropped (none were deployed); their
   compose files stay in `stacks/` as references.
 
@@ -108,8 +109,8 @@ projects only. Downtime during the work is fine (single user).
 ### 5. Arcane for labs, replacing Dockhand
 
 - [x] `services.arcane` (`modules/services/arcane.nix`), next to Dockhand for now: image
-      pinned to v2.17.3, Podman socket only, data in `/tank/v2/services/arcane`, projects in
-      its `projects/`, runs as songpola.
+      pinned to v2.17.3, Podman socket, data in `/tank/v2/services/arcane`, projects in
+      its `projects/`, ran as songpola (later root with D-Bus, see Decisions).
       Sub-aspects: `forward-auth`, `encryption-key` and `sso-login` (OIDC fully from env:
       auto-redirect to Kanidm, `prts_admins` → Admin role, callback `/auth/oidc/callback`,
       PKCE). Secrets in `secrets/arcane.secrets.yaml`. Upgrading past v2.17 means renaming

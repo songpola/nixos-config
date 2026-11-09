@@ -29,7 +29,8 @@
     # Lab projects only (not in this repo), in <dataDir>/projects; see ./quadlet-migration.md
     services.arcane = {
       dataDir = "/tank/v2/services/arcane";
-      user = "songpola";
+      # Root, so it can start, stop and restart the quadlets and run auto-update over D-Bus
+      user = "root";
       domain = "arcane.songpola.dev";
       encryption-key.sopsFile = ./secrets/arcane.secrets.yaml;
     };

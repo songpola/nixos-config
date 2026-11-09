@@ -1,7 +1,11 @@
 # Arcane for managing throwaway lab projects (https://getarcane.app), as a quadlet
-# (`quadlet-arcane.service`) with access to the rootful podman socket (no D-Bus socket: it
-# would let Arcane manage quadlet units and podman auto-update, which are Nix's).
-# Exposed through services.caddy-reverse-proxy at settings.domain.
+# (`quadlet-arcane.service`) with access to the rootful podman socket and the host's system
+# D-Bus. Through D-Bus (with settings.user = "root", as in Arcane's rootful Podman example)
+# it starts, stops and restarts quadlet containers via their systemd units, so a stop sticks
+# instead of being undone by `Restart=always`, and runs podman auto-update (on Podman < 6.2 by
+# starting `podman-auto-update.service`). It could also manage any other unit: keep to the
+# quadlets, and don't remove Nix's quadlets from its Quadlets page (the next switch restores
+# them). Exposed through services.caddy-reverse-proxy at settings.domain.
 #
 # Projects live in settings.projectsDir, mounted at the same path so compose files with
 # relative bind mounts work. Deploy and update them per project, never with a container's
@@ -47,7 +51,8 @@ in
         type = lib.types.str;
         description = ''
           User (and its primary group) Arcane runs as, which owns the files it writes. Not a
-          security boundary: the podman socket already grants root-equivalent access.
+          security boundary: the podman socket already grants root-equivalent access. "root"
+          lets it manage systemd units over D-Bus; another user is refused by polkit.
         '';
       };
       podmanGid = lib.mkOption {
@@ -93,6 +98,8 @@ in
           inherit (cfg) image;
           volumes = [
             "/run/podman/podman.sock:/var/run/docker.sock"
+            # systemd control of the quadlet units and podman auto-update (see the top)
+            "/run/dbus/system_bus_socket:/run/dbus/system_bus_socket"
             "${cfg.dataDir}:/app/data"
             # Same path inside, so compose files with relative bind mounts work
             "${projectsDir}:${projectsDir}"
