@@ -113,7 +113,7 @@ in
           # socket is root-equivalent anyway.
           podmanArgs = [ "--cgroupns=host" ];
           # Exec form (JSON array): the image has no shell. The unit is ready only once it passes
-          healthCmd = ''["/app/arcane","health","--timeout","2s"]'';
+          healthCmd = ''["./arcane","health","--timeout","2s"]'';
           healthInterval = "10s";
           healthStartPeriod = "15s";
           notify = "healthy";
