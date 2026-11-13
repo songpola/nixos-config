@@ -100,23 +100,5 @@
             host.settings.programs.podman.volume-path.path;
         };
     };
-
-    # Don't use: slow (podman lists every layer dataset on each command),
-    # use the default overlay driver; kept here for reference.
-    # _.zfs-storage-driver = {
-    #   settings.dataset = lib.mkOption {
-    #     type = lib.types.str;
-    #     description = "ZFS dataset used by podman's storage driver, e.g. tank/unmanaged/podman";
-    #   };
-
-    #   nixos =
-    #     { host, ... }:
-    #     {
-    #       virtualisation.containers.storage.settings.storage = {
-    #         driver = "zfs";
-    #         options.zfs.fsname = host.settings.programs.podman.zfs-storage-driver.dataset;
-    #       };
-    #     };
-    # };
   };
 }
