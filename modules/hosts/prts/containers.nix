@@ -19,6 +19,8 @@
       domain = "dozzle.songpola.dev";
     };
 
+    # Dockhand: off, kept as a reference; data archived in /tank/v2/backups/dockhand-2026-11-13
+    # (see ./quadlet-migration.md)
     # services.dockhand = {
     #   dataDir = "/tank/v2/services/dockhand";
     #   user = "songpola";

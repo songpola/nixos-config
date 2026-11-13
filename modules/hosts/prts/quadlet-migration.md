@@ -121,11 +121,15 @@ projects only. Downtime during the work is fine (single user).
       kay-chan-discord-bot, mc-all-the-mons, speedtest, unturned-server. None were running.
 - [x] netnow (a Dockhand git stack): archived instead of moved.
 - [x] Dockhand off (2026-11-10): its settings, includes, Kanidm client and secret are
-      commented out in `containers.nix` and `auth.nix`; `modules/services/dockhand.nix` and
-      `secrets/dockhand.secrets.yaml` stay as references. The `dockhand.update=false` label
-      in `programs.podman`'s `autoUpdateLabels` is now inert (Arcane's updater skips
-      quadlets on its own, by `PODMAN_SYSTEMD_UNIT`).
-- [ ] Archive `/tank/v2/services/dockhand` after a few weeks (its stacks are copied).
+      commented out in `containers.nix` and `auth.nix`; `modules/services/dockhand.nix`,
+      `secrets/dockhand.secrets.yaml` and the `dockhand/` key in `secrets/auth.secrets.yaml`
+      stay as references (the encryption key also opens the archived data). The
+      `dockhand.update=false` label in `programs.podman`'s `autoUpdateLabels` is now inert
+      (Arcane's updater skips quadlets on its own, by `PODMAN_SYSTEMD_UNIT`).
+- [x] Archived (2026-11-13) to `/tank/v2/backups/dockhand-2026-11-13/` (root-only): the data
+      directory and the `fnsys/dockhand:latest` image (digest in its README) as zstd tars;
+      dataset `tank/v2/services/dockhand` destroyed, image removed. The leftover netnow
+      images are removed too.
 
 ### 6. Docs and verification
 

@@ -75,9 +75,6 @@ commands can't be undone.
   ```nu
   sudo podman network rm caddy-reverse-proxy-ingress
   ```
-- [ ] Dockhand (off since 2026-11-10; its stacks are copied to Arcane's projects): archive
-      or delete `/tank/v2/services/dockhand`, its image and its sops key in
-      `secrets/auth.secrets.yaml` (`dockhand/OIDC_CLIENT_SECRET`) once nothing is missed.
 - [ ] Snapshots: the `@migrate` snapshots across `tank` (biggest:
       `tank/v2/arrs-data@migrate`, `tank/qbittorrent-downloads@migrate`) and
       `tank/v2/services/arrs@pre-localhost` / `@pre-latest`:
