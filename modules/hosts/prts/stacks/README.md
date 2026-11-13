@@ -1,7 +1,7 @@
 # Stacks
 
-Compose stacks for PRTS. See `../quadlet-migration.md`: these move to quadlet-nix, so
-this directory ends up holding references only.
+Reference compose files of dropped apps, not deployed. PRTS runs its containers as
+quadlets (see `CLAUDE.md`); an app that comes back moves into the repo as quadlets.
 
 | Stack | Status |
 | --- | --- |

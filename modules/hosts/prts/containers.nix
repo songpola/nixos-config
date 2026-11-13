@@ -1,6 +1,6 @@
 # prts containers: Podman, the Caddy reverse proxy and its ACME account, and the Nix-managed
 # infrastructure containers (quadlets). The apps are in ./arrs and ./jellyfin; Arcane runs the
-# lab projects (not in this repo). See ./quadlet-migration.md.
+# lab projects (not in this repo).
 { den, ... }:
 {
   den.hosts."x86_64-linux"."prts".settings = {
@@ -19,8 +19,8 @@
       domain = "dozzle.songpola.dev";
     };
 
-    # Dockhand: off, kept as a reference; data archived in /tank/v2/backups/dockhand-2026-11-13
-    # (see ./quadlet-migration.md)
+    # Dockhand: off, kept as a reference; data and image archived in
+    # /tank/v2/backups/dockhand-2026-11-13
     # services.dockhand = {
     #   dataDir = "/tank/v2/services/dockhand";
     #   user = "songpola";
@@ -28,7 +28,7 @@
     #   encryption-key.sopsFile = ./secrets/dockhand.secrets.yaml;
     # };
 
-    # Lab projects only (not in this repo), in <dataDir>/projects; see ./quadlet-migration.md
+    # Lab projects only (not in this repo), in <dataDir>/projects
     services.arcane = {
       dataDir = "/tank/v2/services/arcane";
       # Root, so it can start, stop and restart the quadlets and run auto-update over D-Bus

@@ -2,8 +2,7 @@
 
 Open work on prts. Commands are nushell, run on prts unless noted. Design notes live
 elsewhere: CLAUDE.md (repo, containers), `modules/hosts/prts/auth.md` (central auth, app
-logins, Jellyfin LDAP), `modules/hosts/prts/quadlet-migration.md` (the move to Quadlet
-and Arcane).
+logins, Jellyfin LDAP).
 
 ## 1. Lab projects (Arcane)
 
@@ -34,13 +33,7 @@ pins IPs on Podman).
 - A lab that becomes permanent moves into the repo as quadlets (like `arrs/`), with its
   secrets in sops.
 
-## 2. Verify
-
-- [ ] Reboot test after the Quadlet migration: every `quadlet-*` unit back, podman-restart
-      `active (exited)`, `systemctl --failed` empty, no `static_ips` in the Podman DB, the
-      next nightly upgrade passes (see `quadlet-migration.md`, phase 6)
-
-## 3. Backup pool on sda (2 TB SMR)
+## 2. Backup pool on sda (2 TB SMR)
 
 sda passed the long SMART test (2026-10-10: no errors, 0 reallocated/pending sectors,
 about 29,600 power-on hours).
@@ -57,7 +50,7 @@ about 29,600 power-on hours).
       12.0), test a Kanidm login, then run a full library scan (required: alternate
       versions are dropped until it runs). Read the 12.x release notes first.
 
-## 4. Cleanup (after about a week of stability)
+## 3. Cleanup (after about a week of stability)
 
 The storage migration was on 2026-10-04, the arrs move on 2026-10-10. The `zfs destroy`
 commands can't be undone.
@@ -86,7 +79,7 @@ commands can't be undone.
 - [ ] The unused Kanidm service account:
       `kanidm service-account delete jellyfin_ldap -D idm_admin`
 
-## 5. Auth follow-ups
+## 4. Auth follow-ups
 
 - **Sharing PRTS with a friend**: Tailscale node sharing, not public access. Before
   sharing, limit shared users (`autogroup:shared`) to port 443 in the Tailscale ACL:
@@ -126,13 +119,13 @@ commands can't be undone.
   `X-Auth-Request-Groups` to show links per group (Kanidm's own app list is at
   `idm.songpola.dev/ui/apps`).
 
-## 6. Later
+## 5. Later
 
 - [ ] Notifications: nothing on prts can alert you yet (`services.smartd` only writes
       to the journal and wall). Pick one channel (e.g. ntfy, or mail through msmtp) and
       route to it: smartd warnings, ZFS events (ZED: pool degraded, scrub results),
       failed systemd units (auto-upgrade, `podman-auto-update` rollbacks, backups once
-      section 3 exists), and Arcane's update notifications.
+      section 2 exists), and Arcane's update notifications.
       Auto-upgrade first (`OnFailure=` on `nixos-upgrade.service`): a failed build
       leaves prts on the old generation silently, so later merges (and security
       updates) stop deploying unnoticed, and a stalled Kanidm bump plus the next
