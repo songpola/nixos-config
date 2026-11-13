@@ -24,7 +24,7 @@ in
     kanidm = {
       # Upgrade one release at a time, see the option's description. Bumped by the
       # update-flake-lock workflow (it edits this exact line).
-      version = "1_11";
+      version = "1_12";
       domain = idmDomain;
       # LDAPS for Jellyfin's LDAP plugin
       ldapPort = 636;
