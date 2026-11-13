@@ -15,7 +15,7 @@
 # behind forward-auth on its public address
 def qui [method: string, path: string, body?: record] {
     let cmd = [
-        "ip=$(sudo -n podman inspect qui --format '{{(index .NetworkSettings.Networks \"caddy\").IPAddress}}')"
+        "ip=$(sudo -n podman inspect arrs-qui --format '{{(index .NetworkSettings.Networks \"caddy\").IPAddress}}')"
         $"sudo -n podman exec -i arrs-prowlarr curl -s -m 180 -X ($method) -H 'Host: qui.songpola.dev' -H 'Content-Type: application/json' --data-binary @- \"http://$ip:7476($path)\""
     ] | str join "; "
     $body | default {} | to json --raw | ^ssh -o BatchMode=yes prts $cmd | from json
