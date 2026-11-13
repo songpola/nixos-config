@@ -3,7 +3,11 @@
   den.hosts."x86_64-linux"."prts".settings = {
     zfs = {
       hostId = "eb8b6756";
-      extraPools = [ "tank" ];
+      extraPools = [
+        "tank"
+        # Replicas of `tank`, see backup.nix
+        "backup"
+      ];
     };
 
     nvidia = {
